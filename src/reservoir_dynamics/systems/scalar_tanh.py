@@ -44,14 +44,32 @@ class ScalarTanhReservoir:
     ) -> tuple[float, ...]:
         """指定入力の下で一時刻だけ更新する。"""
 
+        activation = self._activation(state, input_value)
+        return (math.tanh(activation),)
+
+    def state_jacobian_magnitude(
+        self,
+        state: tuple[float, ...],
+        input_value: tuple[float, ...],
+    ) -> float:
+        """現在状態から次状態への局所微分絶対値を返す。"""
+
+        activation = self._activation(state, input_value)
+        next_state = math.tanh(activation)
+        return abs(self.recurrent_gain) * (1.0 - next_state * next_state)
+
+    def _activation(
+        self,
+        state: tuple[float, ...],
+        input_value: tuple[float, ...],
+    ) -> float:
         if len(state) != 1 or len(input_value) != 1:
             raise ValueError("状態と入力は1次元である必要があります")
         if not math.isfinite(state[0]) or not math.isfinite(input_value[0]):
             raise ValueError("状態と入力は有限である必要があります")
 
-        activation = (
+        return (
             self.recurrent_gain * state[0]
             + self.input_gain * input_value[0]
             + self.bias
         )
-        return (math.tanh(activation),)

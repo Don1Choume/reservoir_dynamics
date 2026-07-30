@@ -26,6 +26,22 @@ class ScalarTanhReservoirTest(unittest.TestCase):
         self.assertAlmostEqual(reservoir.global_state_lipschitz_bound, 0.75)
         self.assertTrue(reservoir.is_globally_contractive)
 
+    def test_computes_local_state_jacobian_magnitude(self) -> None:
+        reservoir = ScalarTanhReservoir(
+            recurrent_gain=-1.2,
+            input_gain=0.5,
+            bias=0.1,
+        )
+        activation = -1.2 * 0.4 + 0.5 * -0.25 + 0.1
+        expected = 1.2 * (1.0 - math.tanh(activation) ** 2)
+
+        observed = reservoir.state_jacobian_magnitude(
+            state=(0.4,),
+            input_value=(-0.25,),
+        )
+
+        self.assertAlmostEqual(observed, expected)
+
     def test_gain_of_one_is_not_strictly_contractive(self) -> None:
         reservoir = ScalarTanhReservoir(
             recurrent_gain=1.0,
@@ -58,6 +74,9 @@ class ScalarTanhReservoirTest(unittest.TestCase):
 
         with self.assertRaisesRegex(ValueError, "1次元"):
             reservoir.step((0.0, 1.0), (0.0,))
+
+        with self.assertRaisesRegex(ValueError, "1次元"):
+            reservoir.state_jacobian_magnitude((0.0,), (0.0, 1.0))
 
 
 if __name__ == "__main__":

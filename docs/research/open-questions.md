@@ -13,7 +13,11 @@
   Lyapunov指数、IPC/TIPC、未知task性能を同時測定する。
 - 必要な対照: 状態次元、重み分布、読み出し、探索予算を一致させる。
 - 実装済み: 共通入力を複数初期状態へ配信する離散時間replica simulator。
-- 次の実装: 多次元tanh RNN、条件付きLyapunov推定、収縮境界のparameter sweep。
+- 検証済み: `EXP-2026-002` で、負の局所条件付き指数と非同期replicaが
+  共存する場合、および大域収縮条件外の入力同期を再現した。
+- 次の実装: 多次元tanh RNN、top conditional Lyapunov推定、linear memory curve。
+- 次の識別実験: recurrent gain、input gain、seedを掃引し、安定性指標と
+  delayed recall性能の媒介関係を評価する。
 
 ### OQ-002 実効レパートリーは連想記憶容量の媒介変数か
 

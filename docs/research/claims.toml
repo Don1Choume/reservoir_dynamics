@@ -108,6 +108,57 @@ falsification_criteria = [
 ]
 
 [[claims]]
+id = "C-RC-005"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "スカラーtanh系で負の有限時間条件付きLyapunov指数を観測しても、複数初期状態が異なる安定応答へ残る場合があり、局所安定性だけでは大域的一意性を保証しない。"
+sources = [
+  "https://doi.org/10.1162/NECO_a_00411",
+  "https://doi.org/10.1016/j.physd.2020.132609",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/conditional_lyapunov.py",
+  "src/reservoir_dynamics/experiments/input_conditioned_stability_sweep.py",
+]
+tests = [
+  "tests/metrics/test_conditional_lyapunov.py",
+  "tests/experiments/test_input_conditioned_stability_sweep.py",
+]
+limitations = [
+  "一つのスカラー系、一つの入力seed、有限時間の結果である。",
+  "条件付き指数は一つの参照軌道に沿って評価した。",
+  "echo indexそのものはまだ推定していない。",
+]
+falsification_criteria = [
+  "同じspecで全replicaが同期し、非同期結果が数値実装の誤りと判明する。",
+]
+
+[[claims]]
+id = "C-RC-006"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "スカラーtanh系では|a|<1の大域収縮条件を満たさなくても、今回の共通入力によりreplica同期が生じた。"
+sources = [
+  "https://doi.org/10.1162/NECO_a_00411",
+  "https://doi.org/10.1016/j.neunet.2012.07.005",
+]
+implementations = [
+  "src/reservoir_dynamics/systems/scalar_tanh.py",
+  "src/reservoir_dynamics/experiments/input_conditioned_stability_sweep.py",
+]
+tests = [
+  "tests/systems/test_scalar_tanh.py",
+  "tests/experiments/test_input_conditioned_stability_sweep.py",
+]
+limitations = [
+  "同期は特定の入力分布、seed、有限時間、閾値に条件付けられている。",
+  "大域的ESPを一般入力について証明したものではない。",
+]
+falsification_criteria = [
+  "同じ入力と初期状態集合で、許容誤差を超えるreplica分離が再現する。",
+]
+
+[[claims]]
 id = "H-RC-001"
 status = "hypothesis"
 evidence_type = "hypothesis"

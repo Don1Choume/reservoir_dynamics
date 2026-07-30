@@ -571,6 +571,8 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - 共通入力を複数初期状態へ与える離散時間replica simulatorを実装した。
 - スカラーtanhリザバーで大域的収縮上界を再現した
   [EXP-2026-001](docs/research/experiments/EXP-2026-001.md) を記録した。
+- 条件付きLyapunov指数とreplica同期を分離した
+  [EXP-2026-002](docs/research/experiments/EXP-2026-002.md) を記録した。
 - これは既知理論のground truthであり、原著論文の新規結果ではない。
 - canonical systems、artifact schema、seed manifestが未完了のためGate 0は未通過である。
 - 論文化判断は[論文化ゲート](docs/research/publication-readiness.md)で管理する。
