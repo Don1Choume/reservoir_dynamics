@@ -566,6 +566,15 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - 同じspecから同じartifactを再生成できる
 - solver、刻み幅、seed、過渡除去条件が全結果に記録される
 
+**進捗 2026-07-30**
+
+- 共通入力を複数初期状態へ与える離散時間replica simulatorを実装した。
+- スカラーtanhリザバーで大域的収縮上界を再現した
+  [EXP-2026-001](docs/research/experiments/EXP-2026-001.md) を記録した。
+- これは既知理論のground truthであり、原著論文の新規結果ではない。
+- canonical systems、artifact schema、seed manifestが未完了のためGate 0は未通過である。
+- 論文化判断は[論文化ゲート](docs/research/publication-readiness.md)で管理する。
+
 ### Phase 1: Atlas MVP（2～5か月）
 
 **成果物**

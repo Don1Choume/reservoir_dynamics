@@ -11,12 +11,18 @@ class BasinStabilityTest(unittest.TestCase):
         self.assertEqual(estimates[0].count, 3)
         self.assertAlmostEqual(estimates[0].probability, 0.75)
         self.assertLessEqual(estimates[0].lower_confidence_bound, 0.75)
-        self.assertGreaterEqual(estimates[0].upper_confidence_bound, 0.75)
+        self.assertGreaterEqual(
+            estimates[0].upper_confidence_bound,
+            0.75,
+        )
 
     def test_preserves_first_observation_order(self) -> None:
         estimates = estimate_basin_stability(("second", "first", "second"))
 
-        self.assertEqual(tuple(estimate.label for estimate in estimates), ("second", "first"))
+        self.assertEqual(
+            tuple(estimate.label for estimate in estimates),
+            ("second", "first"),
+        )
 
     def test_probabilities_sum_to_one(self) -> None:
         estimates = estimate_basin_stability((1, 2, 3, 1, 2))

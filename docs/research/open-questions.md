@@ -12,7 +12,8 @@
 - 識別実験: 同一RNN個体について、自律atlas、replica距離、条件付き
   Lyapunov指数、IPC/TIPC、未知task性能を同時測定する。
 - 必要な対照: 状態次元、重み分布、読み出し、探索予算を一致させる。
-- 次の実装: 共通入力を複数初期状態へ配信するbatched simulator。
+- 実装済み: 共通入力を複数初期状態へ配信する離散時間replica simulator。
+- 次の実装: 多次元tanh RNN、条件付きLyapunov推定、収縮境界のparameter sweep。
 
 ### OQ-002 実効レパートリーは連想記憶容量の媒介変数か
 

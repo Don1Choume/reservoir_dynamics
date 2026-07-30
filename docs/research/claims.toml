@@ -81,6 +81,33 @@ limitations = [
 ]
 
 [[claims]]
+id = "C-RC-004"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "スカラーtanhリザバーで|a|<1のとき、同一入力を受ける複製間距離はD_t <= |a|^t D_0を満たすことを本ツールで再現した。"
+sources = ["https://doi.org/10.1016/j.neunet.2012.07.005"]
+implementations = [
+  "src/reservoir_dynamics/simulation/discrete.py",
+  "src/reservoir_dynamics/systems/scalar_tanh.py",
+  "src/reservoir_dynamics/theory/contraction.py",
+  "src/reservoir_dynamics/experiments/scalar_tanh_contraction.py",
+]
+tests = [
+  "tests/simulation/test_discrete.py",
+  "tests/systems/test_scalar_tanh.py",
+  "tests/theory/test_contraction.py",
+  "tests/experiments/test_scalar_tanh_contraction.py",
+]
+limitations = [
+  "一つのスカラー系、決定論的入力、有限時間のground-truth検証である。",
+  "この十分条件は|a|>=1でのESP不存在を意味しない。",
+  "計算能力または記憶能力の優位性は検証していない。",
+]
+falsification_criteria = [
+  "同じ実験specと数値精度で、観測距離が許容誤差を超えて解析上界に違反する。",
+]
+
+[[claims]]
 id = "H-RC-001"
 status = "hypothesis"
 evidence_type = "hypothesis"

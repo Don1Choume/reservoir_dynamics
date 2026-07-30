@@ -129,10 +129,54 @@ D(t)\approx D(0)e^{\lambda_c t}
 高次元系では、証明できない量を「発見済み下限」または「有限時間推定」と
 明記する。
 
-## 5. 一次資料
+## 5. スカラーtanhリザバーの収縮上界
+
+対応主張: `C-RC-004`
+
+\[
+x_{t+1}=\tanh(a x_t+b u_t+c)
+\]
+
+を考える。同一入力 \(u_t\) を受ける別の複製を \(\tilde x_t\) とする。
+\(\tanh\) の導関数は
+
+\[
+\frac{d}{dz}\tanh(z)=\operatorname{sech}^2(z)\in(0,1]
+\]
+
+である。平均値の定理から、
+
+\[
+\begin{aligned}
+|x_{t+1}-\tilde x_{t+1}|
+&=
+|\tanh(a x_t+b u_t+c)-\tanh(a\tilde x_t+b u_t+c)|\\
+&\le |a|\,|x_t-\tilde x_t|.
+\end{aligned}
+\]
+
+帰納法により、
+
+\[
+|x_t-\tilde x_t|\le |a|^t|x_0-\tilde x_0|
+\]
+
+を得る。従って \(|a|<1\) は、任意の共通入力列に対する大域的な指数収縮の
+十分条件である。
+
+重要なのは十分条件である点である。\(|a|\ge1\) でも、入力が軌道を
+\(\operatorname{sech}^2(z)\ll1\) の飽和領域へ駆動すれば条件付き収縮が
+起こり得る。この境界外を調べるには、解析上界だけでなく条件付きLyapunov
+指数とreplica距離を併用する。
+
+数値照合は [EXP-2026-001](../experiments/EXP-2026-001.md) に記録した。
+これは既知の収縮議論の再現であり、新規定理ではない。
+
+## 6. 一次資料
 
 - Menck et al., basin stability: <https://doi.org/10.1038/nphys2516>
 - Wilson, binomial interval: <https://doi.org/10.1080/01621459.1927.10502953>
 - Jost, entropy and diversity: <https://doi.org/10.1111/j.2006.0030-1299.14714.x>
 - Manjunath and Jaeger, input-specific ESP: <https://doi.org/10.1162/NECO_a_00411>
 - Ceni et al., echo index and multistability: <https://doi.org/10.1016/j.physd.2020.132609>
+- Yildiz, Jaeger, and Kiebel, ESP条件: <https://doi.org/10.1016/j.neunet.2012.07.005>

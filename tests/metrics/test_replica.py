@@ -32,7 +32,10 @@ class PairwiseReplicaDistanceCurveTest(unittest.TestCase):
         )
 
         expected = math.sqrt((1.0 + 9.0 + 4.0) / 3.0)
-        self.assertAlmostEqual(pairwise_replica_distance_curve(trajectories)[0], expected)
+        self.assertAlmostEqual(
+            pairwise_replica_distance_curve(trajectories)[0],
+            expected,
+        )
 
     def test_rejects_single_replica(self) -> None:
         with self.assertRaisesRegex(ValueError, "2つ以上"):

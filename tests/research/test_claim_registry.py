@@ -43,6 +43,22 @@ class ClaimRegistryTest(unittest.TestCase):
             all(claim.sources for claim in claims if claim.status in sourced_statuses)
         )
 
+    def test_implementation_and_test_paths_exist(self) -> None:
+        claims = load_claim_registry(CLAIM_REGISTRY_PATH)
+        referenced_paths = {
+            relative_path
+            for claim in claims
+            for relative_path in (*claim.implementations, *claim.tests)
+        }
+
+        self.assertTrue(referenced_paths)
+        self.assertTrue(
+            all(
+                (PROJECT_ROOT / relative_path).is_file()
+                for relative_path in referenced_paths
+            )
+        )
+
     def test_rejects_duplicate_claim_ids(self) -> None:
         duplicated_claims = """
 schema_version = 1
