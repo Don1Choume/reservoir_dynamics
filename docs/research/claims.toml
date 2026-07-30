@@ -1,0 +1,127 @@
+schema_version = 1
+last_reviewed = "2026-07-30"
+
+[[claims]]
+id = "C-DYN-001"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "Basin stabilityは、明示した初期条件分布から対象アトラクタへ到達する確率として定義できる。"
+sources = ["https://doi.org/10.1038/nphys2516"]
+implementations = ["src/reservoir_dynamics/metrics/basin.py"]
+tests = ["tests/metrics/test_basin.py"]
+limitations = [
+  "値は初期条件分布、探索領域、有限観測時間、アトラクタ分類器に依存する。",
+  "発見していないアトラクタへの確率質量は推定を歪める。",
+]
+
+[[claims]]
+id = "C-STAT-001"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "有限標本のbinomial比率にはWilson score intervalを用いることで、Wald区間の境界付近の病的挙動を避けられる。"
+sources = ["https://doi.org/10.1080/01621459.1927.10502953"]
+implementations = ["src/reservoir_dynamics/metrics/basin.py"]
+tests = ["tests/metrics/test_basin.py"]
+limitations = [
+  "独立同分布の初期条件標本を仮定する。",
+  "軌道分類誤差と数値積分誤差はこの区間に含まれない。",
+]
+
+[[claims]]
+id = "C-DYN-002"
+status = "provisional"
+evidence_type = "inference"
+statement = "吸引確率のShannon entropyの指数は、偏った吸引域を割り引く実効アトラクタ数として利用できる。"
+sources = ["https://doi.org/10.1111/j.2006.0030-1299.14714.x"]
+implementations = ["src/reservoir_dynamics/metrics/repertoire.py"]
+tests = ["tests/metrics/test_repertoire.py"]
+limitations = [
+  "Hill numberの力学系への適用であり、リザバー性能との関係は未検証である。",
+  "初期条件分布が変われば実効個数も変わる。",
+]
+falsification_criteria = [
+  "吸引域の不均衡を操作した連想記憶実験で、生の個数より予測力が一貫して劣る。",
+]
+
+[[claims]]
+id = "C-RC-001"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "同一入力を与えた異なる初期状態間の距離は、入力条件付き応答の再現性を測る観測量になる。"
+sources = [
+  "https://doi.org/10.1162/NECO_a_00411",
+  "https://doi.org/10.1016/j.physd.2020.132609",
+]
+implementations = ["src/reservoir_dynamics/metrics/replica.py"]
+tests = ["tests/metrics/test_replica.py"]
+limitations = [
+  "有限時間の距離減衰だけでは大域的ESPを証明できない。",
+  "入力実現、初期状態分布、距離尺度に依存する。",
+]
+
+[[claims]]
+id = "C-RC-002"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "Dambre型IPCの総和は、その定理の仮定下でアクセス可能な独立状態次元により上から抑えられる。"
+sources = ["https://doi.org/10.1038/srep00514"]
+limitations = [
+  "入力分布、直交基底、線形読み出し、無限データ等の仮定を外した一般性能上限ではない。",
+]
+
+[[claims]]
+id = "C-RC-003"
+status = "provisional"
+evidence_type = "sourced_fact"
+statement = "Generalized RCでは、状態が同一入力へ再現応答しない場合でも、履歴を持つ時間不変読み出しにより再現可能な出力を構成できる場合がある。"
+sources = ["https://arxiv.org/abs/2412.12104"]
+limitations = [
+  "2026-07-30時点で確認した公開版は査読前プレプリントである。",
+  "必要情報の可観測性、読み出し表現力、有限データ学習を保証しない。",
+]
+
+[[claims]]
+id = "H-RC-001"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "入力駆動フィルタ課題では、自律アトラクタ数よりreplica consistency、条件付き安定性、課題整合IPC/TIPCが未知条件の性能をよく予測する。"
+falsification_criteria = [
+  "条件付き安定性と容量を統制した階層モデルで、自律アトラクタ数が複数の未知task familyにわたり一貫して最良の予測子になる。",
+]
+limitations = ["タスクの種類と入力分布を事前に層別化する必要がある。"]
+
+[[claims]]
+id = "H-RC-002"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "連想記憶性能は、生のアトラクタ数より実効レパートリー、吸引域保持曲線、識別性、偽アトラクタ率でよく説明できる。"
+falsification_criteria = [
+  "吸引域分布と識別性を操作・統制しても、生の個数のみが未知cue条件で最良の予測子になる。",
+]
+
+[[claims]]
+id = "H-RC-003"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "metastable state間の遷移時間尺度とタスクが要求する保持時間が整合するとき、性能が最大になる。"
+falsification_criteria = [
+  "タスク遅延を変えても、MFPTまたはimplied timescaleに対する性能ピークが系統的に移動しない。",
+]
+
+[[claims]]
+id = "H-RC-004"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "アトラクタprofileを目的に含む多目的調整は、同じ探索予算の性能損失単独調整より未知条件で頑健になる。"
+falsification_criteria = [
+  "同一探索予算と同一読み出しで、未知seed、未知入力分布、未知力学系familyのいずれにも改善がない。",
+]
+
+[[claims]]
+id = "H-RC-005"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "Generalized RCで必要な読み出し複雑度は、観測不能なタスク非関連自由度と条件付き不安定性の増大に伴って増える。"
+falsification_criteria = [
+  "可観測性と条件付き不安定性を独立に操作しても、必要な履歴長、パラメータ数、学習標本数に再現可能な変化がない。",
+]

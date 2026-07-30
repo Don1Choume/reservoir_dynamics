@@ -1,7 +1,20 @@
 [project]
-name = "app"
+name = "reservoir-dynamics"
 version = "0.1.0"
-description = "Add your description here"
+description = "Attractor-aware analysis and tuning for reservoir dynamics"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
+
+[dependency-groups]
+dev = [
+    "coverage[toml]>=7.6",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["src/reservoir_dynamics"]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true

@@ -1,135 +1,754 @@
-# **リザバーコンピューティングの最新展開と力学系理論：TIPC、カオスエッジ、および物理ダイナミクスの計算能力評価**
+# アトラクタ指向リザバー・ダイナミクス研究計画
 
-## **1\. 序論：非標準計算アーキテクチャとしてのリザバーコンピューティングの進化とダイナミクス評価の必要性**
+最終更新: 2026-07-30
 
-現代の機械学習および複雑系科学のパラダイムにおいて、リカレントニューラルネットワーク（RNN）の訓練コストを劇的に削減し、かつ力学系（Dynamical Systems）の自然な時間発展を情報処理資源として直接的に活用する「リザバーコンピューティング（Reservoir Computing: RC）」が急速な進化を遂げている。古典的なエコーステートネットワーク（ESN）やリキッドステートマシン（LSM）から派生したこのフレームワークは、入力信号を高次元の非線形力学系（リザバー）に投影し、線形な読み出し層（リードアウト）の重みのみを最適化するという単純かつ強力な構造を持つ。  
-近年では、この概念は計算機上のシミュレーションにとどまらず、スピントロニクスデバイス、光回路、メモリスタ、生体組織、さらには量子系そのものを情報処理基盤として利用する「物理リザバーコンピューティング（Physical Reservoir Computing: PRC）」や「量子リザバーコンピューティング（Quantum Reservoir Computing: QRC）」へと拡張されている。物理系をリザバーとして利用する場合、従来の数理モデルに基づくRCとは異なり、システムに内在する熱揺らぎ、量子ノイズ、経年変化、あるいは生体的な変性といった「時間依存的な動態（Time-variant dynamics）」が避けられない。  
-この物理的現実に対処するため、リザバーの性能評価指標は、従来の静的かつ時不変な「情報処理能力（Information Processing Capacity: IPC）」から、システムの非定常性や時間変化を許容し、それを計算資源として定量化する「時間情報処理能力（Temporal Information Processing Capacity: TIPC）」へとパラダイムシフトを起こしている。また、これらのシステムが最大の計算能力を発揮する動作点である「カオスの縁（Edge of Chaos）」の物理的実証や、相空間におけるアトラクタの理論的限界、相転移を予測する臨界減速（CSD）やトポロジカルデータ解析（TDA）の応用など、力学系理論と情報処理の融合がかつてない深さで進行している。  
-本報告書では、TIPCを筆頭とする最新の性能評価手法の数理的基盤から出発し、量子系や生体物理リザバーにおける計算メカニズム、エコーステート特性（ESP）の経験的定式化、アトラクタの極限に関する理論的証明、および力学系の構造変化を検知する最新の統計物理学的アプローチに至るまで、リザバーコンピューティングの最前線を網羅的かつ詳細に解析する。
+位置づけ: 調査報告、仮説、ツール設計、実験計画を統合した研究ロードマップ
 
-## **2\. 情報処理性能の数理的定量化：IPCからTIPCへの理論的進化**
+## 0. 結論
 
-### **2.1 情報処理能力（IPC）の定式化と無限長データに対する漸近評価**
+本研究の中心仮説は有望である。ただし、単純な「アトラクタの種類や数が多いほど、計算能力と記憶能力が高い」という形では成立しない可能性が高い。研究対象は、少なくとも次の三つの計算モードに分ける必要がある。
 
-リザバーコンピューティングの主たる目的は、過去の入力履歴の非線形変換を通じて目的の出力信号を再構築することにある。この記憶能力と非線形変換能力を統一的に定量化するタスク非依存の指標がIPC（Information Processing Capacity）である。システムがフェージングメモリー特性（Fading Memory Property）を満たす場合、系の状態は過去の入力の有限な時間枠のみに依存し、初期条件への依存性は漸近的に消失する。  
-IPCは、フェージングメモリー関数のヒルベルト空間における直交基底関数の再構築能力として定式化される。独立同一分布（i.i.d.）に従う入力系列 u\_t \\in \[-1, 1\] に対し、ルジャンドル多項式 p\_d(\\cdot) を用いて入力履歴の積からなる直交基底 P\_n を構成する。入力から i ステップ過去の信号 u\_{-i} に対応する次数 d のルジャンドル多項式を p\_d(u\_{-i}) とし、これらの有限積によって構成される基底関数の集合に対して、リザバーがどの程度目標出力 \\hat{y}\_t を線形推定できるかを評価する。  
-各基底に対するリザバーの再構築能力 C\_T は、有限のデータ長 T に対して、正規化された平均二乗誤差（MSE）を用いて次のように定義される。  
-C\_T \= 1 \- \\frac{\\min\_w \\frac{1}{T} \\sum\_{t=1}^T \\Vert{}\\hat{y}\_t \- w^\\top x\_t\\Vert{}^2}{\\frac{1}{T} \\sum\_{t=1}^T \\Vert{}\\hat{y}\_t\\Vert{}^2}  
-ここで、x\_t はリザバーの内部状態ベクトル、w は最適化されるリードアウトの重みベクトルである。総IPCはこれら個別の基底に対する再構築能力の総和として計算され、線形的に独立な状態変数の数（自由度）によって上限が規定される。  
-有限なデータ長 T による評価はサンプル誤差や過学習の影響を受けやすいため、無限長データに対する真のIPC C\_0 \\equiv \\lim\_{T \\to \\infty} C\_T を推定する漸近評価手法が極めて重要となる。最新の研究では、学習損失の勾配の共分散行列 I\_\\infty(w) とヘッセ行列の期待値 J を用いた中心極限定理（CLT）の適用により、リードアウトパラメータ w\_T の漸近的な偏差が (TJ)^{-1/2}\\xi\_T に従うことが示されている。これにより、学習データおよびテストデータに対するIPCの期待値はそれぞれ C(T) \= a \+ b\_1/T および C'(T, T') \= a \- b\_2/T' として近似され、重み付き最小二乗法を用いて極限値 a（すなわち真のIPC C\_0）を正確に推定する手法が確立された。  
-さらに、IPCに基づく記憶容量の向上策として、リザバー層のノードダイナミクスそのものを変更することなく、ネットワークのトポロジーを変更する「Delay法」「Passthrough法」「Parallel法」といった構造的アプローチが提案されており、NARMAタスク等において記憶と非線形性のトレードオフを制御しながら性能を飛躍的に向上させることが可能となっている。
+1. **入力駆動型のフィルタ計算**
+   同じ入力履歴に対する応答の再現性、条件付き安定性、入力履歴の分離性、減衰時間、IPC/TIPCが重要である。初期値ごとに異なる応答へ分岐する多重安定性は、文脈として利用されない限り性能低下の原因になり得る。
+2. **自律・閉ループ生成**
+   学習対象の不変集合を再構成し、そのリアプノフスペクトル、幾何、長期統計、吸引域を維持する能力が重要である。ここでは複数の周期・準周期・カオスアトラクタを共存させることが直接的な能力になる。
+3. **連想記憶・状態遷移計算**
+   アトラクタを記憶内容、吸引域を誤り訂正範囲、吸引域境界や遷移障壁を切替コストとみなせる。生のアトラクタ数ではなく、到達可能性、識別可能性、吸引域の大きさ、ノイズ耐性、遷移時間の課題整合性が実効容量を決める。
 
-### **2.2 TIPC（Temporal IPC）の導入と非定常システム・Mortal Computingへの展開**
+したがって、本研究で作るべきものは単一の「アトラクタ数測定器」ではない。任意の力学系に対し、有限の観測・計算予算の下で、
 
-従来のIPCは、リザバーが完全に時不変（Time-invariant）な力学系であることを前提としていた。しかし、現実の物理システムや生体システムは、経年劣化、環境変動、あるいは自己組織化によって時間とともに内部パラメータや力学構造を変化させる。この時間依存（Time-variant）の成分をノイズとして切り捨てるのではなく、計算資源として正当に評価するために導入されたのが、TIPC（Temporal Information Processing Capacity）である。TIPCは、力学系の計算能力を時不変な貢献分と時変的な貢献分に厳密に数学的分解を行う。
+- どのような安定・準安定な振る舞いが発見されたか
+- どの初期条件・入力・摂動から到達するか
+- どれほど区別でき、どれほど長く情報を保持するか
+- どの入力・制御・ノイズで相互遷移するか
+- それらが対象タスクに必要な時間尺度と演算へどう対応するか
+- どのパラメータ変更が因果的に性能を改善するか
 
-| 評価指標 | 前提とするシステム特性 | 評価される計算資源 | 主な適用対象と実装例 |
-| :---- | :---- | :---- | :---- |
-| **IPC** | 時不変 (Time-invariant) | 過去の入力に対する記憶と定常的な非線形マッピング | 標準的なESN、決定論的な人工力学系シミュレーション |
-| **TIPC** | 時変 (Time-variant) | 時不変成分に加え、時間的変動や揺らぎがもたらす情報表現力 | 物理リザバー、量子ノイズ系、生物組織、アンサンブル系 |
+を、信頼区間と実験履歴付きで返す **Attractor and Capacity Atlas** と、その指標を用いる多目的調整器である。
 
-#### **生体物理リザバー（Mortal Computing）におけるTIPCの証左**
+## 1. 既存の前提をどう修正するか
 
-TIPCの威力が最も顕著に現れるのは、「Mortal Computing（死すべき計算機）」と呼称される生体システムを用いたPRCの分野である。これはソフトウェアとハードウェアが密接に結合した生体模倣システムを利用するものであり、とりわけ、実際のタコの腕（Octopus arm）を切り離した直後から、死後硬直（Rigor mortis）、そして腐敗に至るまでの動態を物理リザバーとして利用した画期的な実験においてその真価が発揮された。  
-この研究では、腕の自発的振動や力学特性の変容を、パワースペクトル密度（PSD）とTIPCを通じて時系列的に解析した。生きている状態（切り離し直後の1日目）では、自発的な振動に支えられて高いTIPCとエコーステート特性（ESP）を維持していたが、死後硬直への移行期（2日目）において自発的動きが停止すると、TIPCは一時的に急降下した。しかし極めて興味深いことに、死後硬直が進行して物理的な剛性（Stiffness）が高まるにつれて、タコの腕は過去の入力を物理的変形として保持しやすくなり、TIPCが再び回復するという現象が確認された。生体は自発的な運動によって高度な計算能力を発揮するが、非生命化（物質化）した状態であっても、剛性という物理パラメータの恩恵を受けて記憶容量を再構築できることが、TIPCによって初めて定量的に証明されたのである。
+### 1.1 Reservoir Computing Generalized の正確な射程
 
-#### **量子ノイズとTIPC：環境散逸を計算資源に変換するメカニズム**
+Kubotaらの *Reservoir Computing Generalized* [R1] は、従来はリザバー状態に要求されていた再現性を、最終出力へ移す考え方を提示した。一般形を
 
-量子リザバーコンピューティング（QRC）において、環境からのノイズや散逸は一般に量子コヒーレンスを破壊し、計算能力を低下させると考えられてきた。しかし、TIPCを用いた解析により、振幅減衰（Amplitude damping）などの量子ノイズが、むしろRCにおける有用な時間情報処理能力を引き出すトリガーとなることが証明されている。  
-ノイズのない純粋な量子状態では、ブロッホ球の赤道面上を遷移するだけで過去の軌跡情報が測定値（Pauli-Zなど）に反映されず、フェージングメモリー特性を欠く。しかし、散逸を伴うノイズチャネルが介在することで、状態空間内に収縮的なダイナミクスが生まれ、過去の入力情報が状態空間内に重層的に記録される。実際、IBMの量子プロセッサを用いた実験では、デバイスのエラーレートが高い（すなわちノイズが強い）ほど、非線形な過去の入力履歴の再構築能力が高まり、TIPCのプロファイルが向上するという直観に反する結果が得られている。これは、散逸がRCにおける必須の「記憶の忘却メカニズム」として機能していることを示している。
+\[
+x_{t+1}=F_\theta(x_t,u_t,\xi_t), \qquad
+z_t=h(x_t), \qquad
+\hat y_t=R_\phi(z_t,z_{t-1},\ldots)
+\]
 
-#### **アンサンブルリザバーコンピューティング（ERC）と揺らぎの積極的活用**
+と書く。状態 \(x_t\) が初期値、内部位相、あるいは自律ダイナミクスに依存しても、時間不変変換を実現する読み出し \(R_\phi\) がタスク非関連成分を除去し、入力履歴に対して再現可能な出力を作れれば計算に利用できる、という拡張である。
 
-物理コンピューティングにおいて、熱揺らぎやノイズは一般にパフォーマンスを低下させる要因とされる。スピントルク発振器（STO）などを利用したナノスケールリザバーでは、時間的変動が不可避である。ここで提案された「アンサンブルリザバーコンピューティング（ERC）」は、空間的に多重化された複数のシステムを並列化し、アンサンブル平均を取ることでシステム特有のノイズを相殺するフレームワークである。  
-特筆すべきは、ERCが単にノイズを除去するだけでなく、従来のRCが利用できなかった「時間変動（Temporal fluctuations）に起因する潜在的な計算能力」を抽出する点にある。時変状態は通常、一定の線形リードアウト重みでは処理できないが、ERCは複数のオシレータの揺らぎの位相を揃えずアンサンブルを取ることで、見かけ上の状態を時不変状態へと変換する。結果として、ノイズと時間変動が共存する現実的な環境下でのSTOリザバーにおいて、エラー検出タスクで99%の精度を達成した。これはTIPCにおける時変成分を有効利用した決定的な証左である。
+これは「任意の力学系が、任意のタスクを、そのまま高性能に解ける」という定理ではない。少なくとも次の条件は別に検証する必要がある。
 
-## **3\. エコーステート特性（ESP）と「カオスの縁」の物理的探求**
+- 必要な入力履歴が観測 \(z_t\) またはその履歴から識別できること
+- 使用する読み出しクラスが必要な不変変換を表現できること
+- 有限データ、観測ノイズ、有限精度でも変換を学習できること
+- リザバーから読み出しへ移した計算量を含めて比較すること
+- 未知入力、未知初期値、パラメータドリフトに対して出力が再現すること
 
-リザバーコンピューティングにおいて最高のパフォーマンスが得られる力学系の動作点は、秩序とカオスの中間領域である「カオスの縁（Edge of Chaos）」に存在することが知られている。この境界では、過去の入力を長期間保持する「記憶能力」と、入力を複雑な高次元空間にマッピングする「非線形性」のバランスが最適化される。
+[R1] は2026年7月30日時点で査読済み版を確認できないプレプリントである。本研究では重要な作業仮説として扱うが、確立済みの一般則とは区別する。
 
-### **3.1 経験的ESPインデックスによる漸近安定性の定量化**
+### 1.2 ESP、Fading Memory、分離性、可観測性は別物である
 
-システムがカオスの縁付近で動作しつつ意味のある計算を行うためには、入力信号の履歴への依存性が漸近的に消失する「エコーステート特性（Echo State Property: ESP）」を保持している必要がある。RNNの理論において、ESPは状態忘却特性（State Forgetting Property: SFP）や入力忘却特性（Input Forgetting Property: IFP）と密接に関連しており、時間発展に伴って初期状態の影響が減衰することを要求する。  
-従来の線形理論では、リザバーの内部結合行列の最大特異値またはスペクトル半径が1未満であることがESPの十分条件または必要条件とされてきた。しかし、これらは入力を伴わない自律系における代数的な制約に過ぎず、強い駆動信号が存在する場合の非線形な動的挙動を正確に説明できない。  
-これに対し、Gallicchioらは、入力駆動時の漸近安定性を経験的に評価する「Empirical ESP Index」を導入した。この手法では、以下のアルゴリズムに従ってESPを算出する。
+| 概念 | 主に保証するもの | 単独では保証しないもの |
+|---|---|---|
+| Echo State Property | 同一の左無限入力履歴に対する状態の一意性、初期値依存の消失 | タスクに必要な情報が残ること |
+| Fading Memory | 遠い過去の入力の影響が連続的に減衰すること | 長期記憶、高性能、頑健性 |
+| Separation | タスク上異なる入力履歴を異なる表現へ写すこと | 不要な変動を無視すること |
+| Generalization | タスク上同等な入力を近い表現へまとめること | 力学系としての安定性 |
+| Observability | 内部状態や必要量を観測履歴から識別できること | 有限データで容易に学習できること |
+| Readout approximation | 読み出しクラスが目標写像を近似できること | リザバー自身の寄与、学習効率 |
 
-> 1. まず、ゼロ状態（x\_0 \= 0）から開始したネットワークに入力信号系列 s^L \= \[u(1), \\dots, u(L)\] を与え続け、参照軌道（Reference orbit）O(x\_0, s^L) を作成する。  
-> 2. 次に、P 個のランダムな初期状態 z\_0 から同様に入力信号を与え、摂動軌道 O(z\_0, s^L) を作成する。  
-> 3. 初期の過渡状態（ウォッシュアウト期間 T）を除外した後、各タイムステップにおける参照軌道と各摂動軌道間のユークリッド距離 \\delta\_i(t-T) を測定する。  
-> 4. 各ランダム初期化に対する時間平均の偏差 \\Delta\_i を算出し、最後に全 P 回のランダム実行にわたる平均を取る。
+\(\rho(W)<1\) は、非線形かつ入力駆動された一般のRNNに対するESPの必要十分条件ではない [R3]。本研究では自律系のスペクトル半径だけでなく、同一入力を与えた複製間の収束、入力条件付きリアプノフ指数、generalized synchronization、bubblingへの安定余裕を測る。
 
-\\text{ESP Index} \= \\frac{1}{P} \\sum\_{i=1}^P \\left( \\frac{1}{L-T} \\sum\_{t=T+1}^L \\Vert{}\\hat{F}(x\_0, \[u(1), \\dots, u(t)\]) \- \\hat{F}(z\_0, \[u(1), \\dots, u(t)\])\\Vert{} \\right)  
-この指標がゼロに漸近すれば、初期状態の差異に関わらず一つのアトラクタ軌道に収束したことを意味し、駆動信号下におけるESPの実質的な成立が証明される。この経験的評価により、理論的なスペクトル半径の限界を超えた領域であっても、入力信号の性質によってはESPが成立し、より高い非線形計算能力を引き出せる「真のカオスの縁」を探索することが可能になった。
+ESNの普遍近似結果は、主に有界入力上のfading-memory filterの表現可能性を述べる [R4, R5]。また、Sugiuraらはリザバー自身のfading memoryを普遍性の必須条件としない十分条件を示している [R6]。いずれも、有限データでの学習、任意のランダム個体、任意タスクでの高性能を保証するものではない。
 
-### **3.2 物理リザバーにおける「カオスの縁」の多様な発現**
+### 1.3 Edge of Chaos は設計原理ではなく検証対象である
 
-カオスの縁は、スピントロニクスから量子系に至るまで、様々な物理実装において性能のピークと一致することが確認されている。  
-**スピン波干渉リザバー:** イットリウム・鉄・ガーネット（YIG）単結晶の表面にアンテナを配置し、スピン波の干渉を利用したPRCの研究では、入力電圧パルスの間隔や外部磁場を調整することで系の非線形性を制御した。ヤコビ行列推定法により系の最大リアプノフ指数（\\lambda\_{max}）を計算した結果、多くの条件で \\lambda\_{max} \> 0（カオス）を示したが、パルス間隔が5 ns 〜 15 nsの特定の領域でのみ \\lambda\_{max} がわずかに負の極小値を示し、「カオスの縁」の状態が物理的に現出した。この領域において、サイン波、矩形波、位相シフト波、倍周波数波という4種の非線形波形変換タスクのすべてにおいて、計算精度（変換精度）がピークに達した。  
-**メモリスタベースの時間遅延リザバー（ECM-TDR）:** 二次元離散メモリスタを用いたエッジ・オブ・カオスマップに基づく時間遅延リザバーは、従来のTDRを根本的に再構築したものである。局所的に活性なメモリスタが持つ非単調なエッジ効果とフラクタル境界特性をリザバーアーキテクチャに統合することで、非線形投影能力が飛躍的に向上した。リアプノフ指数スペクトルの解析を通じて、リザバーの非線形ダイナミクスが単なる確率的なものではなく、エッジ・オブ・カオスマップによって厳密に支配されているという「動的整合性の原理」が証明され、Mackey-Glass方程式のような強い記憶依存性を伴うカオス時系列の長期予測において、従来手法を大幅に凌駕する精度を記録した。  
-**多体系量子カオスの縁（Edge of Many-Body Quantum Chaos）:** 量子系においては、ハイゼンベルクの不確定性原理により古典的な位相空間の軌跡を定義できないため、リアプノフ指数によるカオスの評価が困難である。そこでSachdev-Ye-Kitaev（SYK）モデルを用いた量子リザバーコンピューティング（QRC）の研究では、ランダム行列理論（RMT）に支配されるスペクトル統計に注目した。ここでは2種類の「カオスの縁」が特定された。第一は、系のダイナミクスがRMTに従い始める時間スケールである「サウレス時間（Thouless time）」による時間的境界。第二は、積分可能（非カオス）な領域からカオス的領域への移行を決定するパラメータ的境界である。両方の境界付近において、QRCの非線形変換能力と記憶保持能力の双方が最大化されることが判明し、量子計算資源の設計原理として「多体系量子カオスの縁」という新たな指標が確立された。
+臨界点近傍で能力が最大になる例はあるが [R10]、短期記憶の最適点がedge of chaosより前に現れる例 [R11]、edge of chaosを一般則とみなせない例 [R12]、アトラクタ再構成で十分に負の条件付きリアプノフ指数が必要になる例 [R13] がある。2026年の研究でも、最適点を条件付きリアプノフ指数ゼロへ単純に同一視できないこと [R26]、強く収縮的で弱非線形な領域でも高い記憶性能を得られること [R27] が報告されている。
 
-## **4\. アトラクタダイナミクス：多重安定性、理論的限界、および準アトラクタ**
+従って、本研究は「最大リアプノフ指数をゼロに近づける」単目的最適化を採用しない。調整対象は次のPareto問題である。
 
-リザバーコンピューティングを構成する力学系の背後には、アトラクタの幾何学的な構造が支配領域として存在する。計算の多重化や長期記憶を実現するためには、相空間内に存在するアトラクタの数や、その複雑なトポロジーを解明し制御する必要がある。
+- 条件付き安定余裕
+- 適切な長さの記憶
+- 入力履歴の分離性と有効次元
+- 課題整合的なIPC/TIPC
+- アトラクタの到達可能性と識別可能性
+- 吸引域と遷移障壁
+- ノイズ、初期値、パラメータずれへの頑健性
+- 読み出しのサイズ、学習データ量、推論コスト
 
-### **4.1 アトラクタの数の理論的限界と漸近的スケーリング**
+## 2. 研究対象の操作的定義
 
-多重安定性（Multistability）は、ニューラルネットワークに複数の情報を同時に保持させるために不可欠な性質である。しかし、与えられた力学系が持ち得るアトラクタの最大数については、長らく理論的な限界が議論されてきた。  
-連続的な多項式ベクトル場におけるアトラクタ（リミットサイクル）の数の上限を問う問題は、「ヒルベルトの第16問題」の第2部として知られている。次数 n の平面多項式ベクトル場 \\dot{x} \= P\_n(x,y), \\dot{y} \= Q\_n(x,y) について、IlyashenkoとÉcalleによって各ベクトル場が持つリミットサイクルの数は有限であることが証明されたものの、次数 n に依存する普遍的な上限 H(n) は現在でも未解決である。少数の n については下限が知られており（例：n=2 で最低4つ、n=3 で13つ）、漸近的には O(n\[span\_54\](start\_span)\[span\_54\](end\_span)^2 \\ln n) のペースで増加することが示唆されている。  
-一方で、離散状態をとるブーリアンネットワークである「臨界Kauffmanモデル（接続数 K=1）」においては、アトラクタの数がネットワークサイズ N に対して厳密に (2/\\sqrt{e})^N（約 1.213^N）として指数関数的にスケールすることが、近年初めて数学的に証明された。 この画期的な証明は、以下の洗練された解析的手法によって導かれた。
+### 2.1 三種類のアトラクタを混同しない
 
-> 1. **確率分布の導出：** ネットワーク内のノードのうち、アトラクタの生成要因となるループ構造（サイクル）を形成するノード数 m の厳密な確率分布 P(m) を、Moonの定理（木構造の数え上げ）等を用いて P(m) \= \\frac{m}{N} \\frac{N\[span\_56\](start\_span)\[span\_56\](end\_span)\!}{(N-m)\!} \\frac{1}{N^m} と導出した。  
-> 2. **アトラクタ数のバウンド設定：** 与えられた m に対するアトラクタ数の上限は、すべてが長さ1の偶数ループである場合の 2^m である。一方、下限はランダウ関数の制約により 2^{m \- 1.52\\sqrt{m}\\ln m / 2} で与えられる。これらを P(m) で重み付け加算し、総アトラクタ数 c(N) の不等式を構築した。  
-> 3. **漸近極限の評価：** 厄介な項である \\sqrt{m}\\ln m を任意の微小定数 \\epsilon を用いた線形関数 m\\epsilon \+ \\frac{b^2}{\\epsilon} \\ln(\\frac{b}{\\epsilon}) で上界評価し、ランベルトのW関数を用いて漸近極限を取ることで、大域的極限 N \\to \\infty において上下のバウンドが (2/\\\[span\_58\](start\_span)\[span\_58\](end\_span)sqrt{e})^N に完全に収束することを厳密に証明した。
+#### A. 自律アトラクタ
 
-この結果は、比較的単純な接続構造を持つネットワークであっても、臨界状態に調整することで、指数関数的に膨大な数のアトラクタ空間（情報表現空間）を構成できることを証明しており、巨大な物理リザバーの理論的バックボーンとなる。
+\(u_t=0\) または一定入力の下での自由系 \(F_\theta\) が持つ不変集合である。固定点、極限周期、トーラス、カオスアトラクタなどを含む。ネットワーク固有のダイナミクスを理解するには重要だが、入力駆動タスクの性能を単独で決めるとは限らない。
 
-### **4.2 準アトラクタ（Quasi-attractors）とニューハウス現象**
+#### B. 入力駆動アトラクタ
 
-純粋な双曲型アトラクタ（Hyperbolic attractors）とは対照的に、非双曲型の力学系は「準アトラクタ（Quasi-attractor）」と呼ばれる特異な振る舞いを示す。準アトラクタは、孤立した誘引近傍を持つ厳密な意味での古典的アトラクタではないが、チェイントランジティブ（Chain-transitive）であり、実質的なアトラクタとして観測される力学的な核を形成する。  
-ミルナー（Milnor）やイリヤシェンコ（Ilyashenko）の定義に基づく物理的アトラクタは、リアプノフ安定性や稠密な軌道（Palisの定義における条件）を欠く場合であっても、ルベーグ測度がゼロでない残留部分集合（Residual subset）上のほとんど全ての初期条件からの時間平均ダイナミクスを支配する。  
-とりわけ複雑なダイナミクスを生むのが、「ニューハウス現象（Newhouse phenomenon）」の発生である。ホモクリニック接触（安定多様体と不安定多様体が接する状態）を持つ系をわずかに摂動させると、その近傍に無限個の安定な周期軌道（シンク）が共存する領域（ニューハウス領域）が出現する。 これをリザバーコンピューティングの観点から解釈すると、力学系がニューハウス領域に突入した場合、システムはESP（フェージングメモリー特性）を喪失する。初期条件のわずかな違いが無限に存在する異なるアトラクタへの引き込みを引き起こし、システムの決定論的な入力依存性が崩壊するからである。しかし逆に言えば、こうした無限の分岐ダイナミクスを制御できれば、時間無制限の記憶を必要とする特殊なタスクや、カオス的な乱数生成器としての活用が可能となる。
+時間依存入力の下では系は非自律である。対象は通常の自律アトラクタよりも、pullback attractor、random attractor、入力条件付き応答集合、generalized synchronization manifoldである。同じ入力に対して複数の安定応答が残る度合いはecho index [R14] として扱える。
 
-## **5\. トポロジカルデータ解析（TDA）による力学系の特徴抽出**
+#### C. 学習後の閉ループアトラクタ
 
-複雑なアトラクタダイナミクスやカオスへの相転移を、力学系の方程式を解かずにデータ駆動で定量化する手段として、トポロジカルデータ解析（TDA: Topological Data Analysis）と「パーシステントホモロジー（Persistent Homology: PH）」が急速に台頭している。  
-時系列データからターケンスの埋め込み定理（Takens' embedding theorem）を用いて再構築された相空間の点群（Point cloud）に対し、ヴィエトリス・リプス（Vietoris-Rips）複体やドロネー・リプス（Delaunay-Rips）複体といった単体的複体（Simplicial complex）のフィルトレーション（Filtration）を適用する。スケールパラメータ（例えば点間の接続半径）を連続的に増加させながら、ホモロジー群 H\_k の生成（Birth）と消滅（Death）を追跡することで、1次元のループや2次元の空洞といったトポロジカルな特徴（ベッチ数 \\\[span\_74\](start\_span)\[span\_74\](end\_span)\[span\_76\](start\_span)\[span\_76\](end\_span)beta\_k）をバーコードやパーシステンス図として抽出する。  
-特にドロネー・リプスフィルトレーションは、点群のドロネー三角形分割の1-スケルトンに現れるエッジのみを追加することで、ヴィエトリス・リプス複体の計算爆発を防ぎ、高次元データの効率的な処理を可能にする。このアプローチはノイズに対して極めて頑健（ボトルネック距離の安定性定理により摂動の上限が保証される）であり、Duffing振動子やLorenz系といった力学系が、周期的なリミットサイクルからカオス的なストレンジアトラクタへと分岐（Bifurcation）する遷移点を、パーシステンススコアやノイズスコアといった位相幾何学的な要約統計量を用いて正確に検知することができる。リザバーの内部状態がカオスの縁にあるかどうかをリアルタイムで監視するための機械学習ツールとして、TDAは極めて有望である。
+予測出力を入力へ戻す系では、学習により新たな閉ループ力学系が生まれる。評価すべきなのは一点ごとの予測誤差だけではなく、学習対象と同じ不変測度、リアプノフ指数、周期軌道、吸引域、遷移構造を再構成しているかである [R13, R15, R16]。
 
-## **6\. 力学系の構造変化と臨界減速（CSD）の早期警戒シグナル**
+### 2.2 「アトラクタ数」は有限実験では下限である
 
-リザバーが特定の入力に対してどの程度適応しているか、あるいは安定限界（ティッピングポイント）にいつ到達するかを予測するために、時系列データに対する非線形テストと早期警戒シグナル（EWS）の解析が応用されている。
+任意の高次元非線形系について、隠れアトラクタを含む全アトラクタを有限時間で列挙することは一般には期待できない。ツールが報告する値は、次の条件付きの **発見済み個数の下限** とする。
 
-### **6.1 BDSテストと再帰的適用による非線形依存性の検出**
+\[
+\widehat N_{\mathrm{attr}}
+=
+\widehat N_{\mathrm{attr}}
+(\mathcal X_0,\mu_0,\mathcal U,T,\varepsilon,B)
+\]
 
-相関次元に起因するBrock-Dechert-Scheinkman（BDS）テストは、時系列データが独立同一分布（i.i.d.）に従う白色雑音であるか、あるいは何らかの非線形構造（カオスや自己回帰的分散不均一性など）を含んでいるかを判別する強力なノンパラメトリック検定である。埋め込み次元 m における空間的な近接性を示す相関積分 C\_m(\\epsilon) が、i.i.d. の仮定の下で \[C\_1(\\epsilon)\]^m と等しくなる性質を利用し、この乖離を標準正規分布に従う検定統計量として評価する。  
-リザバーコンピューティングにおいて、リードアウトの残差に対してBDSテストを適用することで、リザバーが入力信号の非線形ダイナミクスを完全に表現しきれているか（残差が純粋なノイズになっているか）を検証できる。 さらに、BDSテストをサブサンプルから開始して漸次データサイズを拡大しながら反復適用する「再帰的BDSテスト（Recursive BDS test）」は、背後にあるモデルを特定することなく、システムに生じた構造変化（Structural breaks）を動的に検知することができる。国際金融市場における新型コロナウイルス感染症（COVID-19）の衝撃によるレジームシフトの検出などでその威力が実証されており、物理リザバーの環境変動による特性変化（ドリフト）のオンライン検出への応用が期待される。
+ここで、\(\mathcal X_0\) は初期状態探索領域、\(\mu_0\) は初期条件分布、\(\mathcal U\) は入力・摂動モデル、\(T\) は観測時間、\(\varepsilon\) は同一性判定許容誤差、\(B\) は計算予算である。
 
-### **6.2 臨界減速（Critical Slowing Down: CSD）と相転移の予測**
+結果には必ず、探索領域、初期条件数、収束判定、積分器、刻み幅、過渡除去時間、クラスタ判定、乱数seed、未収束率を添える。厳密な個数を装わない。
 
-気候変動、生態系の崩壊、あるいは金融危機といった複雑系の相転移現象において、システムが分岐点（例えばサドルノード分岐やフォールド分岐）に接近すると、小さな摂動から元の平衡状態へ回復する速度が極端に遅くなる。この現象は「臨界減速（Critical Slowing Down: CSD）」と呼ばれる。  
-CSDの数学的メカニズムは、平衡点周りのヤコビ行列の主要な固有値の実部 \\lambda\_1 が分岐点においてゼロに漸近することに起因する。これにより、ポテンシャルの谷が平坦化し、ノイズによって状態が平衡点から遠くへ押し流されるようになる。この現象は、時系列データに特定の「早期警戒シグナル（Early Warning Signals: EWS）」として現れる。
+### 2.3 実効アトラクタ容量
 
-| CSD指標 | 数学的背景とメカニズム | リザバーにおける物理的意味 |
-| :---- | :---- | :---- |
-| **ラグ1自己相関 (\\phi)** | AR(1)プロセス x\_{t+1} \= \\alpha\_1 x\_t \+ \\epsilon\_t において \\alpha\_1 \\to 1。回復速度の低下により隣接ステップの類似度が増加。 | ESPの喪失過程。過去の履歴が消えにくくなり、新たな入力に対する感度が低下する。 |
-| **分散 (\\sigma^2)** | 定数ノイズ \\sigma^2 に対し、系の分散は \\text{Var}(x) \= \\sigma^2 / (1-\\phi^2) で与えられるため、\\phi \\to 1 に伴い分散が発散する。 | ポテンシャルの拘束力低下に伴い、ノイズによる揺らぎが状態空間上で増幅される。 |
-| **歪度 (Skewness) と尖度 (Kurtosis)** | テイラー展開における高次項の影響。ポテンシャルの非対称性が強まり、極端な値の発生頻度が上昇する。 | 分岐点近傍での非線形性の歪み。ディープラーニング等により検知可能な微妙な非対称変動。 |
+生の個数に代えて、探索分布の下での吸引確率 \(p_i\) から
 
-生態系の相互作用ネットワークの崩壊や、岩石の破壊限界（アコースティック・エミッションの分散増加）などにおいて、このCSD現象による早期警戒シグナルの有効性が証明されている。また、CSDの解析において、スパースな精度行列（Precision matrix Q \= \\Sigma^{-1}）を持つガウスマルコフ確率場を利用することで、巨大なデータセットに対する高速なベイズ推論が可能となっている。  
-物理リザバーの運用において、外部からの過大な入力駆動やパラメータ変動によって系がESP（フェージングメモリー特性）を失うティッピングポイントに向かっている場合、リザバーの内部状態変数の自己相関や分散をリアルタイムで監視することで、カオス的崩壊を事前に予測し、パラメータ（入力スケーリングやスペクトル半径）を適応的に調整する制御機構を構築することが可能となる。
+\[
+N_{\mathrm{eff}}
+=
+\exp\left(-\sum_i p_i\log p_i\right)
+\]
 
-## **7\. 結論**
+を定義する。さらに、各アトラクタの観測可能性 \(o_i\)、頑健性 \(r_i\)、他との識別性 \(d_i\)、到達可能性 \(a_i\) を別軸として保持する。
 
-リザバーコンピューティングは、機械学習における単なるアルゴリズム的ショートカットから、物理世界に偏在するダイナミクスを直接計算に活用する「物理的知能」の基盤技術へと進化を遂げた。本報告書で論じた理論的枠組みは、この進化を支える確固たる基盤である。
+\[
+\mathcal A_{\mathrm{profile}}
+=
+\left(
+N_{\mathrm{eff}},
+\{p_i\},
+\{o_i\},
+\{r_i\},
+\{d_i\},
+\{a_i\},
+P_{ij}(\tau),
+\mathrm{MFPT}_{ij}
+\right)
+\]
 
-> 1. **評価指標のパラダイムシフト：** 従来のIPCによる時不変的な評価から、TIPCの導入により、量子ノイズや生体組織の死後硬直といった非定常・時変的プロセスに潜む計算能力の厳密な定量化が可能となった。これにより、減衰や揺らぎといった一見有害な要素が、時系列情報の非線形投影における本質的な資源であることが証明された。  
-> 2. **動作点と漸近安定性：** Gallicchioの経験的ESPインデックスは、入力駆動時における「真のカオスの縁」の探索を可能にし、スピン波干渉やメモリスタ、SYK多体量子モデルを用いた実証実験において、性能が極大化するスイートスポットの特定に寄与した。  
-> 3. **アトラクタの極限とトポロジー解析：** K=1臨界Kauffmanモデルにおける (2/\\sqrt{e})^N のスケール則の証明や、ニューハウス現象の存在は、力学系が持つ記憶容量と多重安定性の理論的限界を示唆している。また、ドロネー・リプス等を用いたパーシステントホモロジー（TDA）は、相空間の位相幾何学的な特徴の変化を抽出することで、カオスへの遷移を正確に捉える強力なツールとなる。  
-> 4. **臨界状態の監視と予測：** 臨界減速（CSD）に伴う分散や自己相関の発散、および再帰的BDSテストによる非線形構造変化の検出は、リザバーがフェージングメモリー特性を失う限界点を予測するための早期警戒シグナルとして機能する。
+初期段階では恣意的な重みで一つのスコアへ潰さない。課題ごとに、どの軸が性能を説明するかを階層モデルと因果介入で検証する。
 
-今後の展望として、乱数行列を排して暗黙的なリザバーを数式的に実現する「次世代リザバーコンピューティング（NVAR）」のような数学的還元アプローチが進展する一方で、アンサンブルリザバー（ERC）のように多数の物理揺らぎを統合的に計算力へと昇華させるアプローチが並行して発展していくと予想される。計算機科学、非線形力学系理論、トポロジカルデータ解析、そして量子・生体物理学が交差するこの領域は、次世代の超低消費電力AIおよび適応型ダイナミクス処理システムの設計に向けた、最も豊かなフロンティアを形成している。
+### 2.4 「遷移しやすさ」には摂動モデルが必要である
 
-#### **引用文献**
+遷移しやすさは力学系だけの属性ではない。何を入力し、どの方向に、どの強度で、どれだけの時間加えるかによって変わる。
 
-1\. Next generation reservoir computing \- PMC \- NIH, https://pmc.ncbi.nlm.nih.gov/articles/PMC8455577/ 2\. Reservoir computing \- Wikipedia, https://en.wikipedia.org/wiki/Reservoir\_computing 3\. Neuronics25 \- Edge-of-chaos state achieved by reservoir computing using spin-wave interference \- nanoGe, https://www.nanoge.org/proceedings/Neuronics25/681abcd7f2560109d510d12a 4\. Edge of Many-Body Quantum Chaos in Quantum Reservoir Computing \- arXiv, https://arxiv.org/html/2506.17547v1 5\. Computational anatomy of living and nonliving transitions: a case study on a real octopus arm, https://direct.mit.edu/isal/proceedings-pdf/isal2025/37/91/2567063/isal.a.920.pdf 6\. Ensemble Reservoir Computing for Physical Systems \- arXiv, https://arxiv.org/html/2601.21807v1 7\. Deriving task specific performance from the information processing capacity of a reservoir computer \- PMC, https://pmc.ncbi.nlm.nih.gov/articles/PMC11501742/ 8\. (PDF) Information Processing Capacity of Dynamical Systems \- ResearchGate, https://www.researchgate.net/publication/229428040\_Information\_Processing\_Capacity\_of\_Dynamical\_Systems 9\. Information Processing Capacity of a Single-Node Reservoir Computer: An Experimental Evaluation \- SciSpace, https://scispace.com/pdf/information-processing-capacity-of-a-single-node-reservoir-3q8sw7l5.pdf 10\. Enhancing memory capacity of reservoir computing via external structures: \<i\>Delay\</i\>, \<i\>Passthrough\</i\>, and \<i\>Parallel\</i\> Connections \- DOI, https://doi.org/10.1587/nolta.17.66 11\. Computational anatomy of living and nonliving transitions: a case study on a real octopus arm | Artificial Life Conference Proceedings \- MIT Press Direct, https://direct.mit.edu/isal/proceedings-abstract/isal2025/37/91/134112 12\. Echo state network \- Wikipedia, https://en.wikipedia.org/wiki/Echo\_state\_network 13\. Overview of how to leverage quantum noises as computational resources... \- ResearchGate, https://www.researchgate.net/figure/Overview-of-how-to-leverage-quantum-noises-as-computational-resources-in-the-abstract\_fig1\_362089075 14\. (PDF) Temporal information processing induced by quantum noise \- ResearchGate, https://www.researchgate.net/publication/370271106\_Temporal\_information\_processing\_induced\_by\_quantum\_noise 15\. \[2310.06706\] Quantum reservoir computing with repeated measurements on superconducting devices \- arXiv, https://arxiv.org/abs/2310.06706 16\. Tomoyuki Kubota's research while affiliated with The University of Tokyo and other places, https://www.researchgate.net/scientific-contributions/Tomoyuki-Kubota-2145246505 17\. Echoes of the past: A unified perspective on fading memory and echo states \- arXiv, https://arxiv.org/html/2508.19145v1 18\. Reservoir Computing and Echo State Networks \- DidaWiki \- UNIPI, https://didawiki.cli.di.unipi.it/lib/exe/fetch.php/magistraleinformatica/aa2/rnn4-esn.pdf 19\. Chasing the Echo State Property, https://www.esann.org/sites/default/files/proceedings/legacy/es2019-76.pdf 20\. arXiv:1811.10892v2 \[cs.NE\] 24 Sep 2019, https://arxiv.org/pdf/1811.10892 21\. Time delay reservoir computing under edge-of-chaos mapping and its application in nonlinear time series forecasting | IEEE Journals & Magazine, https://ieeexplore.ieee.org/document/11417139/ 22\. Universal Approximation Theorems for Dynamical Systems with Infinite-Time Horizon Guarantees \- arXiv, https://arxiv.org/html/2602.08640v2 23\. Hilbert's sixteenth problem \- Wikipedia, https://en.wikipedia.org/wiki/Hilbert%27s\_sixteenth\_problem 24\. From Abel's differential equations to Hilbert's 16th problem, https://d-nb.info/1357302134/34 25\. Number of attractors in the critical Kauffman model is exponential \- London Institute for Mathematical Sciences, https://lims.ac.uk/documents/paper-number-of-attractors-in-the-critical-kauffman-model-is-exponential.pdf 26\. Dynamics of C1-diffeomorphisms: global description and prospects for classification \- arXiv, https://arxiv.org/pdf/1405.0305 27\. arXiv:1706.08684v2 \[math.DS\] 10 Dec 2019, https://arxiv.org/pdf/1706.08684 28\. Observable Dynamics and the Generic Coincidence of Milnor, Statistical, and Physical Attractors \- arXiv, https://arxiv.org/pdf/2511.09718 29\. Observable Dynamics and Attractor Coincidence \- Scribd, https://www.scribd.com/document/948646636/OBSERVABLE-DYNAMICS-AND-THE-GENERIC-COINCIDENCE-OF-MILNOR-STATISTICAL-AND-PHYSICAL-ATTRACTORS 30\. Dynamical phenomena in systems with structurally unstable Poincare´ homoclinic orbits, https://www.ma.imperial.ac.uk/\~dturaev/mypapers/chaos1996.pdf 31\. Chapter 21 Ruelle-Takens Theorem, https://www.its.caltech.edu/\~mcc/Chaos\_Course/Lesson21/RTN.pdf 32\. Stability and machine learning applications of persistent homology using the Delaunay-Rips complex \- Frontiers, https://www.frontiersin.org/journals/applied-mathematics-and-statistics/articles/10.3389/fams.2023.1179301/full 33\. Topological data analysis approach to time series and shape analysis of dynamical system \- PubMed, https://pubmed.ncbi.nlm.nih.gov/40526891/ 34\. Persistent Homology in TDA \- Emergent Mind, https://www.emergentmind.com/topics/persistent-homology-ph 35\. Characterization of dynamical systems with scanty data using Persistent Homology and Machine Learning \- arXiv, https://arxiv.org/html/2408.15834v1 36\. Detecting Structural Changes in Time Series by Using the BDS Test Recursively: An Application to COVID-19 Effects on International Stock Markets \- MDPI, https://www.mdpi.com/2227-7390/11/23/4843 37\. BDS Test for Nonlinearity Calculator \- MetricGate, https://metricgate.com/docs/brock-dechert-scheinkman-test/ 38\. The BDS test of independence \- AgEcon Search, https://ageconsearch.umn.edu/record/340408/files/Baum.pdf 39\. Using BDS statistics to detect nonlinearity in time series ∑, https://2001.isiproceedings.org/pdf/98.PDF 40\. Detecting Structural Changes in Time Series by Using the BDS Test Recursively: An Application to COVID-19 Effects on International Stock Markets \- IDEAS/RePEc, https://ideas.repec.org/a/gam/jmathe/v11y2023i23p4843-d1292558.html 41\. Critical slowing down as early warning for the onset of collapse in mutualistic communities | PNAS, https://www.pnas.org/doi/10.1073/pnas.1406326111 42\. Slow Recovery from Perturbations as a Generic Indicator of a Nearby Catastrophic Shift | The American Naturalist: Vol 169, No 6, https://www.journals.uchicago.edu/doi/10.1086/516845 43\. Early Warning Signals of Tipping-Points in Blog Posts \- MITRE, https://www.mitre.org/sites/default/files/pdf/12\_4711.pdf 44\. Deep learning for early warning signals of tipping points \- PNAS, https://www.pnas.org/doi/10.1073/pnas.2106140118 45\. Critical slowing down theory provides early warning signals for sandstone failure \- Frontiers, https://www.frontiersin.org/journals/earth-science/articles/10.3389/feart.2022.934498/full 46\. Bayesian analysis of early warning signals using a time-dependent model \- ESD, https://esd.copernicus.org/articles/16/1539/2025/esd-16-1539-2025.pdf
+- **決定論的制御:** 最小制御エネルギー、最短切替時間、吸引域境界までの距離
+- **確率的摂動:** 平均初回通過時間（MFPT）、committor、反応流束、準ポテンシャル、最小作用経路
+- **入力駆動:** 入力クラスに条件付けた遷移確率 \(P_{ij}(\tau\mid u)\)、成功率、誤遷移率
+- **有限精度計算:** 量子化、丸め、積分誤差に対する遷移率
+
+従って、遷移グラフの各辺には摂動モデルと信頼区間を持たせる。
+
+## 3. 中心研究課題と反証可能な仮説
+
+### RQ1: アトラクタ構造は、どの計算モードで能力を説明するか
+
+**H1:** 入力駆動型の短期フィルタ課題では、自律アトラクタ数より、低いecho index、条件付き収縮率、入力分離性、課題整合IPC/TIPCが性能を強く説明する。多重安定性は、初期状態が明示的な文脈変数として使われる場合にのみ利益になる。
+
+反証条件: 自律アトラクタ数だけで、条件付き安定性と容量を統制した後も未知タスク性能を一貫して予測できる。
+
+### RQ2: 多重安定性の何が連想記憶能力を決めるか
+
+**H2:** 連想記憶容量は生のアトラクタ数よりも、\(N_{\mathrm{eff}}\)、吸引域の均衡、識別距離、ノイズ保持曲線、偽アトラクタ率によって説明される。
+
+反証条件: 吸引域と識別性を統制しても、単純な個数が想起性能の最良予測子であり続ける。
+
+### RQ3: 遷移時間尺度とタスク時間尺度は整合するか
+
+**H3:** metastable state間のimplied timescale、MFPT、条件付き遷移確率が、タスクの必要遅延や状態保持時間と整合するとき性能が最大になる。
+
+反証条件: 遷移時間尺度を大きく変えても、必要遅延を変えたタスク間で性能ピークが移動しない。
+
+### RQ4: アトラクタ指標を用いた調整は性能を因果的に改善するか
+
+**H4:** 容量、吸引域、遷移、条件付き安定性を目的とする多目的調整は、edge-of-chaos調整、スペクトル半径調整、タスク損失だけの調整より、未知seed、未知タスク、未知力学系で高い性能と頑健性を示す。
+
+反証条件: 同じ探索予算の下で、アトラクタ指標を追加しても汎化性能、頑健性、サンプル効率のいずれも改善しない。
+
+### RQ5: Generalized RC の利得とコストは何か
+
+**H5:** 状態がESPを満たさない系でも、時間不変な履歴読み出しにより有用な出力再現性を得られる。ただし必要な読み出し複雑度は、タスク非関連な自律自由度、観測不足、条件付き不安定性とともに増える。
+
+比較では次を同時に報告する。
+
+- 状態のreplica consistencyと出力のreplica consistency
+- 読み出しのパラメータ数、FLOPs、履歴長
+- 学習データ量と学習時間
+- ノイズ、初期値、パラメータずれに対する性能
+- リザバーを固定・シャッフル・除去した対照
+
+## 4. Attractor and Capacity Atlas の分析体系
+
+### 4.1 六つの分析軸
+
+| 軸 | 主要量 | 主な意味 |
+|---|---|---|
+| 条件付き安定性 | 条件付きLyapunov指数、replica距離、echo index、bubbling margin | 同一入力に対する再現性 |
+| レパートリー | 発見アトラクタ、\(N_{\mathrm{eff}}\)、metastable state、偽アトラクタ率 | 保持・生成できる状態の多様性 |
+| 吸引域 | basin stability、basin entropy、境界感度、保持曲線 | 想起の許容範囲と誤り訂正 |
+| 遷移 | 遷移行列、implied timescale、MFPT、committor、制御エネルギー | 切替の容易さと時間尺度 |
+| 幾何・混合 | Lyapunov spectrum、次元、PSD、自己相関、RQA、持続ホモロジー | 軌道の不安定性、形、長期統計 |
+| 計算容量 | memory curve、IPC/TIPC、有効rank、分離性、タスク性能 | 入力履歴に対する演算資源 |
+
+### 4.2 手法の適用範囲
+
+| 手法 | 得られるもの | 適用上の注意 |
+|---|---|---|
+| 多初期値シミュレーションと軌道signature clustering | 発見アトラクタ、吸引確率、代表軌道 | 隠れアトラクタと長い過渡を見逃す |
+| Lyapunov / FTLE / CLV | 不安定方向、時間尺度、局所感度 | 有限時間、数値誤差、接空間実装に依存 |
+| Recurrence plot / RQA [A1, A2] | 周期性、再帰、determinism、laminarity | 埋め込みと閾値依存。単独分類に使わない |
+| Koopman / EDMD / DMDc [A3, A4] | 周波数、減衰モード、入力応答 | 有限辞書と観測関数に依存 |
+| Ulam / transfer operator [A5] | almost-invariant set、確率的遷移 | 次元の呪い。低次元またはlatent空間向け |
+| MSM / VAMPnet [A6, A7] | metastable state、implied timescale | Markov性、lag time、latent表現を検証する |
+| Transition Path Theory [A8, A9] | committor、反応流束、主要遷移路 | 遷移データが希少な場合は不確実性が大きい |
+| Basin stability / entropy [A10, A11] | 吸引確率、境界の不確実性 | 初期条件分布を明記しない値は比較不能 |
+| Persistent homology / Mapper [A12] | ループ、連結成分、形状差 | トポロジーはダイナミクスや安定性の証明ではない |
+| Conley–Morse graph [A13, A14] | 不変集合と大域遷移の検証 | 主に低次元・粗視化された系で実用的 |
+| Quasipotential / gMAM [A15] | ノイズ誘起遷移障壁、最小作用路 | 小雑音近似と低い有効次元が必要 |
+
+### 4.3 次元別の解析戦略
+
+- **2～3次元:** 位相図、分岐継続、吸引域境界、Ulam、Conley–Morse、準ポテンシャルまで実施する。
+- **有効次元10程度まで:** 局所断面、latent transfer operator、FTLE、持続ホモロジー、限定的なConley解析を組み合わせる。
+- **数百～数万次元:** top-\(k\) Lyapunov指数、Jacobian-vector product、replica test、疎な再帰解析、latent MSM/Koopman、Monte Carlo basin stabilityを使う。全相空間の格子化は行わない。
+- **観測しかできないblack box:** delay embedding、RQA、SINDy、Koopman、operator inference、equation-free continuationを候補とし、観測可能性を先に評価する。
+
+### 4.4 アトラクタ同一性の判定
+
+最終状態のユークリッド距離だけでクラスタリングしない。各軌道について、次の複合signatureを作る。
+
+\[
+s_i =
+[
+\text{mean/variance},
+\text{PSD peaks},
+\text{ACF},
+\text{RQA},
+\lambda_{1:k},
+\text{Koopman frequencies},
+\text{persistent features},
+\text{invariant-measure distance}
+]
+\]
+
+複数seed・複数観測窓でsignatureの安定性を検証した後にクラスタリングする。クラスタ間は再初期化、摂動、長時間延長で再検証する。UMAPやt-SNEは探索用表示に限定し、アトラクタの存在証明には使わない。
+
+## 5. ツール設計
+
+### 5.1 設計原則
+
+1. **モデル非依存:** 離散時間、連続時間、確率系、観測black boxを共通adapterで扱う。
+2. **条件を成果物に含める:** 初期条件分布、入力、積分器、探索予算を結果から切り離さない。
+3. **不確実性を第一級データにする:** 個数、吸引確率、遷移率、容量に信頼区間を付ける。
+4. **探索と検証を分離する:** 微分可能proxyによる高速調整後、非微分な分岐・多初期値解析で認証する。
+5. **一つの万能指標を作らない:** 多目的profileとPareto frontを基本出力とする。
+6. **同一予算で比較する:** 調整法、読み出し、baselineの探索回数と総計算量を揃える。
+7. **再現可能性:** 不変な実験spec、seed manifest、環境lock、データ系譜を保存する。
+
+### 5.2 共通インターフェース
+
+```python
+next_state = step(state, input_value, parameters, random_key)
+derivative = vector_field(time, state, input_value, parameters)
+observations = evolve_black_box(
+    initial_state_distribution,
+    input_protocol,
+    parameters,
+    horizon,
+)
+```
+
+内部状態を持つ実装でも、入力specと結果artifactは不変オブジェクトとして扱う。ユーザー入力、範囲、solver設定はPydantic等で検証する。
+
+### 5.3 モジュール構成
+
+```text
+reservoir_dynamics/
+  systems/        # discrete / continuous / stochastic / black-box adapters
+  simulation/     # integrators, batching, transient removal, replica runs
+  stability/      # Lyapunov, FTLE, CLV, consistency, echo index
+  atlas/          # trajectory signatures, clustering, basin estimation
+  transitions/    # MSM, MFPT, committor, controlled switching
+  capacity/       # memory curve, IPC, TIPC, effective rank
+  topology/       # persistence and optional Conley-Morse adapters
+  tuning/         # multi-objective search and differentiable proxies
+  benchmarks/     # canonical systems, RC tasks, baselines
+  reporting/      # figures, provenance, comparison tables
+  schemas/        # immutable experiment and artifact definitions
+```
+
+ファイルは機能・ドメイン単位で小さく保ち、計算backend固有の処理をcore interfaceから分離する。
+
+### 5.4 技術選択
+
+**主要実装:** Python、JAX、Equinox、Diffraxを第一候補とする。
+
+- `jax.lax.scan` とvectorizationで多数の軌道・seedを並列化できる。
+- JVP/VJPで高次元系のtop Lyapunov解析と勾配ベース調整を共通化できる。
+- Diffraxで常微分方程式、確率微分方程式、adjointを扱える。
+
+**厳密・非微分解析の補助:** JuliaのDynamicalSystems.jl、Attractors.jl、BifurcationKit.jlをsidecarとして利用する。
+
+- Pythonへ全機能を再実装せず、分岐継続や吸引域解析の検証に限定する。
+- Juliaを必須依存にはせず、同じspecとartifact schemaを介して結果を交換する。
+
+**データ駆動解析:** PySINDy、PyKoopmanまたはdeeptime、GUDHIまたはgiotto-tda、PyRQAを評価する。
+
+依存導入前に、ライセンス、更新状況、GPU/自動微分対応、数値再現性を小規模benchmarkで比較する。MVPではJAX系、NumPy/SciPy、scikit-learn、Pydanticに絞り、重い解析はoptional extraとする。
+
+### 5.5 可視化
+
+標準reportには以下を含める。
+
+- 分岐図と継続曲線
+- 相図、Poincaré断面、代表軌道
+- 吸引域断面、未分類領域、推定誤差
+- Lyapunov spectrumと条件付き安定余裕
+- recurrence plotとRQA
+- 持続diagram
+- アトラクタ／metastable state遷移グラフ
+- committorまたは切替成功率の地図
+- IPC/TIPCの遅延次数・非線形次数heatmap
+- 性能、頑健性、コストのPareto front
+
+次元削減表示には、元空間の距離や近傍をどの程度保存したかを併記する。
+
+## 6. 調整戦略
+
+### 6.1 調整対象
+
+- recurrent weightのスペクトル半径だけでなく、特異値、非正規性、疎性
+- leak rate、時定数分布、遅延
+- 入力gain、bias、フィードバックgain
+- 興奮・抑制比と符号制約
+- modularity、small-world性、次数分布、motif
+- ノード非線形、局所分岐パラメータ
+- 観測ノードと読み出し履歴
+- noise強度、量子化、物理系の制御可能パラメータ
+
+ネットワーク構造の効果を調べる際は、次数列、重み分布、状態次元、入力数、訓練予算を保ったdegree-preserving rewiringを対照に使う。
+
+### 6.2 二段階最適化
+
+#### 段階1: 微分可能proxyによる探索
+
+\[
+\mathcal L =
+\mathcal L_{\mathrm{task}}
++ \alpha \mathcal L_{\mathrm{consistency}}
++ \beta \mathcal L_{\mathrm{basin\ margin}}
++ \gamma \mathcal L_{\mathrm{transition}}
++ \delta \mathcal L_{\mathrm{capacity}}
++ \eta \mathcal L_{\mathrm{cost}}
+\]
+
+proxy候補は、有限時間のreplica距離、soft minimum basin margin、短時間遷移成功率、top Lyapunov penalty、課題整合容量、観測rankである。
+
+アトラクタ個数、分岐点、クラスタlabelを直接autodiffしない。これらは不連続で、有限時間判定のartifactを最適化する危険がある。
+
+#### 段階2: 非微分な認証
+
+上位候補に対し、多初期値・長時間軌道、solver感度、分岐継続、basin bootstrap、未知摂動、未知seedで検証する。proxyが改善しても認証指標が改善しなければ、そのproxyを棄却または再較正する。
+
+### 6.3 最終的な設計問題
+
+単一性能の最大化ではなく、
+
+\[
+\max_\theta
+\left[
+\text{task utility},
+\text{robustness},
+\text{effective repertoire},
+\text{transition alignment}
+\right],
+\qquad
+\min_\theta
+\left[
+\text{readout complexity},
+\text{energy},
+\text{failure rate}
+\right]
+\]
+
+としてPareto frontを求める。用途別に次のprofileを選ぶ。
+
+- filter profile: 一意応答、適度な記憶、入力分離
+- associative profile: 大きく均衡した吸引域、低い偽想起率、制御可能な切替
+- generator profile: 目標不変測度と安定性、不要アトラクタの抑制
+- adaptive profile: metastable stateの時間尺度整合、頑健な遷移
+
+## 7. 実験計画
+
+### E0. 解析器のground-truth検証
+
+**目的:** ツール自身の誤検出、solver依存、有限時間biasを定量化する。
+
+**系:** logistic map、Hénon map、Duffing系、Lorenz系、Rössler系、必要に応じてChua回路。
+
+**検証項目:**
+
+- 既知の固定点、周期倍化、カオス領域の回収
+- Lyapunov指数と分岐点の誤差
+- 初期条件数、観測時間、刻み幅に対する発見率
+- basin stabilityのbinomial / bootstrap信頼区間
+- 軌道signatureの偽分割と偽統合
+- ノイズと部分観測での劣化
+
+**合格基準:** 設定した精度範囲で既知の定性的相図を再現し、未分類率と誤分類率を報告できること。
+
+### E1. RNNで「アトラクタ数」仮説を因果分解する
+
+**目的:** 同一規模のRNNで、レパートリー、吸引域、遷移障壁、条件付き安定性のどれが各計算モードに効くかを切り分ける。
+
+**介入:**
+
+- bias、feedback、modularity、非正規性、leak、入力gainを系統的に変更
+- degree-preserving rewiringでネットワーク統計を可能な限り保持
+- 状態次元、読み出しクラス、訓練データ、探索予算を一致
+
+**課題:**
+
+- delayed recall、delayed XOR / parity
+- IPC/TIPC
+- NARMA10/30。ただし定義、入力範囲、divergence処理を固定する [R25]
+- Mackey–Glass、Lorenz、Hénonの予測
+- 複数アトラクタのcue-based associative recall
+- 指定アトラクタへの制御切替
+
+**主要解析:** 媒介分析を用いて、構造介入 \(\rightarrow\) アトラクタprofile \(\rightarrow\) 性能という経路を評価する。性能だけを相関させない。
+
+### E2. 駆動・自律・閉ループを同一個体で比較する
+
+**目的:** 自律アトラクタの指標が、入力駆動応答や学習後の閉ループアトラクタをどの程度予測するかを調べる。
+
+同じリザバーについて、
+
+1. 無入力または定常入力で自律atlasを作る。
+2. 共通入力でreplica consistency、echo index、条件付きLyapunov指数を測る。
+3. teacher forcingでcapacityとone-step predictionを測る。
+4. 閉ループ化し、不変測度、Lyapunov spectrum、climate統計、不要アトラクタを測る。
+
+**判定:** 三モード間で共通する予測因子と、モード固有の予測因子を分離する。
+
+### E3. アトラクタ指向調整器の有効性
+
+**目的:** H4を直接検証する。
+
+**比較法:**
+
+- random search
+- Bayesian optimization
+- スペクトル半径またはedge-of-stability調整
+- タスク損失のみのgradient tuning
+- 提案するprofile-based multi-objective tuning
+
+**評価:** 同一計算予算で、未知seed、未知入力分布、未知ノイズ、未知遅延、未調整の力学系familyへ外挿する。チューニングに使った課題だけで結論を出さない。
+
+### E4. 連想記憶と多機能生成
+
+**目的:** 多重安定性を明示的な計算資源として利用する。
+
+Kongらの動的アトラクタ連想記憶 [R17] と、多機能RC [R18, R19] を再現baselineとする。周期だけでなく複数のカオスアトラクタを記憶対象とし、
+
+- cue corruptionに対する想起成功率
+- basin retention curveとAUC
+- 偽アトラクタ・混成アトラクタ率
+- 記憶数を増やしたときの容量曲線
+- cue energy、切替時間、誤遷移率
+- ノイズ誘起itinerancy
+
+を測る。その後、吸引域の均衡、障壁、遷移時間尺度を直接目的にして改善する。
+
+### E5. Generalized RC とblack-box力学系
+
+**目的:** H5とツールのモデル非依存性を検証する。
+
+Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない候補を用いる。linear readout、NVAR/NGRC、履歴MLP、GRU readoutを、総パラメータ数と学習データ量を揃えて比較する。
+
+次に内部方程式を隠し、
+
+- delay embedding
+- SINDy
+- Koopman / VAMP
+- neural ODEまたはoperator inference
+- equation-free continuation
+
+でatlasを推定する。white-box結果との差から、観測不足とモデル誤差を分離する。最終段階で物理リザバーのログまたはhardware emulatorへ適用する。
+
+## 8. 評価設計
+
+### 8.1 Baseline
+
+- linear delay line / FIR
+- vanilla ESN
+- random、small-world、modular、scale-free、非正規RNN
+- NVAR / NGRC
+- パラメータ数を合わせたGRU / LSTM
+- SINDy、Koopman、neural ODE
+- oracle integratorまたは真の方程式が利用できる場合の上限
+
+小規模リザバーでは、結合を増やしたネットワークが常に有利とは限らないため [R24]、無結合または弱結合の対照も含める。
+
+### 8.2 指標
+
+**短期予測**
+
+- NRMSE、MAE
+- 有効予測時間。最大Lyapunov時間で正規化する
+
+**長期・climate**
+
+- invariant measure間のWasserstein距離またはMMD
+- PSD、自己相関、極値統計
+- Lyapunov spectrum、次元
+- recurrence / persistence signature
+- 既知アトラクタの回収率と不要アトラクタ率
+
+**記憶・計算**
+
+- delay別memory \(R^2\)
+- IPC/TIPCの総量と次数・遅延別配分
+- 有効rank、separation/generalization
+
+**連想・遷移**
+
+- cue corruption別想起率
+- basin retention AUC
+- MFPT、切替成功率、最小cue energy
+- 誤遷移、偽想起、壊滅的吸引域縮小
+
+**工学**
+
+- wall-clock、peak memory、FLOPs概算
+- 学習データ量、読み出しパラメータ数
+- 失敗率、未収束率、数値例外率
+
+### 8.3 統計
+
+- 個体ごとに同じ入力、noise、splitを使うpaired design
+- 最初に約30 seedのpilotを行い、効果量と分散から本実験の検出力を設計
+- 単一平均だけでなくmedian、interquartile mean、95% bootstrap CI、失敗率を報告
+- trajectory block bootstrapで時系列相関を保持
+- seed、task、system familyを階層化したmixed-effectsまたはBayesian hierarchical model
+- 多数比較にはHolm補正、分布仮定が弱い比較にはFriedman / Wilcoxonを使用
+- 調整と評価のseed、タスク、パラメータ領域を分離
+- 全手法のチューニング予算を一致
+
+事前に主要評価量、除外条件、divergence処理、停止条件を登録する。NARMAは実装差で結果が大きく変わるため、式、係数、初期化、入力範囲をartifactに含める [R25]。
+
+## 9. 開発・研究ロードマップ
+
+### Phase 0: 定義と再現基盤（0～2か月）
+
+**成果物**
+
+- system adapter、experiment schema、seed manifest
+- logistic、Duffing、Lorenz、ESNの最小実装
+- trajectory artifactとreportの仕様
+- benchmark定義書
+- CI上の小規模再現テスト
+
+**Gate 0**
+
+- 同じspecから同じartifactを再生成できる
+- solver、刻み幅、seed、過渡除去条件が全結果に記録される
+
+### Phase 1: Atlas MVP（2～5か月）
+
+**成果物**
+
+- 多初期値探索、signature clustering
+- Lyapunov、replica consistency、echo index
+- basin stabilityと信頼区間
+- memory curve、IPCの最小版
+- canonical systemのreport
+
+**Gate 1**
+
+- E0を通過
+- 発見個数を下限として報告し、未分類率を表示できる
+- 長時間延長とsolver変更による感度を自動比較できる
+
+### Phase 2: 因果検証（5～8か月）
+
+**成果物**
+
+- E1、E2のデータセットと再現notebook/report
+- TIPC、RQA、transition graph
+- ネットワーク介入と媒介分析
+
+**Gate 2**
+
+- 「どのアトラクタ量がどの計算モードを予測するか」について、少なくとも一つの反証可能な結論を得る
+- 未知seedで再現しない相関は設計原理から除外する
+
+### Phase 3: 調整器と連想記憶（8～12か月）
+
+**成果物**
+
+- 微分可能proxyと多目的optimizer
+- 非微分認証pipeline
+- E3、E4
+- Pareto atlas dashboard
+
+**Gate 3**
+
+- 同一予算のbaselineに対し、未知条件で性能または頑健性を改善
+- proxy改善と認証指標改善の関係を定量化
+
+### Phase 4: Generalized RC とblack box（12～18か月）
+
+**成果物**
+
+- 履歴readoutの公平比較
+- SINDy / Koopman / equation-free adapter
+- 方程式を隠したE5
+- 物理系またはhardware emulatorでの実証
+
+**Gate 4**
+
+- 状態非再現性と出力再現性を分けて評価できる
+- white-boxとblack-boxの誤差要因を説明できる
+- 別の力学系familyへ移植できる設計指標を一つ以上示す
+
+## 10. 最初の8週間の実施項目
+
+1. 本文の三モードと用語をADRとして固定する。
+2. `SystemAdapter`、`ExperimentSpec`、`TrajectoryArtifact`を定義する。
+3. logistic、Duffing、Lorenz、vanilla ESNを実装し、ground-truth testを先に書く。
+4. 多初期値batch simulationと過渡除去を実装する。
+5. 最大Lyapunov指数、replica consistency、memory curveを実装する。
+6. 軌道signatureの最小版をPSD、ACF、最大Lyapunov指数で作る。
+7. basin stabilityをbootstrap CI付きで実装する。
+8. E0の精度・計算量曲線を作る。
+9. E1のpilot用に、同一状態次元のESN群とdegree-preserving rewiringを用意する。
+10. delayed recall、IPC、cue-based recallを同一評価APIに載せる。
+
+8週間終了時の判断は「高度な可視化ができたか」ではなく、未知seedを含む再実行で、解析値と不確実性が一貫して得られるかで行う。
+
+## 11. 想定される失敗と対策
+
+| リスク | 何が起きるか | 対策 |
+|---|---|---|
+| 隠れアトラクタ | 発見数を真の個数と誤認 | 下限として報告、探索分布と予算を明示、継続法を併用 |
+| 長い過渡 | metastable stateをアトラクタと誤認 | 観測時間延長、survival curve、複数窓で検証 |
+| 次元の呪い | basinやtransfer operatorが破綻 | Monte Carlo、latent解析、JVP、低次元断面へ切替 |
+| 部分観測 | 異なる状態を同一と誤認 | delay embedding、観測可能性評価、複数sensor比較 |
+| TDAの過解釈 | 形の違いを安定性と解釈 | Lyapunov、再帰、遷移解析との複合signatureに限定 |
+| autodiff artifact | 数値積分器や有限時間proxyを攻略 | solver変更、長時間・非微分認証、gradient check |
+| benchmark leakage | 調整課題だけ改善 | 未知task、未知遅延、未知系familyで評価 |
+| 読み出しへの能力移転 | GRCの利得をリザバー能力と誤認 | 総パラメータ、FLOPs、データ量を揃え、reservoir ablation |
+| edge-of-chaos先入観 | ゼロLyapunov近傍だけ探索 | 広い安定領域とPareto探索、条件付き指数を測定 |
+| 一つの万能指標 | 相反する用途を同じscoreで最適化 | profileを保持し、用途別Pareto選択 |
+
+## 12. 論文化の単位
+
+1. **Atlas methodology paper**
+   有限予算下でのアトラクタ発見下限、不確実性、複合signature、canonical systemsでの検証。
+2. **Causal reservoir design paper**
+   構造介入、条件付き安定性、吸引域、遷移時間、IPC/TIPCと三計算モードの因果関係。
+3. **Attractor-aware tuning paper**
+   多目的proxy、非微分認証、未知タスク・未知系familyへの汎化。
+4. **Generalized/physical RC paper**
+   状態非再現性と出力再現性、読み出し複雑度、black-boxまたは物理系での実証。
+
+最初の論文で「任意の力学系を最適化できる」と主張しない。まず測定の妥当性と適用限界を確立し、次に因果調整、最後に一般化へ進む。
+
+## 13. 主要参考文献
+
+### 13.1 Reservoir Computing、容量、普遍性
+
+- [R1] Kubota et al. (2024), “Reservoir Computing Generalized.” arXiv:2412.12104. <https://arxiv.org/abs/2412.12104>
+- [R2] Jaeger (2001), “The ‘Echo State’ Approach to Analysing and Training Recurrent Neural Networks.” GMD Report 148. <https://publica.fraunhofer.de/entities/publication/7d4a7eec-a22c-4df0-903d-93f9cd5aca02>
+- [R3] Yildiz, Jaeger, and Kiebel (2012), “Re-visiting the Echo State Property.” *Neural Networks*. <https://doi.org/10.1016/j.neunet.2012.07.005>
+- [R4] Grigoryeva and Ortega (2018), “Echo State Networks are Universal.” *Neural Networks*. <https://doi.org/10.1016/j.neunet.2018.08.025>
+- [R5] Grigoryeva and Ortega (2018), “Universal Discrete-Time Reservoir Computers with Stochastic Inputs and Linear Readouts Using Non-Homogeneous State-Affine Systems.” *JMLR* 19. <https://jmlr.org/papers/v19/18-020.html>
+- [R6] Sugiura et al. (2024), “Nonessentiality of Reservoir’s Fading Memory for Universality.” *IEEE TNNLS*. <https://doi.org/10.1109/TNNLS.2023.3298013>
+- [R7] Dambre et al. (2012), “Information Processing Capacity of Dynamical Systems.” *Scientific Reports* 2, 514. <https://doi.org/10.1038/srep00514>
+- [R8] Kubota, Takahashi, and Nakajima (2021), “A Unifying Framework for Information Processing in Stochastically Driven Dynamical Systems.” *Physical Review Research* 3, 043135. <https://doi.org/10.1103/PhysRevResearch.3.043135>
+- [R9] Ohkubo and Inubushi (2024), “Reservoir Computing with Generalized Readout Based on Generalized Synchronization.” *Scientific Reports* 14, 30918. <https://doi.org/10.1038/s41598-024-81880-3>
+
+### 13.2 安定性、臨界性、アトラクタ再構成
+
+- [R10] Boedecker et al. (2012), “Information Processing in Echo State Networks at the Edge of Chaos.” *Theory in Biosciences*. <https://doi.org/10.1007/s12064-011-0146-8>
+- [R11] Haruna and Nakajima (2019), “Optimal Short-Term Memory Before the Edge of Chaos in Driven Random Recurrent Networks.” *Physical Review E* 100, 062312. <https://doi.org/10.1103/PhysRevE.100.062312>
+- [R12] Carroll (2021), “Do Reservoir Computers Work Best at the Edge of Chaos?” *Chaos*. <https://doi.org/10.1063/5.0038163>
+- [R13] Hart (2024), “Attractor Reconstruction with Reservoir Computers: The Effect of the Reservoir’s Conditional Lyapunov Exponents on Faithful Attractor Reconstruction.” *Chaos* 34, 043123. <https://doi.org/10.1063/5.0196257>
+- [R14] Ceni et al. (2020), “The Echo Index and Multistability in Input-Driven Recurrent Neural Networks.” *Physica D* 412, 132609. <https://doi.org/10.1016/j.physd.2020.132609>
+- [R15] Pathak et al. (2017), “Using Machine Learning to Replicate Chaotic Attractors and Calculate Lyapunov Exponents from Data.” *Chaos*. <https://doi.org/10.1063/1.5010300>
+- [R16] Lu, Hunt, and Ott (2018), “Attractor Reconstruction by Machine Learning.” *Chaos*. <https://doi.org/10.1063/1.5039508>
+- [R17] Kong, Brewer, and Lai (2024), “Reservoir-computing Based Associative Memory and Itinerancy for Complex Dynamical Attractors.” *Nature Communications*. <https://doi.org/10.1038/s41467-024-49190-4>
+- [R18] Du et al. (2025), “Multifunctional Reservoir Computing.” *Physical Review E* 111, 035303. <https://doi.org/10.1103/PhysRevE.111.035303>
+- [R19] Flynn, Tsachouridis, and Amann (2021), “Multifunctionality in a Reservoir Computer.” *Chaos*. <https://doi.org/10.1063/5.0019974>
+- [R20] Zhang and Cornelius (2023), “Catch-22s of Reservoir Computing for Basin Prediction.” *Physical Review Research* 5, 033213. <https://doi.org/10.1103/PhysRevResearch.5.033213>
+- [R21] Kabayama et al. (2025), “Designing Chaotic Attractors: A Semisupervised Approach.” *Physical Review E* 111, 034207. <https://doi.org/10.1103/PhysRevE.111.034207>
+- [R22] Kobayashi et al. (2026), “On the Attractor in High-Dimensional Neural Network Dynamics of Reservoir Computing: A Lyapunov Analysis Viewpoint.” *Chaos* 36, 053115. <https://doi.org/10.1063/5.0315384>
+- [R23] Yan et al. (2024), “Emerging Opportunities and Challenges for the Future of Reservoir Computing.” *Nature Communications* 15, 2056. <https://doi.org/10.1038/s41467-024-45187-1>
+- [R24] Jaurigue et al. (2024), “Chaotic Attractor Reconstruction Using Small Reservoirs—the Influence of Topology.” arXiv:2402.16888. <https://arxiv.org/abs/2402.16888>
+- [R25] Wringe, Stepney, and Trefzer (2025), “Reservoir Computing Benchmarks: A Tutorial Review and Critique.” *International Journal of Parallel, Emergent and Distributed Systems* 40(4), 313–351. <https://doi.org/10.1080/17445760.2025.2472211>
+- [R26] Suetani and Parlitz (2026), “Impact of Weak Generalized Synchronization on Time Series Forecasting Using Reservoir Computers.” *Chaos* 36, 043125. <https://doi.org/10.1063/5.0283017>
+- [R27] Metzner et al. (2026), “Illuminating the Black Box of Reservoir Computing.” *Scientific Reports* 16, 15500. <https://doi.org/10.1038/s41598-026-53098-y>
+
+### 13.3 力学系・遷移・トポロジーの分析
+
+- [A1] Eckmann, Kamphorst, and Ruelle (1987), “Recurrence Plots of Dynamical Systems.” *Europhysics Letters*. <https://doi.org/10.1209/0295-5075/4/9/004>
+- [A2] Marwan et al. (2007), “Recurrence Plots for the Analysis of Complex Systems.” *Physics Reports*. <https://doi.org/10.1016/j.physrep.2006.11.001>
+- [A3] Williams, Kevrekidis, and Rowley (2015), “A Data-Driven Approximation of the Koopman Operator.” *Journal of Nonlinear Science*. <https://doi.org/10.1007/s00332-015-9258-5>
+- [A4] Proctor, Brunton, and Kutz (2016), “Dynamic Mode Decomposition with Control.” *SIAM Journal on Applied Dynamical Systems*. <https://doi.org/10.1137/15M1013857>
+- [A5] Dellnitz and Junge (1999), “On the Approximation of Complicated Dynamical Behavior.” *SIAM Journal on Numerical Analysis*. <https://doi.org/10.1137/S0036142996313002>
+- [A6] Sarich, Noé, and Schütte (2010), “On the Approximation Quality of Markov State Models.” *Multiscale Modeling & Simulation*. <https://doi.org/10.1137/090764049>
+- [A7] Mardt et al. (2018), “VAMPnets for Deep Learning of Molecular Kinetics.” *Nature Communications*. <https://doi.org/10.1038/s41467-017-02388-1>
+- [A8] Metzner, Schütte, and Vanden-Eijnden (2009), “Transition Path Theory for Markov Jump Processes.” *Multiscale Modeling & Simulation*. <https://doi.org/10.1137/070699500>
+- [A9] E and Vanden-Eijnden (2010), “Transition-Path Theory and Path-Finding Algorithms for the Study of Rare Events.” *Annual Review of Physical Chemistry*. <https://doi.org/10.1146/annurev.physchem.040808.090412>
+- [A10] Menck et al. (2013), “How Basin Stability Complements the Linear-Stability Paradigm.” *Nature Physics*. <https://doi.org/10.1038/nphys2516>
+- [A11] Daza et al. (2016), “Basin Entropy: A New Tool to Analyze Uncertainty in Dynamical Systems.” *Scientific Reports*. <https://doi.org/10.1038/srep31416>
+- [A12] Perea and Harer (2015), “Sliding Windows and Persistence: An Application of Topological Methods to Signal Analysis.” *Foundations of Computational Mathematics*. <https://doi.org/10.1007/s10208-014-9206-z>
+- [A13] Dey, Mrozek, and Slechta (2022), “Persistence of Conley–Morse Graphs in Combinatorial Dynamical Systems.” *SIAM Journal on Applied Dynamical Systems* 21(2), 817–839. <https://doi.org/10.1137/21M143162X>
+- [A14] Vieira et al. (2022), “A Pipeline for Data-Driven Analysis of Complex Dynamical Systems Using Morse Graphs.” arXiv:2202.08383. <https://arxiv.org/abs/2202.08383>
+- [A15] Heymann and Vanden-Eijnden (2008), “The Geometric Minimum Action Method.” *Communications on Pure and Applied Mathematics*. <https://doi.org/10.1002/cpa.20238>
+- [A16] Morr, Kuehn, and Datseris (2026), “Computing Resilience Measures in Dynamical Systems.” *Chaos* 36, 023102. <https://doi.org/10.1063/5.0303938>
+
+## 14. 調査方法と確度
+
+本稿は、Reservoir Computing、非線形力学、データ駆動力学系、遷移解析、トポロジカルデータ解析、数値計算基盤という六領域に分けて調査した。主張の根拠には、原著論文、査読誌、公式プロジェクト文書を優先した。レビューやプレプリントは、最先端の方向性または未確定の仮説を示す場合に限定して用いた。
+
+特に確度に注意すべき点は次の通りである。
+
+- GRC [R1]、小規模reservoir [R24]、Morse graph pipeline [A14] は本文執筆時点でプレプリントとして扱う。
+- edge of chaos、アトラクタ数、ネットワーク構造に関する結論は系・入力・タスク依存であり、普遍則として扱わない。
+- 高次元系の全アトラクタ列挙、完全な吸引域境界、厳密な遷移障壁はMVPの保証対象にしない。
+- 新規ライブラリの採用可否は、今後公式文書、ライセンス、保守状況、再現benchmarkを確認して決定する。
+
+本研究の新規性は、既存指標を並べることではない。自律、入力駆動、閉ループという異なる力学系を同じ実験規約で比較し、アトラクタのレパートリー、吸引域、遷移、条件付き安定性、IPC/TIPCを因果介入と多目的調整へ結び付ける点に置く。
+
+## 15. 継続的な理論・証拠・実装の運用
+
+本計画の各主張は、機械可読な
+[研究主張台帳](docs/research/claims.toml)で、出典付き事実、ローカル再現、
+推論、仮説に分離して管理する。数学的定義と数値推定量の境界は
+[基礎指標の数学的根拠](docs/research/theory/core-metrics.md)、未解決部分と
+次の識別実験は[未解決課題](docs/research/open-questions.md)へ記録する。
+
+実装へ進めるのは、数学的定義または既存研究上の根拠が明確で、数値的な
+適用限界をテストで固定できる部分である。未解決の関係を事実として実装へ
+埋め込まず、反証条件付きの仮説として登録する。各実験は
+[実験記録テンプレート](docs/research/experiments/TEMPLATE.md)から作成し、
+成功・陰性・判定不能のすべてを台帳へ戻す。
+
+最新研究との対応付けは
+[文献監視手順](docs/research/literature-watch.md)に従い、少なくとも各実験
+フェーズ開始時と論文投稿前に更新する。GRC、条件付き安定性、アトラクタ
+設計のように更新が速い領域は月次確認候補とする。
