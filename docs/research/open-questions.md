@@ -152,18 +152,20 @@
 - 確認済み: `EXP-2026-009` の未使用30 seed、raw count一定120条件では、
   低外乱のcertified fractionと符号記憶保持率のSpearmanが0.8823、高外乱の
   mean marginとのSpearmanが0.9347だった。raw-count予測よりMAEが改善した。
-- 未知部分: coupling baselineに対する増分優位は未確立であり、hyperbox
-  certificateの順位が別topology、noise、cue、readout taskでも保たれるか
-  未確認である。
-- 次の識別実験: sparse symmetric、asymmetric、non-normal familyで
-  外乱強度を掃引し、同じ符号memoryに加えてcue routingとlinear readoutの
-  保持率を測る。
+- 確認済み: `EXP-2026-010` の未使用30 seed、4 family、raw count一定
+  480条件ではmean marginとのSpearmanが0.8933–0.9771だった。seed単位pooled
+  MAEはraw count、coupling、worst local Jacobianよりそれぞれ0.0851、
+  0.0080、0.0051小さかった。
+- 未知部分: hyperbox certificateの順位がfamilyを丸ごと未知にした予測、
+  stochastic noise、cue、readout taskでも保たれるか未確認である。
+- 次の識別実験: leave-one-family-out予測と、time-varying stochastic外乱に
+  対するsurvival curveを行う。続いてcue routingとlinear readout保持率を測る。
 - baseline: raw count、平均局所Jacobian spectral radius、\(\|W\|_\infty\)、
   basin stability、minimum fixed-point coordinate。
-- 主要判定: 未知外乱方向・未知seedで、\(N_{\mathrm{rob}}(e)\) または
-  \(S_{\mathrm{rob}}(e)\) がcouplingと局所安定性baselineへ有意な増分予測力を
+- 主要判定: 未知family・未知外乱時系列で、\(N_{\mathrm{rob}}(e)\) または
+  \(S_{\mathrm{rob}}(e)\) がcoupling、局所安定性、多変量baselineへ増分予測力を
   持つ。
-- 外的妥当性: sparse symmetric、asymmetric、non-normalの3 familyへ拡張する。
+- 外的妥当性: 高次元、学習済み、spiking、物理reservoirへ拡張する。
 - 主要評価: core attractor survival、basin stability差、機能的商の保持、
   novel容量、energy。
 

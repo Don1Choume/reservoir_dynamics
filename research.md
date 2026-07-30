@@ -621,6 +621,13 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
   Spearman 0.8823、高外乱で平均marginとのSpearman 0.9347を確認した。
 - これは一つの4次元signed RNN familyにおけるtask接続であり、couplingから
   独立した増分予測力、別family、人間規模条件ではない。
+- family横断の
+  [EXP-2026-010](docs/research/experiments/EXP-2026-010.md) では、
+  dense symmetric、sparse symmetric、asymmetric dense、feedforward
+  non-normalの未使用30 seedで、raw count 16を保ったままmean marginと
+  符号記憶保持率のSpearman 0.8933–0.9771を確認した。
+- pooled secondary解析ではmargin predictorがcouplingとworst local Jacobian
+  より小さいMAEを示した。論文原稿の核にはなるが、人間規模条件ではない。
 - canonical systems、artifact schema、seed manifestが未完了のためGate 0は未通過である。
 - 論文化判断は[論文化ゲート](docs/research/publication-readiness.md)で管理する。
 
@@ -778,6 +785,19 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - [R33] Dohare et al. (2024), “Loss of Plasticity in Deep Continual
   Learning.” *Nature* 632, 768–774.
   <https://doi.org/10.1038/s41586-024-07711-7>
+- [R34] Dhadphale et al. (2026), “Prediction Performance of Random
+  Reservoirs with Different Topology for Nonlinear Dynamical Systems with
+  Different Number of Degrees of Freedom.” *Chaos*.
+  <https://doi.org/10.1063/5.0314081>
+- [R35] Park et al. (2026), “Photonic Reservoir Computing with Complex
+  Networks.” arXiv:2607.23285. <https://arxiv.org/abs/2607.23285>
+- [R36] Poggialini et al. (2026), “Non-normal Dynamics on Nonreciprocal
+  Networks: Reactivity and Effective Dimensionality in Neural Circuits.”
+  *Physical Review E*, accepted.
+  <https://doi.org/10.1103/jv6l-3s5z>
+- [R37] Clark (2026), “Transient Dynamics of Associative Memory Models.”
+  *Physical Review E* 113, 054301.
+  <https://doi.org/10.1103/42y2-bsh1>
 
 ### 13.3 力学系・遷移・トポロジーの分析
 

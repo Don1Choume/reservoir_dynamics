@@ -319,7 +319,10 @@ scheduleは、最初から同じ最終疎度を持つ回路より学習効率と
 続く `EXP-2026-009` の未使用30 seedでは、raw count一定のまま、低外乱で
 robust fractionと符号記憶保持率のSpearman 0.8823、高外乱で平均marginとの
 Spearman 0.9347を得た。これはP5の人工RNNにおける機構的構成例とtask接続で
-あるが、生物学的margin、発生、遺伝、学習余剰を直接示していない。
+ある。`EXP-2026-010` では4 network familyの未使用30 seedへ拡張し、
+mean marginとのSpearman 0.8933–0.9771、raw count、coupling、局所Jacobianに
+対するpooled MAE改善を確認した。それでも生物学的margin、発生、遺伝、
+学習余剰を直接示していない。
 
 外乱budget \(e\) に対するレパートリーを
 
@@ -337,9 +340,9 @@ S_{\mathrm{rob}}(e)
 \sum_k p_k\mathbf 1[\mu_k\ge e]
 \]
 
-とする。符号保持taskへの予測は一つのfamilyで確認した。今後は、このcurveが
-別topology、学習feedback、noise、cue routing、readout性能でもcouplingや
-局所安定性baselineを超えて予測するか検証する。
+とする。符号保持taskへの予測は4構成familyで確認した。今後は、このcurveが
+未知family、学習feedback、stochastic noise、cue routing、readout性能でも
+多変量baselineを超えて予測するか検証する。
 
 ## 5. 実験ロードマップ
 

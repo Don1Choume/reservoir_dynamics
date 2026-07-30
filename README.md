@@ -26,6 +26,8 @@
 - 非対角tanh RNNの符号orthant別robust hyperbox certificate
 - raw attractor countを一致させたrobust repertoireの独立30 seed確認
 - robust repertoireと外乱下符号記憶を結ぶ事前登録30 seed確認
+- 対称・疎・非対称・非正規4 familyの事前登録外的妥当性確認
+- 結合norm、局所Jacobian、固定点座標、非正規性の比較baseline
 - 出典、実装、反証条件を接続する研究主張台帳
 
 これらは基礎指標であり、全アトラクタの発見やESPの数学的証明を保証しない。
@@ -47,6 +49,9 @@
 - [EXP-2026-007](docs/research/experiments/EXP-2026-007.md)
 - [EXP-2026-008](docs/research/experiments/EXP-2026-008.md)
 - [EXP-2026-009](docs/research/experiments/EXP-2026-009.md)
+- [EXP-2026-010](docs/research/experiments/EXP-2026-010.md)
+- [日本語論文草稿](docs/papers/robust-repertoire-memory-ja.md)
+- [日本語論文DOCX](docs/papers/robust-repertoire-memory-ja.docx)
 - [core–reserve保護条件](docs/research/theory/core-reserve-protection.md)
 - [双安定coreのロバスト不変margin](docs/research/theory/bistable-core-margin.md)
 - [非対角tanh RNNのorthant-box margin](docs/research/theory/orthant-box-margin.md)

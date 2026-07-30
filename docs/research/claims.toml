@@ -700,8 +700,8 @@ falsification_criteria = [
   "certificateが保守的過ぎ、Monte Carlo survivabilityまたはtask性能の順位を一貫して逆転させる。",
 ]
 limitations = [
-  "EXP-2026-009は符号記憶について部分支持したが、hyperbox certificateと一つのnetwork familyに限定される。",
-  "coupling gainから独立した増分予測力、basin-weighted safe mass、未知task familyは未確認である。",
+  "EXP-2026-009とEXP-2026-010は符号記憶について部分支持したが、4次元tanh RNNとhyperbox certificateに限定される。",
+  "basin-weighted safe mass、未知task family、familyを丸ごと未知にした予測は未確認である。",
 ]
 
 [[claims]]
@@ -732,4 +732,81 @@ limitations = [
 falsification_criteria = [
   "同じ事前登録specの再実装でcertificate下界違反または主要予測判定の不成立が再現する。",
   "事前登録した別network familyでrobust featureがraw countまたは局所安定性baselineを一貫して下回る。",
+]
+
+[[claims]]
+id = "C-RC-021"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "Reservoir topologyの対称性、connectivity pattern、edge weightが予測性能へ与える効果は対象力学系に依存し、一つのtopologyで得た性能順位は普遍的設計則にならない。"
+sources = [
+  "https://doi.org/10.1063/5.0314081",
+  "https://arxiv.org/abs/2607.23285",
+]
+limitations = [
+  "前者は4予測対象と5 random reservoir topology、後者はphotonic reservoirと特定taskに限定される。",
+  "topology依存性はorthant marginまたは多重安定性の因果効果を直接示さない。",
+]
+
+[[claims]]
+id = "C-DYN-004"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "非正規な再帰結合は、臨界固有値によるdynamical slowingとは異なる高速な過渡増幅を生じ得て、非相反なfeedforward構造とcyclic構造はnoise下の活動伝播と遷移を異なる形で組織し得る。"
+sources = [
+  "https://doi.org/10.1103/PhysRevE.86.011909",
+  "https://doi.org/10.1103/jv6l-3s5z",
+]
+limitations = [
+  "最初の結果は線形random balanced neuronal network、後者はaccepted段階のWilson-Cowan networkに関する。",
+  "非正規性だけから多重安定RNNの有限外乱survivabilityは決定できない。",
+]
+
+[[claims]]
+id = "C-RC-022"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "連想記憶modelでは平衡論的な記憶固定点が消える容量超過後にも、遅い領域により有限時間のtransient retrievalが残り得るため、固定点countと有限時間機能は一致しない。"
+sources = [
+  "https://doi.org/10.1103/42y2-bsh1",
+]
+limitations = [
+  "graded-activity dense associative memory modelとその平均場解析に関する結果である。",
+  "transient retrievalはロバスト正不変性または長期記憶保証ではない。",
+]
+
+[[claims]]
+id = "C-RC-023"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-010の未使用30 seed、4 network familyでは全480条件のraw autonomous countが16のまま、平均orthant marginと外乱下符号記憶保持率のSpearmanが0.8933から0.9771となり、seed単位pooled予測MAEはraw countより0.0851、couplingより0.0080、worst local Jacobian infinity normより0.0051低かった。"
+sources = [
+  "https://doi.org/10.1038/srep29654",
+  "https://doi.org/10.1063/5.0314081",
+  "https://doi.org/10.1103/PhysRevE.86.011909",
+]
+implementations = [
+  "src/reservoir_dynamics/theory/orthant_box.py",
+  "src/reservoir_dynamics/metrics/network_diagnostics.py",
+  "src/reservoir_dynamics/experiments/recurrent_weight_families.py",
+  "src/reservoir_dynamics/experiments/robust_repertoire_task.py",
+  "src/reservoir_dynamics/experiments/cross_family_robust_task_confirmation.py",
+]
+tests = [
+  "tests/theory/test_orthant_box.py",
+  "tests/metrics/test_network_diagnostics.py",
+  "tests/experiments/test_recurrent_weight_families.py",
+  "tests/experiments/test_robust_repertoire_task.py",
+  "tests/experiments/test_cross_family_robust_task_confirmation.py",
+]
+limitations = [
+  "4次元tanh RNN、4構成family、一定corner外乱、符号保持taskに限定される。",
+  "sparse familyは他familyと異なるcoupling gridと外乱budgetを用い、family間絶対性能を比較できない。",
+  "couplingとlocal Jacobianに対するpooled優位は事前登録secondary endpointである。",
+  "feedforward familyではlocal Jacobianとminimum coordinateのfamily内MAEがmean marginより小さかった。",
+  "leave-one-family-out、stochastic外乱、未知task、高次元、生物回路は未確認である。",
+]
+falsification_criteria = [
+  "同じ事前登録specの再実装でraw count一致、certificate下界、全family相関、pooled raw改善のいずれかが再現しない。",
+  "未知familyまたは未知taskでmargin predictorがraw count、coupling、局所安定性baselineを一貫して下回る。",
 ]

@@ -23,6 +23,23 @@
 | 力学的干渉保護 | dynamical subspace, orthogonal gradient, modular continual learning | `C-BIO-003`, `H-BIO-004`, `H-BIO-005` |
 | motif再利用 | dynamical motif, compositional RNN, fast task transfer | `C-RC-017`, `H-BIO-002` |
 | plasticity枯渇 | loss of plasticity, feature renewal, continual learning | `C-CL-001`, `H-BIO-002` |
+| topology外的妥当性 | symmetry, sparsity, small-world, task dependence | `H-RC-007`, `EXP-2026-010` |
+| 非正規・非相反力学 | non-normality, reactivity, transient amplification | `H-RC-007`, `EXP-2026-010` |
+
+## 2026-07-30 差分
+
+- Dhadphale et al. (2026) は、connectivity patternとedge weightを制御した
+  5 reservoir topologyで、対称性の予測性能効果が対象力学系に依存することを
+  報告した。DOI: <https://doi.org/10.1063/5.0314081>
+- Poggialini et al. (2026, accepted) は、非相反Wilson–Cowan networkで
+  feedforward構造が局所非正規性を固定しても過渡reactivityを増すことを
+  報告した。DOI: <https://doi.org/10.1103/jv6l-3s5z>
+- Clark (2026) は、連想記憶modelで固定点が消えた容量超過後にも有限時間の
+  transient retrievalが残り得ることを示した。アトラクタcountと有限時間機能を
+  同一視しない根拠になる。DOI: <https://doi.org/10.1103/42y2-bsh1>
+- Park et al. (2026, preprint) は、photonic reservoirでsmall-world topologyの
+  memory・予測性能を報告した一方、最適topologyがtaskに依存することを示した。
+  arXiv: <https://arxiv.org/abs/2607.23285>
 
 ## 情報源の優先順位
 

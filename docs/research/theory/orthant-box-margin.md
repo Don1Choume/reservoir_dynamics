@@ -281,7 +281,36 @@ baselineより小さいMAEを示した。
 が成立した。ただしこれは認証対象外の成功率を上から制約せず、coupling
 baselineへの増分予測力も確立しない。
 
-## 10. 人間規模仮説への接続
+## 10. EXP-2026-010: network familyを越えた確認
+
+dense symmetric、sparse symmetric、asymmetric dense、
+feedforward non-normalの4 family、未使用seed 901–930で、全networkの
+raw autonomous countを16へ固定した。family別にdiscovery fitした
+\(\bar\mu\) とtask retentionのSpearmanは、
+
+\[
+0.8933,\quad 0.9244,\quad 0.9557,\quad 0.9771
+\]
+
+だった。seed単位poolingしたMAE差は、
+
+\[
+\begin{aligned}
+E_{\mathrm{raw}}-E_{\bar\mu}
+&=0.0851\ [0.0828,0.0873],\\
+E_{\mathrm{coupling}}-E_{\bar\mu}
+&=0.0080\ [0.0030,0.0133],\\
+E_{\mathrm{local\ Jacobian}}-E_{\bar\mu}
+&=0.0051\ [0.0020,0.0085].
+\end{aligned}
+\]
+
+後二つは事前登録secondary endpointである。poolした平均では有限外乱marginが
+生成parameterと微小摂動baselineを上回ったが、feedforward family内では
+local Jacobian MAEの方が小さかった。普遍的優位ではなく、4 familyにわたる
+再現可能なprofile指標として解釈する。
+
+## 11. 人間規模仮説への接続
 
 必須機能 \(k\) のmargin \(\mu_k\) と、学習moduleからのfeedback load \(e_k\)
 を比較し、
@@ -297,15 +326,17 @@ baselineへの増分予測力も確立しない。
 これは人間脳の必要条件として確立していない。今後、task数、module数、
 network dimension、energyとともにこれらのcurveがどうscaleするかを測る。
 
-## 11. 適用限界
+## 12. 適用限界
 
 - hyperboxと成分別一様外乱に限定した十分条件である。
 - 共通境界 \(m\) は座標別境界より保守的になり得る。
-- 4次元対称signed complete graph以外では未確認である。
+- 4次元の4構成familyで確認したが、高次元、学習済み、spiking、物理系では
+  未確認である。
 - raw countは指定初期値からの固定点発見数で、全アトラクタ列挙保証ではない。
 - 符号保持taskは確認したが、readout性能、記憶容量、cue routingは未検証で
   ある。
 - coupling 0.07は発見実験後に選ばれ、EXP-008は同じ生成分布内のseed確認で
   ある。
 - EXP-009は別seedで事前登録確認したが、coupling baselineへの増分優位は
-  未確立である。
+  未確立だった。EXP-010のpooled secondary解析では優位を得たが、family内で
+  一貫した支配ではない。

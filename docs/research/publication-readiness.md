@@ -1,7 +1,7 @@
 # 論文化ゲート
 
 判定日: 2026-07-30  
-現在の判定: **査読付き原著論文には未到達**
+現在の判定: **限定的な原著論文の草稿開始可**
 
 ## 証拠
 
@@ -58,7 +58,15 @@
 - discovery fitを固定した未知seed予測MAEはraw-count baselineより
   0.0554 [0.0474, 0.0647]、0.0846 [0.0742, 0.0955] 小さかった。
 - 61,440 challengeでcertificate下界違反は0だった。
-- 実装は全119テストを通過し、branch coverageは90%である。
+- `EXP-2026-010` の未使用30 seed、4 network familyでは全480条件の
+  raw countが16のまま、mean marginと符号記憶保持率のSpearmanが
+  0.8933–0.9771だった。
+- 122,880 challengeでcertificate下界違反は0だった。
+- seed単位pooled予測ではmargin MAEがraw countより0.0851
+  [0.0828, 0.0873]、couplingより0.0080 [0.0030, 0.0133]、worst local
+  Jacobianより0.0051 [0.0020, 0.0085] 小さかった。後二つはsecondary
+  endpointである。
+- 実装は全129テストを通過し、branch coverageは90%である。
 
 ### 陰性結果
 
@@ -82,8 +90,9 @@
 - task-specificな機能的アトラクタ商の数学的整備とatlas上での安定推定
 - 生得的機能コアとplastic reserveの操作定義が新規学習と忘却を予測するか
 - 高次元・非対角・非normalな多重安定coreでの安全集合margin推定
-- robust repertoire curveの予測がcouplingと局所安定性から独立するか
-- robust repertoireと符号記憶の関係が別network・task familyで維持されるか
+- robust repertoireと符号記憶の関係がfamilyを丸ごと未知にした予測で
+  維持されるか
+- robust repertoireがstochastic外乱、cue、readout、逐次学習taskを予測するか
 - random matched mask、部分空間保護、EWC、replayに対するcore–reserve
   構造の増分優位
 - module数、task数、reserve次元、feedback総量、energyのscale law
@@ -132,6 +141,21 @@ interval hyperboxという既知の直接手法、一つの4次元生成分布�
 0を含んだ。別family、局所安定性baseline、別taskがないため、現時点では
 技術報告またはpreprintの核であり、査読付き原著論文の開始判定は変更しない。
 
+`EXP-2026-010` は、事前登録した4 network familyと未使用30 seedでこの関係を
+再現し、poolしたsecondary解析でcouplingとlocal Jacobian baselineも上回った。
+これにより「生のアトラクタ数ではなく、有限外乱に対するmargin profileが
+利用可能な記憶レパートリーを表す」という限定命題は、原著論文の中心仮説に
+置ける。
+
+ただし、sparse familyは別の外乱budgetを用い、feedforward family内では
+local Jacobianがmean marginより小さいMAEだった。従って「marginがあらゆる
+局所指標を常に支配する」「任意の力学系へ一般化する」とは主張しない。
+現時点で草稿を開始し、投稿判断は追加外的妥当性実験後に行う。
+
+日本語草稿は
+[アトラクタ数を越えたリザバー評価](../papers/robust-repertoire-memory-ja.md)
+として作成した。
+
 ## 原著論文へ進む最小条件
 
 次のいずれかを満たした段階で論文原稿を開始する。
@@ -149,17 +173,24 @@ interval hyperboxという既知の直接手法、一つの4次元生成分布�
    条件付きアトラクタ構造、可観測性、読み出し複雑度の間に新しい上界・
    下界・十分条件を導出し、数値実験で適用範囲を示す。
 
-## 次回判定
+`EXP-2026-010` により条件2を限定的に満たした。4 familyと未知seedで
+margin profileの性能予測を再現し、単純なcoupling、local Jacobianに対する
+pooled secondary優位を得たため、原稿作成を開始する。
 
-以下が揃った時点で再判定する。
+## 投稿前の必須追加条件
 
-- 独立seedでrelative retentionの確認基準を事前登録し、再現する
-- 少なくとも非直交・疎RNNを含む3 network familyで検証する
+草稿は開始するが、投稿前に次を満たす。
+
+- leave-one-family-outまたは新しい第五familyで未知family予測を行う
+- time-varying stochastic外乱でsurvival curveと保証の保守性を測る
+- family、coupling、local Jacobian、固定点座標を含む多変量baselineを
+  nested cross-validationで比較する
+- hyperbox以外のset表現を一つ以上実装し、保守性と計算量を比較する
+- manuscriptの全数値をartifactから自動再生成する
+
+次の研究段階としては、さらに以下を継続する。
+
 - Lymburn型global/output consistencyをbaselineとして直接比較する
 - 非線形taskと、線形・二次・履歴readoutの公平比較を行う
-- 自律atlas上で機能同値類を推定し、未知初期状態性能を交差検証する
-- 非対角・高次元の多重安定coreで安全集合marginを推定・外部認証する
-- sparse symmetric、asymmetric、non-normal familyでrobust curveを確認する
-- coupling、局所Jacobian、固定点座標に対する増分予測力を交差検証する
 - protected block、matched random mask、部分空間保護を同一budgetで比較する
 - task逐次追加によるreserve枯渇とfeedback budgetのscale lawを推定する

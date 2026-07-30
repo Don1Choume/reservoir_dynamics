@@ -25,6 +25,20 @@ class RobustRepertoireTaskDiagnosticsTest(unittest.TestCase):
             all(point.raw_attractor_count == 8 for point in result.points)
         )
         self.assertTrue(
+            all(
+                point.off_diagonal_infinity_norm > 0.0
+                and point.maximum_local_jacobian_infinity_norm > 0.0
+                and point.minimum_fixed_point_coordinate > 0.0
+                for point in result.points
+            )
+        )
+        self.assertTrue(
+            all(
+                point.nonnormality_commutator_norm == 0.0
+                for point in result.points
+            )
+        )
+        self.assertTrue(
             all(point.guarantee_gap >= -1e-12 for point in result.points)
         )
         self.assertTrue(
@@ -71,6 +85,12 @@ class RobustRepertoireTaskDiagnosticsTest(unittest.TestCase):
         )
         self.assertTrue(
             all(point.raw_attractor_count == 8 for point in result.points)
+        )
+        self.assertTrue(
+            all(
+                point.nonnormality_commutator_norm > 0.0
+                for point in result.points
+            )
         )
 
     def test_rejects_invalid_split_and_axes(self) -> None:

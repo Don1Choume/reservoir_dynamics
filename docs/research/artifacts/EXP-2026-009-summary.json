@@ -106,7 +106,7 @@
   "execution_note": "最初の計算後に表示用field参照が失敗したため、specと判定を変更せず決定論的に再実行した。",
   "reproducibility": {
     "git_base_commit": "99b2a711d0b316ac9eb30fe54f8eb02b2b50cf01",
-    "source_manifest_sha256": "2c30ce827fd6b60ea21cfcfe02fdd4d2dab366d375fce6755019dcc8709b2d4f",
+    "source_manifest_sha256": "88a8d1a49af59acec345d3ce79c1030cfab7b3c73e6ecf4fa85685446e5d2266",
     "docker_image": "sha256:7bff3a4b9c8dc9391f02f690992f8681b7fb245931058304a5437689324c1c99",
     "python": "3.11.2"
   }

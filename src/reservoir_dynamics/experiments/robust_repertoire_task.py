@@ -14,6 +14,12 @@ from reservoir_dynamics.experiments.recurrent_weight_families import (
     RecurrentWeightFamily,
     build_recurrent_weights,
 )
+from reservoir_dynamics.metrics.network_diagnostics import (
+    local_jacobian_infinity_norm,
+    matrix_nonnormality_commutator_norm,
+    off_diagonal_infinity_norm,
+    signed_minimum_coordinate,
+)
 from reservoir_dynamics.theory.orthant_box import (
     Matrix,
     RobustOrthantBoxCertificate,
@@ -38,6 +44,10 @@ class RobustRepertoireTaskPoint:
     mean_uniform_disturbance_margin: float
     task_retention: float
     guarantee_gap: float
+    off_diagonal_infinity_norm: float
+    maximum_local_jacobian_infinity_norm: float | None
+    minimum_fixed_point_coordinate: float | None
+    nonnormality_commutator_norm: float
 
 
 @dataclass(frozen=True, slots=True)
@@ -135,6 +145,37 @@ def run_robust_repertoire_task_diagnostics(
             raw_attractor_count = sum(
                 fixed_point[1] for fixed_point in fixed_points
             )
+            retained_fixed_points = tuple(
+                (signs, fixed_point_result[0])
+                for signs, fixed_point_result in zip(
+                    sign_patterns,
+                    fixed_points,
+                    strict=True,
+                )
+                if fixed_point_result[1]
+            )
+            maximum_local_jacobian_norm = (
+                max(
+                    local_jacobian_infinity_norm(
+                        recurrent_weights=recurrent_weights,
+                        state=fixed_point,
+                    )
+                    for _, fixed_point in retained_fixed_points
+                )
+                if retained_fixed_points
+                else None
+            )
+            minimum_fixed_point_coordinate = (
+                min(
+                    signed_minimum_coordinate(
+                        state=fixed_point,
+                        attractor_signs=signs,
+                    )
+                    for signs, fixed_point in retained_fixed_points
+                )
+                if retained_fixed_points
+                else None
+            )
             mean_margin = math.fsum(
                 certificate.maximum_uniform_disturbance
                 for certificate in certificates
@@ -152,6 +193,20 @@ def run_robust_repertoire_task_diagnostics(
                     certificates=certificates,
                     raw_attractor_count=raw_attractor_count,
                     mean_margin=mean_margin,
+                    off_diagonal_norm=off_diagonal_infinity_norm(
+                        recurrent_weights
+                    ),
+                    maximum_local_jacobian_norm=(
+                        maximum_local_jacobian_norm
+                    ),
+                    minimum_fixed_point_coordinate=(
+                        minimum_fixed_point_coordinate
+                    ),
+                    nonnormality_norm=(
+                        matrix_nonnormality_commutator_norm(
+                            recurrent_weights
+                        )
+                    ),
                     task_steps=task_steps,
                 )
                 for disturbance_bound in disturbance_bounds
@@ -201,6 +256,10 @@ def _evaluate_disturbance_bound(
     certificates: tuple[RobustOrthantBoxCertificate, ...],
     raw_attractor_count: int,
     mean_margin: float,
+    off_diagonal_norm: float,
+    maximum_local_jacobian_norm: float | None,
+    minimum_fixed_point_coordinate: float | None,
+    nonnormality_norm: float,
     task_steps: int,
 ) -> RobustRepertoireTaskPoint:
     certified_count = sum(
@@ -266,6 +325,12 @@ def _evaluate_disturbance_bound(
         mean_uniform_disturbance_margin=mean_margin,
         task_retention=task_retention,
         guarantee_gap=task_retention - certified_fraction,
+        off_diagonal_infinity_norm=off_diagonal_norm,
+        maximum_local_jacobian_infinity_norm=(
+            maximum_local_jacobian_norm
+        ),
+        minimum_fixed_point_coordinate=minimum_fixed_point_coordinate,
+        nonnormality_commutator_norm=nonnormality_norm,
     )
 
 
