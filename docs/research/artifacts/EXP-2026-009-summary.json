@@ -1,0 +1,113 @@
+{
+  "artifact_type": "derived_summary",
+  "experiment_id": "EXP-2026-009",
+  "executed_at": "2026-07-30",
+  "spec": {
+    "discovery_seeds": {
+      "first": 401,
+      "last": 430,
+      "count": 30
+    },
+    "confirmation_seeds": {
+      "first": 601,
+      "last": 630,
+      "count": 30
+    },
+    "dimension": 4,
+    "diagonal_gain": 1.5,
+    "coupling_gains": [
+      0.04,
+      0.05,
+      0.06,
+      0.07
+    ],
+    "disturbance_bounds": [
+      0.08,
+      0.16
+    ],
+    "task_steps": 100,
+    "autonomous_steps": 500,
+    "orthant_count": 16,
+    "disturbance_corner_count": 16,
+    "confirmation_challenge_count": 61440,
+    "bootstrap_resamples": 2000,
+    "confidence_level": 0.95
+  },
+  "confirmation": [
+    {
+      "disturbance_bound": 0.08,
+      "condition_count": 120,
+      "testing_spearman_certified_fraction": 0.8823467997278774,
+      "testing_spearman_mean_margin": 0.7841043940109562,
+      "certified_fraction_test_mae": 0.04560818446813819,
+      "mean_margin_test_mae": 0.04609882048072457,
+      "coupling_gain_test_mae": 0.04088715277777778,
+      "raw_count_test_mae": 0.1009982638888889,
+      "raw_minus_certified_error": {
+        "estimate": 0.0553900794207507,
+        "lower": 0.04737148685933406,
+        "upper": 0.06470515338570894
+      },
+      "coupling_minus_certified_error": {
+        "estimate": -0.00472103169036041,
+        "lower": -0.015036610316124221,
+        "upper": 0.005952074759945116
+      },
+      "guarantee_violation_count": 0,
+      "mean_guarantee_gap": 0.16458333333333333
+    },
+    {
+      "disturbance_bound": 0.16,
+      "condition_count": 120,
+      "testing_spearman_certified_fraction": 0.2066650985691109,
+      "testing_spearman_mean_margin": 0.9347185412197367,
+      "certified_fraction_test_mae": 0.118359375,
+      "mean_margin_test_mae": 0.03678295319015825,
+      "coupling_gain_test_mae": 0.0407013888888889,
+      "raw_count_test_mae": 0.12137586805555554,
+      "raw_minus_margin_error": {
+        "estimate": 0.0845929148653973,
+        "lower": 0.0742191208799788,
+        "upper": 0.09550315280883709
+      },
+      "coupling_minus_margin_error": {
+        "estimate": 0.003918435698730653,
+        "lower": -0.001805099905409401,
+        "upper": 0.012571048607923924
+      },
+      "guarantee_violation_count": 0,
+      "mean_guarantee_gap": 0.472265625
+    }
+  ],
+  "mean_task_retention": {
+    "disturbance_0.08": {
+      "coupling_0.04": 1.0,
+      "coupling_0.05": 0.9145833333333333,
+      "coupling_0.06": 0.7786458333333334,
+      "coupling_0.07": 0.7776041666666667
+    },
+    "disturbance_0.16": {
+      "coupling_0.04": 0.76640625,
+      "coupling_0.05": 0.6815104166666667,
+      "coupling_0.06": 0.5158854166666667,
+      "coupling_0.07": 0.45859375
+    }
+  },
+  "raw_attractor_count_values": [
+    16
+  ],
+  "minimum_guarantee_gap": 0.0,
+  "decisions": {
+    "raw_count_matched": true,
+    "certificate_lower_bound_valid": true,
+    "robust_count_predicts_low_disturbance": true,
+    "mean_margin_predicts_high_disturbance": true
+  },
+  "execution_note": "最初の計算後に表示用field参照が失敗したため、specと判定を変更せず決定論的に再実行した。",
+  "reproducibility": {
+    "git_base_commit": "99b2a711d0b316ac9eb30fe54f8eb02b2b50cf01",
+    "source_manifest_sha256": "2c30ce827fd6b60ea21cfcfe02fdd4d2dab366d375fce6755019dcc8709b2d4f",
+    "docker_image": "sha256:7bff3a4b9c8dc9391f02f690992f8681b7fb245931058304a5437689324c1c99",
+    "python": "3.11.2"
+  }
+}

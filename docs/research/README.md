@@ -57,7 +57,11 @@ established
 - `open-questions.md`: 未解決課題と次の識別実験
 - `literature-watch.md`: 継続調査の検索軸と最終確認日
 - `theory/core-metrics.md`: 実装済み基礎指標の数学的定義
+- `theory/core-reserve-protection.md`: 機能coreを保つreserve更新の十分条件
+- `theory/bistable-core-margin.md`: 多重安定coreのロバスト不変集合と外力margin
+- `theory/orthant-box-margin.md`: 非対角RNNのorthant別robust repertoire
 - `experiments/TEMPLATE.md`: 実験記録テンプレート
+- `directions/innate-core-plastic-reserve.md`: 生得的構造と生涯学習の長期仮説
 
 台帳は `load_claim_registry` により検証され、仮説に反証条件がない場合や、
 検証済み扱いの主張に出典がない場合はテストが失敗する。

@@ -1,0 +1,116 @@
+{
+  "artifact_type": "derived_summary",
+  "experiment_id": "EXP-2026-007",
+  "executed_at": "2026-07-30",
+  "spec": {
+    "trial_seeds": {
+      "first": 401,
+      "last": 430,
+      "count": 30
+    },
+    "dimension": 4,
+    "diagonal_gain": 1.5,
+    "coupling_gains": [
+      0.04,
+      0.08
+    ],
+    "safe_disturbance_ratio": 0.9,
+    "witness_disturbance_ratio": 1.1,
+    "safe_trials": 16,
+    "simulation_steps": 100,
+    "autonomous_steps": 500,
+    "convergence_tolerance": 1e-09,
+    "bootstrap_resamples": 2000,
+    "confidence_level": 0.95
+  },
+  "coupling_summaries": [
+    {
+      "coupling_gain": 0.04,
+      "autonomous_repertoire_count": {
+        "estimate": 16.0,
+        "lower": 16.0,
+        "upper": 16.0
+      },
+      "certified_robust_repertoire_count": {
+        "estimate": 16.0,
+        "lower": 16.0,
+        "upper": 16.0
+      },
+      "mean_uniform_disturbance_margin": {
+        "estimate": 0.1373224876692166,
+        "lower": 0.13519069136281903,
+        "upper": 0.14050643953051517
+      },
+      "safe_survival_rate": 1.0,
+      "adversarial_witness_escape_rate": 1.0
+    },
+    {
+      "coupling_gain": 0.08,
+      "autonomous_repertoire_count": {
+        "estimate": 13.866666666666667,
+        "lower": 12.533333333333333,
+        "upper": 14.939999999999964
+      },
+      "certified_robust_repertoire_count": {
+        "estimate": 9.733333333333333,
+        "lower": 9.2,
+        "upper": 10.266666666666667
+      },
+      "mean_uniform_disturbance_margin": {
+        "estimate": 0.08045409808043755,
+        "lower": 0.076410846841959,
+        "upper": 0.08576019586392376
+      },
+      "safe_survival_rate": 1.0,
+      "adversarial_witness_escape_rate": 1.0
+    }
+  ],
+  "paired_contrasts": {
+    "weak_minus_strong_autonomous_count": {
+      "estimate": 2.1333333333333333,
+      "lower": 1.0666666666666667,
+      "upper": 3.466666666666667
+    },
+    "weak_minus_strong_certified_count": {
+      "estimate": 6.266666666666667,
+      "lower": 5.733333333333333,
+      "upper": 6.733333333333333
+    }
+  },
+  "count_distributions": {
+    "coupling_0.04": {
+      "autonomous": {
+        "16": 30
+      },
+      "certified": {
+        "16": 30
+      }
+    },
+    "coupling_0.08": {
+      "autonomous": {
+        "8": 8,
+        "16": 22
+      },
+      "certified": {
+        "8": 8,
+        "10": 20,
+        "14": 2
+      }
+    }
+  },
+  "decisions": {
+    "autonomous_repertoire_preserved": false,
+    "robust_repertoire_separated": true,
+    "safe_box_invariance": true,
+    "adversarial_boundary_witness": true
+  },
+  "post_hoc": {
+    "autonomous_horizon_1000_count_distribution_unchanged": true,
+    "coupling_0.07": {
+      "uses_same_selected_seeds": true,
+      "autonomous_count_both_groups": 16.0,
+      "strong_certified_count": 9.733333333333333,
+      "weak_minus_strong_certified_count": 6.266666666666667
+    }
+  }
+}

@@ -7,12 +7,22 @@
 | 領域 | 検索軸 | 研究への接続 |
 |---|---|---|
 | Generalized RC | `"reservoir computing generalized"`, output reproducibility | `C-RC-003`, `H-RC-005` |
+| 機能的整合性 | output/readout consistency, consistency profile, replica test | `C-RC-012`, `H-RC-006` |
 | 条件付き安定性 | conditional Lyapunov, bubbling, generalized synchronization | `C-RC-001`, `H-RC-001` |
 | 多機能・連想記憶 | multifunctional RC, associative memory, spurious attractor | `H-RC-002` |
 | 遷移理論 | committor, MFPT, quasipotential, TPT, metastability | `H-RC-003` |
 | 大域解析 | basin stability, Conley–Morse, transfer operator | `C-DYN-001` |
+| 過渡安全性 | survivability, robust invariant set, ISS, tipping margin | `C-DYN-003`, `C-RC-015` |
+| NN不変集合 | neural dynamical system, set recursion, reachability, hyperbox | `OQ-010` |
+| robust repertoire | disturbance margin, viability kernel, safe basin, task robustness | `C-RC-019`, `H-RC-007` |
 | 容量理論 | IPC, TIPC, fading memory, universality | `C-RC-002` |
 | 調整 | differentiable dynamics, topology intervention, reservoir design | `H-RC-004` |
+| 発生prior | genomic bottleneck, developmental encoding, innate circuit | `C-BIO-001`, `H-BIO-001` |
+| 発生connectome | connectome maturation, pruning, CA3 development | `C-BIO-002`, `H-BIO-002` |
+| 進化と生涯学習 | evolution-learning loop, plasticity mask, critical period | `H-BIO-001`, `H-BIO-003` |
+| 力学的干渉保護 | dynamical subspace, orthogonal gradient, modular continual learning | `C-BIO-003`, `H-BIO-004`, `H-BIO-005` |
+| motif再利用 | dynamical motif, compositional RNN, fast task transfer | `C-RC-017`, `H-BIO-002` |
+| plasticity枯渇 | loss of plasticity, feature renewal, continual learning | `C-CL-001`, `H-BIO-002` |
 
 ## 情報源の優先順位
 

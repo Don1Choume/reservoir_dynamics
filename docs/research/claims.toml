@@ -203,3 +203,533 @@ statement = "Generalized RCで必要な読み出し複雑度は、観測不能�
 falsification_criteria = [
   "可観測性と条件付き不安定性を独立に操作しても、必要な履歴長、パラメータ数、学習標本数に再現可能な変化がない。",
 ]
+
+[[claims]]
+id = "C-RC-007"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "8次元tanh RNNの3 seed pilotで、負の最大条件付きLyapunov指数とreplica非同期が9条件で共存し、局所摂動減衰だけでは大域的な入力応答一意性を保証しなかった。"
+sources = [
+  "https://doi.org/10.1162/NECO_a_00411",
+  "https://doi.org/10.1016/j.physd.2020.132609",
+]
+implementations = [
+  "src/reservoir_dynamics/systems/tanh_rnn.py",
+  "src/reservoir_dynamics/metrics/top_conditional_lyapunov.py",
+  "src/reservoir_dynamics/experiments/multidimensional_memory_sweep.py",
+]
+tests = [
+  "tests/systems/test_tanh_rnn.py",
+  "tests/metrics/test_top_conditional_lyapunov.py",
+  "tests/experiments/test_multidimensional_memory_sweep.py",
+]
+limitations = [
+  "直交再帰核、8次元、3 seed、有限時間に限定したpilotである。",
+  "最大条件付き指数はzero初期状態からの一つの参照軌道に沿って評価した。",
+  "replica集合は4個の決定論的初期状態であり、吸引域分布を標本化していない。",
+]
+falsification_criteria = [
+  "同じspecで非同期結果が再現せず、数値実装または閾値設定の誤りと判明する。",
+]
+
+[[claims]]
+id = "C-RC-008"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-003ではrecurrent gain 1.2と1.5の全seedで、input gain 1.5がreplica同期を回復した一方、低recurrent gainでは強入力に伴う線形記憶容量低下を観測した。"
+sources = [
+  "https://doi.org/10.1016/j.neunet.2012.07.005",
+  "https://doi.org/10.24406/publica-fhg-291107",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/linear_memory.py",
+  "src/reservoir_dynamics/experiments/multidimensional_memory_sweep.py",
+]
+tests = [
+  "tests/metrics/test_linear_memory.py",
+  "tests/experiments/test_multidimensional_memory_sweep.py",
+]
+limitations = [
+  "同期回復と記憶低下は同じinput gain操作により同時に変化しており、媒介関係を識別していない。",
+  "線形遅延記憶だけを評価し、非線形情報処理容量とtask性能は未測定である。",
+]
+
+[[claims]]
+id = "C-RC-009"
+status = "provisional"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-003の直交tanh RNNでは、最良のseed平均線形記憶容量はtop条件付き指数が0に近い条件ではなく、recurrent gain 0.6、input gain 0.1の強い収縮条件で得られた。"
+sources = [
+  "https://doi.org/10.24406/publica-fhg-291107",
+  "https://doi.org/10.1038/srep00514",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/linear_memory.py",
+  "src/reservoir_dynamics/experiments/multidimensional_memory_sweep.py",
+]
+tests = [
+  "tests/metrics/test_linear_memory.py",
+  "tests/experiments/test_multidimensional_memory_sweep.py",
+]
+limitations = [
+  "3 seedかつ単一network familyの探索的結果であり、edge-of-chaos仮説一般への反証ではない。",
+  "有限test標本では相関係数二乗の総和に正方向biasがあり、最大値が状態次元をわずかに超えた。",
+]
+falsification_criteria = [
+  "30 seed以上、複数network family、標本bias補正後に、同期領域のedge近傍が一貫して優越する。",
+]
+
+[[claims]]
+id = "C-RC-010"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-004の8次元直交tanh RNNでは、30対応seedにおける(0.6, 0.1)の局所線形記憶容量が(0.9, 0.5)を平均0.7356、bootstrap 95%区間[0.6305, 0.8467]で上回った。"
+sources = [
+  "https://doi.org/10.1007/s12064-011-0146-8",
+  "https://doi.org/10.1103/PhysRevE.100.062312",
+  "https://doi.org/10.1063/5.0038163",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/bootstrap.py",
+  "src/reservoir_dynamics/metrics/linear_memory.py",
+  "src/reservoir_dynamics/experiments/replica_readout_validation.py",
+]
+tests = [
+  "tests/metrics/test_bootstrap.py",
+  "tests/metrics/test_linear_memory.py",
+  "tests/experiments/test_replica_readout_validation.py",
+]
+limitations = [
+  "単一の直交tanh RNN family、8次元、12遅延の線形記憶課題に限定される。",
+  "edge-of-chaos一般への反証ではなく、比較した2条件間の局所結果である。",
+  "有限標本のlocal memoryは相関係数二乗に由来する正方向biasを含み得る。",
+]
+falsification_criteria = [
+  "独立seedによる同一specの確認実験で、対応差の95%区間が0以下を含む。",
+]
+
+[[claims]]
+id = "C-RC-011"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-004ではinput gainを1.5へ上げると、recurrent gain 1.2と1.5の両方で同期率が平均0.7333改善し、shared worst容量もそれぞれ3.6703と2.6191改善した。"
+sources = [
+  "https://doi.org/10.1162/NECO_a_00411",
+  "https://doi.org/10.1016/j.physd.2020.132609",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/replica.py",
+  "src/reservoir_dynamics/metrics/linear_memory.py",
+  "src/reservoir_dynamics/experiments/replica_readout_validation.py",
+]
+tests = [
+  "tests/metrics/test_replica.py",
+  "tests/metrics/test_linear_memory.py",
+  "tests/experiments/test_replica_readout_validation.py",
+]
+limitations = [
+  "同期と容量の改善は同じinput gain介入に伴うため、媒介効果を分離していない。",
+  "入力分布、初期状態集合、有限時間、同期閾値に条件付けられる。",
+]
+falsification_criteria = [
+  "独立seedによる同一specで、いずれかの同期率差の95%区間下限が0以下になる。",
+]
+
+[[claims]]
+id = "C-RC-012"
+status = "provisional"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-004の非同期を含む条件間で固定readout retentionは大きく異なり、(1.5, 0.1)では平均0.0892、(1.5, 1.5)では平均0.9962だったため、状態非同期だけでは遅延記憶task上の有害性を決定できなかった。"
+sources = [
+  "https://doi.org/10.1063/1.5079686",
+  "https://arxiv.org/abs/2412.12104",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/linear_memory.py",
+  "src/reservoir_dynamics/experiments/replica_readout_validation.py",
+]
+tests = [
+  "tests/metrics/test_linear_memory.py",
+  "tests/experiments/test_replica_readout_validation.py",
+]
+limitations = [
+  "二条件はinput gainも異なるため、状態同期率から独立した因果効果ではない。",
+  "事前登録した絶対shared penalty基準は不成立であり、本記述は探索的な条件差である。",
+  "固定線形readoutと遅延記憶taskに限定され、任意taskの機能同値性を意味しない。",
+]
+falsification_criteria = [
+  "独立seedとnetwork familyで、状態非同期条件のretention差が再現しない。",
+  "(1.5, 0.1)型条件のretention 95%区間上限が事前登録値0.25未満にならない。",
+]
+
+[[claims]]
+id = "H-RC-006"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "raw state attractorを固定readoutとtask scoreが誘導する機能同値類へまとめた商構造は、replica距離または自律アトラクタ数だけより、未知初期状態で利用できる計算能力をよく予測する。"
+sources = [
+  "https://doi.org/10.1063/1.5079686",
+  "https://arxiv.org/abs/2412.12104",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/linear_memory.py",
+]
+tests = [
+  "tests/metrics/test_linear_memory.py",
+]
+limitations = [
+  "機能的商という整理概念は本研究の提案であり、同値関係の一般的性質と推定一致性は未証明である。",
+  "readout、task、許容誤差を変えると同値類も変わる。",
+]
+falsification_criteria = [
+  "複数network familyと未知taskで、global/output consistencyを含むbaselineへ機能的商の指標を加えても未知初期状態性能の増分予測力がない。",
+]
+
+[[claims]]
+id = "C-BIO-001"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "神経回路の全結合をゲノムが個別指定する代わりに、低次元な発生・結線規則が複雑な回路を生成するgenomic bottleneckという枠組みと、その計算モデルが提案されている。"
+sources = [
+  "https://doi.org/10.1038/s41467-019-11786-6",
+  "https://doi.org/10.1038/s41467-023-37980-1",
+  "https://doi.org/10.1073/pnas.2409160121",
+]
+limitations = [
+  "genomic bottleneckは有力な枠組みだが、個々の生物種の全神経回路が同一方式で符号化されることを証明していない。",
+  "人工networkでの圧縮とtransfer性能は、生物学的発生機構そのものの再現ではない。",
+]
+
+[[claims]]
+id = "C-BIO-002"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "神経系発生では保存される構造的scaffoldと個体差・発生依存の結合変化が共存し、CA3では発生に伴う疎で構造化された再帰結合への変化が報告されている。"
+sources = [
+  "https://doi.org/10.1038/s41586-021-03778-8",
+  "https://doi.org/10.1038/s41467-026-71914-x",
+]
+limitations = [
+  "線虫全脳とmouse CA3の結果を、人間全脳へ直接一般化できない。",
+  "遺伝的指定と経験依存塑性の寄与率は回路、発生時期、種により異なる。",
+]
+
+[[claims]]
+id = "H-BIO-001"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "圧縮された発生generatorが機能コアとplastic reserveを同時生成するnetworkは、同じ記述長、学習標本、更新量のrandom初期networkより、学習前性能、適応速度、core保持をPareto改善する。"
+falsification_criteria = [
+  "未知task familyと未知seedで、random初期化または全結合学習が同じbudget下でPareto frontierを一貫して支配する。",
+]
+limitations = [
+  "plastic reserveの操作定義とbudgetの公平な対応付けを事前規定する必要がある。",
+]
+
+[[claims]]
+id = "H-BIO-002"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "有用な力学的余剰は未使用アトラクタの静的個数ではなく、既存core性能を許容範囲内に保ちながら新しい安定応答を形成できる制約付き適応容量である。"
+falsification_criteria = [
+  "複数network familyとtask familyで、静的アトラクタ数が制約付き適応容量より新規学習、忘却、頑健性を一貫してよく予測する。",
+]
+
+[[claims]]
+id = "H-BIO-003"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "人間規模の処理能力に必要な条件は、状態数だけでなく、task組合せ複雑度、可塑的余剰、時間尺度階層、bandwidth、energy、頑健性、発生記述長の同時制約として下界化できる。"
+falsification_criteria = [
+  "小規模から大規模へのscaling lawがnetwork family間で安定せず、生物データまたは未知scaleを予測できない。",
+]
+limitations = [
+  "現段階では具体的な下界を導出しておらず、研究programを示す仮説である。",
+]
+
+[[claims]]
+id = "C-BIO-003"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "相補学習系は高速な新規記憶獲得と既存構造知識の緩徐な更新を分けることで干渉を抑える枠組みを示し、RNNでは既存task dynamicsを活動部分空間内に保護する学習則が実証されている。"
+sources = [
+  "https://doi.org/10.1037/0033-295X.102.3.419",
+  "https://proceedings.neurips.cc/paper/2020/hash/a576eafbce762079f7d1f77fca1c5cc2-Abstract.html",
+  "https://proceedings.mlr.press/v108/farajtabar20a.html",
+]
+limitations = [
+  "相補学習系は生物学的・計算論的枠組みであり、厳密なblock-triangular結線を主張しない。",
+  "直交部分空間学習の人工RNN結果を、人間の生涯学習機構へ直接一般化できない。",
+]
+
+[[claims]]
+id = "C-RC-013"
+status = "established"
+evidence_type = "inference"
+statement = "tanh core–reserve系でcore parameterを固定したreserve-only更新を比較すると、core距離はD[t+1] <= Lc D[t] + Lf Rを満たし、feedback blockが0かつ初期coreが同じならcore軌道とcore readoutは厳密に不変である。"
+sources = [
+  "https://proceedings.neurips.cc/paper/2020/hash/a576eafbce762079f7d1f77fca1c5cc2-Abstract.html",
+  "https://proceedings.mlr.press/v108/farajtabar20a.html",
+]
+implementations = [
+  "src/reservoir_dynamics/systems/core_reserve_tanh.py",
+  "src/reservoir_dynamics/theory/core_protection.py",
+]
+tests = [
+  "tests/systems/test_core_reserve_tanh.py",
+  "tests/theory/test_core_protection.py",
+]
+limitations = [
+  "大域上界にはcore recurrent blockの誘導無限大normが1未満という強い十分条件を使う。",
+  "有限feedback上界は符号相殺とtanh飽和を使わないため保守的である。",
+  "生物回路が同じblock分解を持つことを意味しない。",
+]
+falsification_criteria = [
+  "仮定を満たす有限精度ground-truth系で、許容誤差を超える上界違反が再現する。",
+]
+
+[[claims]]
+id = "C-RC-014"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-005の4+4次元tanh系30 seedでは、zero-feedback reserve-only更新がcore retention 1を保ちながらnovel容量を平均3.5503改善し、同じ候補数と可塑parameter枠数で独立最適化したcore更新対照よりnovel容量1.8759、core retention 0.9715だけ高かった。"
+sources = [
+  "https://doi.org/10.1037/0033-295X.102.3.419",
+  "https://proceedings.neurips.cc/paper/2020/hash/a576eafbce762079f7d1f77fca1c5cc2-Abstract.html",
+]
+implementations = [
+  "src/reservoir_dynamics/experiments/core_reserve_trial.py",
+  "src/reservoir_dynamics/experiments/core_reserve_protection.py",
+]
+tests = [
+  "tests/experiments/test_core_reserve_trial.py",
+  "tests/experiments/test_core_reserve_protection.py",
+]
+limitations = [
+  "対角、収縮、4+4次元の人工tanh系と二つの独立遅延記憶taskに限定される。",
+  "protected群はreserve、対照群はcoreだけを新規taskに使う構成的介入であり、random maskや既存continual-learning法とは未比較である。",
+  "各blockの対角重みと入力重みは共通gainで束縛され、8可塑parameter枠に対する実効探索次元は2である。",
+  "新しい自律アトラクタの形成ではなく、入力駆動線形記憶容量の獲得を測った。",
+]
+falsification_criteria = [
+  "独立network familyまたはrandom matched mask対照で、protected更新のcore保持・新規容量Pareto差の95%区間が0を含む。",
+]
+
+[[claims]]
+id = "H-BIO-004"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "発生中に形成されるmodule境界、疎結合、可塑性maskは、同じ可塑parameter数の一様またはrandom更新より、既存機能因子を保った新規学習をPareto改善する。"
+sources = [
+  "https://doi.org/10.1037/0033-295X.102.3.419",
+  "https://proceedings.neurips.cc/paper/2020/hash/a576eafbce762079f7d1f77fca1c5cc2-Abstract.html",
+]
+falsification_criteria = [
+  "複数network family、未知task、未知seedで、matched random maskが構造化maskのcore保持・新規学習Pareto frontierを一貫して支配する。",
+]
+limitations = [
+  "EXP-2026-005は構成的block対照であり、発生過程によるmask形成を検証していない。",
+]
+
+[[claims]]
+id = "H-BIO-005"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "多数の可塑moduleを持つ系でcore機能を頑健に保つには、module数そのものよりcoreへ流入するfeedback誘導normの総和を収縮marginと許容忘却に応じて制御する必要がある。"
+falsification_criteria = [
+  "feedback norm総和、core収縮margin、reserve活動差を独立操作しても、core偏差または忘却の上界・経験的scale lawに再現可能な関係がない。",
+]
+limitations = [
+  "現在の不等式はworst-case十分条件であり、人間規模の処理能力に対する必要条件ではない。",
+  "高次元、非normal、多アトラクタcoreでは安全集合と外力方向を含む別のcertificateが必要である。",
+]
+
+[[claims]]
+id = "C-DYN-003"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "Survivabilityは漸近的なattractor所属だけでなく、指定した望ましい領域から過渡軌道が一度も出ない初期条件の割合として定義でき、basin stabilityと異なる情報を与える。"
+sources = [
+  "https://doi.org/10.1038/srep29654",
+  "https://doi.org/10.1038/nphys2516",
+]
+limitations = [
+  "値は安全領域、初期条件分布、観測horizonに依存する。",
+  "有限標本推定は決定論的なロバスト正不変性の証明ではない。",
+]
+
+[[claims]]
+id = "C-RC-015"
+status = "established"
+evidence_type = "inference"
+statement = "scalar双安定tanh core c'=tanh(a c+eta), a>1では、m=sqrt(1-1/a)とeta_crit=a m-atanh(m)により、|eta_t|<=eta_critなら正負の区間[m,1]と[-1,-m]が任意の時変外力に対してロバスト正不変になる。"
+sources = [
+  "https://doi.org/10.1016/S0005-1098(01)00028-0",
+  "https://doi.org/10.1038/srep29654",
+]
+implementations = [
+  "src/reservoir_dynamics/theory/bistable_margin.py",
+]
+tests = [
+  "tests/theory/test_bistable_margin.py",
+]
+limitations = [
+  "scalar、離散時間、加法外力をtanh内部へ持つ対称双安定系の十分条件である。",
+  "一般のRNNにおける最大ロバスト不変集合または必要条件ではない。",
+  "外力の方向、符号相殺、実際のreserve振幅を使わないworst-case証明である。",
+]
+falsification_criteria = [
+  "仮定内の厳密計算または十分精度の数値計算で、認証区間からの逸脱が再現する。",
+]
+
+[[claims]]
+id = "C-RC-016"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-006のscalar双安定core 30 seed評価では、cue後に平均0.9327の符号状態を保持するreserveを形成し、臨界外力比0.5と0.9でcertified core retention 1を保った一方、比1.1と1.5では反対符号cueの全trialがcore tippingを起こした。"
+sources = [
+  "https://doi.org/10.1038/srep29654",
+  "https://doi.org/10.1038/nphys2516",
+]
+implementations = [
+  "src/reservoir_dynamics/experiments/bistable_reserve_trial.py",
+  "src/reservoir_dynamics/experiments/bistable_core_protection.py",
+]
+tests = [
+  "tests/experiments/test_bistable_core_protection.py",
+]
+limitations = [
+  "scalar、決定論的、対称tanh系であり、reserve parameterは有限候補から選択した。",
+  "勾配学習、逐次task、noise、非対角または高次元RNNを検証していない。",
+  "reserve recallは漸近固定点でseed間分散がなく、seed変動は初期値とcue振幅の標本化に由来する。",
+  "臨界比超過は最悪方向の十分な持続外力に対する結果であり、任意の超過外力が失敗する必要条件ではない。",
+]
+falsification_criteria = [
+  "同じspecで臨界比未満のcertified retentionが1を下回る。",
+  "horizon感度を十分延長しても臨界比超過の一定最悪外力または反対cueでtippingが再現しない。",
+]
+
+[[claims]]
+id = "C-RC-017"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "multitask人工RNNでは、attractor、decision boundary、rotationなどのdynamical motifが関連task間で再利用され、既存motifを持つnetworkが入力重みの学習により新taskへ速く転用できる例が報告されている。"
+sources = [
+  "https://doi.org/10.1038/s41593-024-01668-6",
+]
+limitations = [
+  "特定の人工RNNとtask suiteにおける結果であり、全taskまたは生物回路の普遍的module性を証明しない。",
+  "motif再利用と未使用reserveへの新規attractor形成は異なる適応機構である。",
+]
+
+[[claims]]
+id = "C-CL-001"
+status = "established"
+evidence_type = "sourced_fact"
+statement = "標準的なdeep learningは継続的な非定常task列で新しいtaskを学ぶ能力自体を失うplasticity lossを示し、低utility featureを継続的に置換する方法が複数設定でplasticityを維持した。"
+sources = [
+  "https://doi.org/10.1038/s41586-024-07711-7",
+]
+limitations = [
+  "主にdeep feedforward networkとcontinual supervisedまたはreinforcement learning設定の結果である。",
+  "plasticity lossをattractor余剰の枯渇と同一視できず、RNN力学での対応付けが必要である。",
+]
+
+[[claims]]
+id = "C-RC-018"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-007の4次元signed tanh RNN 30 matched seedでは、coupling 0.04から0.08への介入でautonomous countが平均2.1333、orthant-box認証countが平均6.2667減り、raw count一定という事前判定は不成立だった。"
+sources = [
+  "https://doi.org/10.1038/srep29654",
+  "https://arxiv.org/abs/2505.11546",
+]
+implementations = [
+  "src/reservoir_dynamics/theory/orthant_box.py",
+  "src/reservoir_dynamics/experiments/orthant_margin_sweep.py",
+]
+tests = [
+  "tests/theory/test_orthant_box.py",
+  "tests/experiments/test_orthant_margin_sweep.py",
+]
+limitations = [
+  "4次元対称signed complete graph、二coupling強度、指定16初期値に限定される。",
+  "raw countも変化したため、certified countの増分的なtask予測力を示していない。",
+  "共通境界hyperboxの認証不能はattractor不存在を意味しない。",
+]
+falsification_criteria = [
+  "同じspecでautonomousまたはcertified countの対応差が再現せず、実装誤りと判明する。",
+]
+
+[[claims]]
+id = "C-RC-019"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-008の未使用30 seedでは、coupling 0.04群と0.07群がともに全seedで16 autonomous orthant attractorを保つ一方、orthant-box認証countは16.0対10.2となり、対応差95%区間は[5.2667, 6.2667]だった。"
+sources = [
+  "https://doi.org/10.1038/srep29654",
+  "https://arxiv.org/abs/2505.11546",
+]
+implementations = [
+  "src/reservoir_dynamics/theory/orthant_box.py",
+  "src/reservoir_dynamics/experiments/orthant_margin_sweep.py",
+  "src/reservoir_dynamics/experiments/orthant_count_confirmation.py",
+]
+tests = [
+  "tests/theory/test_orthant_box.py",
+  "tests/experiments/test_orthant_margin_sweep.py",
+  "tests/experiments/test_orthant_count_confirmation.py",
+]
+limitations = [
+  "同じ4次元signed complete graph生成分布内のseed一般化である。",
+  "coupling 0.07はEXP-2026-007の事後探索で選択され、別network familyでは未確認である。",
+  "認証countまたはmarginが未知task性能を予測することはまだ示していない。",
+  "raw countは指定初期値から発見した固定点数であり、完全列挙保証ではない。",
+]
+falsification_criteria = [
+  "同じ確認specまたは事前登録した別生成分布でraw count一致とcertified count差が再現しない。",
+]
+
+[[claims]]
+id = "H-RC-007"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "外乱強度別のrobust repertoire curve N_rob(e)とbasin-weighted safe mass S_rob(e)は、raw attractor countを一致させたnetwork間で、未知外乱下の記憶保持、誤遷移、task性能をよりよく予測する。"
+falsification_criteria = [
+  "複数network familyと未知外乱方向で、raw count、局所固有値、結合normを統制した後にrobust curveの増分予測力がない。",
+  "certificateが保守的過ぎ、Monte Carlo survivabilityまたはtask性能の順位を一貫して逆転させる。",
+]
+limitations = [
+  "EXP-2026-009は符号記憶について部分支持したが、hyperbox certificateと一つのnetwork familyに限定される。",
+  "coupling gainから独立した増分予測力、basin-weighted safe mass、未知task familyは未確認である。",
+]
+
+[[claims]]
+id = "C-RC-020"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-009の未使用30 seed、全120条件でraw autonomous countが16のまま、外乱0.08ではcertified robust fractionが符号記憶保持率とSpearman 0.8823、外乱0.16では平均marginが0.9347で相関し、discovery fitの予測MAEはraw-count baselineよりそれぞれ0.0554と0.0846低かった。"
+sources = [
+  "https://doi.org/10.1038/srep29654",
+  "https://doi.org/10.1016/S0005-1098(01)00028-0",
+]
+implementations = [
+  "src/reservoir_dynamics/theory/orthant_box.py",
+  "src/reservoir_dynamics/experiments/robust_repertoire_task.py",
+  "src/reservoir_dynamics/experiments/robust_repertoire_task_confirmation.py",
+]
+tests = [
+  "tests/theory/test_orthant_box.py",
+  "tests/experiments/test_robust_repertoire_task.py",
+  "tests/experiments/test_robust_repertoire_task_confirmation.py",
+]
+limitations = [
+  "4次元対称signed complete tanh RNN、一つの生成分布、一定corner外乱、符号保持taskに限定される。",
+  "robust featureはraw countを上回ったが、coupling baselineに対する誤差差95%区間は0を含んだ。",
+  "raw countは16の指定orthant初期値から発見した固定点数であり、完全列挙保証ではない。",
+  "discovery結果観測後に外乱強度とfeatureを選び、別seedで確認した二段階設計である。",
+]
+falsification_criteria = [
+  "同じ事前登録specの再実装でcertificate下界違反または主要予測判定の不成立が再現する。",
+  "事前登録した別network familyでrobust featureがraw countまたは局所安定性baselineを一貫して下回る。",
+]

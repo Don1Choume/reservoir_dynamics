@@ -1,0 +1,169 @@
+{
+  "artifact_type": "derived_summary",
+  "experiment_id": "EXP-2026-006",
+  "executed_at": "2026-07-30",
+  "spec": {
+    "trial_seeds": {
+      "first": 301,
+      "last": 330,
+      "count": 30
+    },
+    "analytical_recurrent_gains": [
+      1.2,
+      1.5,
+      2.0
+    ],
+    "core_recurrent_gain": 1.5,
+    "feedback_ratios": [
+      0.5,
+      0.9,
+      1.1,
+      1.5
+    ],
+    "calibration_trials": 64,
+    "evaluation_trials": 128,
+    "analytical_steps": 2000,
+    "evaluation_steps": 300,
+    "bootstrap_resamples": 2000,
+    "confidence_level": 0.95
+  },
+  "certificate": {
+    "invariant_boundary": 0.5773502691896258,
+    "critical_forcing": 0.2075464553220303,
+    "certified_uniform_fraction": 0.42264973081037416
+  },
+  "selected_adaptation": {
+    "recurrent_gain": 1.8,
+    "cue_gain": 2.0,
+    "seed_count": 30
+  },
+  "feedback_summaries": [
+    {
+      "feedback_ratio": 0.5,
+      "reserve_recall_gain": {
+        "estimate": 0.9327175721960947,
+        "lower": 0.9327175721960947,
+        "upper": 0.9327175721960947
+      },
+      "certified_core_retention": {
+        "estimate": 1.0,
+        "lower": 1.0,
+        "upper": 1.0
+      },
+      "full_basin_core_retention": {
+        "estimate": 0.9341145833333333,
+        "lower": 0.9260416666666667,
+        "upper": 0.9416666666666667
+      },
+      "opposing_core_retention": {
+        "estimate": 1.0,
+        "lower": 1.0,
+        "upper": 1.0
+      },
+      "mean_minimum_certified_margin": {
+        "estimate": 0.17920009880416457,
+        "lower": 0.17619978948853818,
+        "upper": 0.18219415804921432
+      }
+    },
+    {
+      "feedback_ratio": 0.9,
+      "reserve_recall_gain": {
+        "estimate": 0.9327175721960947,
+        "lower": 0.9327175721960947,
+        "upper": 0.9327175721960947
+      },
+      "certified_core_retention": {
+        "estimate": 1.0,
+        "lower": 1.0,
+        "upper": 1.0
+      },
+      "full_basin_core_retention": {
+        "estimate": 0.8692708333333333,
+        "lower": 0.8596354166666667,
+        "upper": 0.8786458333333333
+      },
+      "opposing_core_retention": {
+        "estimate": 1.0,
+        "lower": 1.0,
+        "upper": 1.0
+      },
+      "mean_minimum_certified_margin": {
+        "estimate": 0.15555340723200228,
+        "lower": 0.15310874367030983,
+        "upper": 0.15788060241610605
+      }
+    },
+    {
+      "feedback_ratio": 1.1,
+      "reserve_recall_gain": {
+        "estimate": 0.9327175721960947,
+        "lower": 0.9327175721960947,
+        "upper": 0.9327175721960947
+      },
+      "certified_core_retention": {
+        "estimate": 0.5,
+        "lower": 0.5,
+        "upper": 0.5
+      },
+      "full_basin_core_retention": {
+        "estimate": 0.5,
+        "lower": 0.5,
+        "upper": 0.5
+      },
+      "opposing_core_retention": {
+        "estimate": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "mean_minimum_certified_margin": {
+        "estimate": -0.6506407052453631,
+        "lower": -0.6527868945454126,
+        "upper": -0.648613031664562
+      }
+    },
+    {
+      "feedback_ratio": 1.5,
+      "reserve_recall_gain": {
+        "estimate": 0.9327175721960947,
+        "lower": 0.9327175721960947,
+        "upper": 0.9327175721960947
+      },
+      "certified_core_retention": {
+        "estimate": 0.5,
+        "lower": 0.5,
+        "upper": 0.5
+      },
+      "full_basin_core_retention": {
+        "estimate": 0.5,
+        "lower": 0.5,
+        "upper": 0.5
+      },
+      "opposing_core_retention": {
+        "estimate": 0.0,
+        "lower": 0.0,
+        "upper": 0.0
+      },
+      "mean_minimum_certified_margin": {
+        "estimate": -0.6574513466415725,
+        "lower": -0.6595202997615007,
+        "upper": -0.6553519845244475
+      }
+    }
+  ],
+  "decisions": {
+    "analytic_safe_invariance": true,
+    "analytic_threshold_tipping": true,
+    "reserve_attractor_acquisition": true,
+    "certified_core_preservation": true,
+    "margin_predicts_failure": true
+  },
+  "horizon_sensitivity": {
+    "evaluation_steps": [
+      100,
+      300,
+      600
+    ],
+    "retention_estimates_identical": true
+  }
+}

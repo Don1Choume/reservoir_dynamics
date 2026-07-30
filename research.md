@@ -26,6 +26,19 @@
 
 を、信頼区間と実験履歴付きで返す **Attractor and Capacity Atlas** と、その指標を用いる多目的調整器である。
 
+長期的には、このAtlasを「進化的に圧縮された機能コア」と「生涯学習に利用
+できる可塑的余剰」の設計問題へ拡張する。余剰は静的な未使用アトラクタ数では
+なく、既存機能を保持しながら新しい安定応答を形成できる制約付き適応容量と
+して定義する。仮説、数学的定義、段階的な生物学対応は
+[生得的機能コアと可塑的力学余剰](docs/research/directions/innate-core-plastic-reserve.md)
+で管理する。
+
+最初の構成的検証では、収縮coreの軌道偏差budgetに加え、双安定coreの
+ロバスト正不変forcing marginを導いた。cueでreserveへ新しい自律固定点を
+形成してもmargin内なら既存coreを保護できる一方、無外力で同じbasinに属する
+だけでは学習外乱下の安全性を保証しなかった。詳細は
+[EXP-2026-006](docs/research/experiments/EXP-2026-006.md)に記録する。
+
 ## 1. 既存の前提をどう修正するか
 
 ### 1.1 Reservoir Computing Generalized の正確な射程
@@ -573,7 +586,41 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
   [EXP-2026-001](docs/research/experiments/EXP-2026-001.md) を記録した。
 - 条件付きLyapunov指数とreplica同期を分離した
   [EXP-2026-002](docs/research/experiments/EXP-2026-002.md) を記録した。
-- これは既知理論のground truthであり、原著論文の新規結果ではない。
+- 多次元tanh RNNでtop条件付きLyapunov指数、replica同期、線形記憶を
+  同時測定した
+  [EXP-2026-003](docs/research/experiments/EXP-2026-003.md) を記録した。
+- 参照replicaだけで学習した固定readoutを全初期状態へ移送する指標を追加し、
+  6条件30 seedの
+  [EXP-2026-004](docs/research/experiments/EXP-2026-004.md) を記録した。
+- 事前登録4判定のうち、入力による同期回復と強収縮条件の局所記憶優位は
+  成立し、負CLE・非同期率の強い頻度基準と絶対shared penalty基準は
+  不成立だった。
+- 状態非同期でもtask上ほぼ同値な応答と、局所容量が初期状態間で移送できない
+  応答を分離した。既存のoutput consistencyとの差分検証は未完了である。
+- core–reserve block系でreserve-only更新時のcore不変性とfinite-feedback
+  偏差上界を導出し、30 seedの
+  [EXP-2026-005](docs/research/experiments/EXP-2026-005.md) で照合した。
+- zero-feedbackではcore retention 1のままnovel容量を追加できたが、これは
+  構成的十分性であり、発生過程または生物学的moduleの実証ではない。
+- scalar双安定coreでロバスト正不変forcing marginを導出し、cue形成reserveと
+  既存coreのsurvivabilityを30 seedの
+  [EXP-2026-006](docs/research/experiments/EXP-2026-006.md) で照合した。
+- 臨界比0.9まで認証区間のretentionは1だったが、無外力basin全体では
+  0.8693へ低下し、basin所属と外乱下の安全性を分離した。
+- 臨界比1.1以上では反対cueの全trialがtippingした。これはscalar構成的
+  十分性であり、高次元RNNまたは生物回路への一般化ではない。
+- `EXP-2026-007` の強coupling条件ではraw countも低下し、事前登録した
+  count-matched判定は不成立だった。
+- その陰性結果から分離した未使用seed確認
+  [EXP-2026-008](docs/research/experiments/EXP-2026-008.md) では、
+  両群のraw countを16へ一致させたまま、orthant-box認証countを16.0対
+  10.2へ分離した。
+- 事前登録した
+  [EXP-2026-009](docs/research/experiments/EXP-2026-009.md) の未使用30 seed
+  では、raw count一定のまま、低外乱でrobust fractionと符号記憶保持率の
+  Spearman 0.8823、高外乱で平均marginとのSpearman 0.9347を確認した。
+- これは一つの4次元signed RNN familyにおけるtask接続であり、couplingから
+  独立した増分予測力、別family、人間規模条件ではない。
 - canonical systems、artifact schema、seed manifestが未完了のためGate 0は未通過である。
 - 論文化判断は[論文化ゲート](docs/research/publication-readiness.md)で管理する。
 
@@ -712,6 +759,25 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - [R25] Wringe, Stepney, and Trefzer (2025), “Reservoir Computing Benchmarks: A Tutorial Review and Critique.” *International Journal of Parallel, Emergent and Distributed Systems* 40(4), 313–351. <https://doi.org/10.1080/17445760.2025.2472211>
 - [R26] Suetani and Parlitz (2026), “Impact of Weak Generalized Synchronization on Time Series Forecasting Using Reservoir Computers.” *Chaos* 36, 043125. <https://doi.org/10.1063/5.0283017>
 - [R27] Metzner et al. (2026), “Illuminating the Black Box of Reservoir Computing.” *Scientific Reports* 16, 15500. <https://doi.org/10.1038/s41598-026-53098-y>
+- [R28] Lymburn et al. (2019), “Consistency in Echo-State Networks.”
+  *Chaos* 29, 023118. <https://doi.org/10.1063/1.5079686>
+- [R29] McClelland, McNaughton, and O'Reilly (1995), “Why There Are
+  Complementary Learning Systems in the Hippocampus and Neocortex.”
+  *Psychological Review* 102(3), 419–457.
+  <https://doi.org/10.1037/0033-295X.102.3.419>
+- [R30] Duncker et al. (2020), “Organizing Recurrent Network Dynamics by
+  Task-Computation to Enable Continual Learning.” *NeurIPS 33*.
+  <https://proceedings.neurips.cc/paper/2020/hash/a576eafbce762079f7d1f77fca1c5cc2-Abstract.html>
+- [R31] Farajtabar et al. (2020), “Orthogonal Gradient Descent for
+  Continual Learning.” *AISTATS*, PMLR 108.
+  <https://proceedings.mlr.press/v108/farajtabar20a.html>
+- [R32] Driscoll, Shenoy, and Sussillo (2024), “Flexible Multitask
+  Computation in Recurrent Networks Utilizes Shared Dynamical Motifs.”
+  *Nature Neuroscience* 27, 1349–1363.
+  <https://doi.org/10.1038/s41593-024-01668-6>
+- [R33] Dohare et al. (2024), “Loss of Plasticity in Deep Continual
+  Learning.” *Nature* 632, 768–774.
+  <https://doi.org/10.1038/s41586-024-07711-7>
 
 ### 13.3 力学系・遷移・トポロジーの分析
 
@@ -731,6 +797,15 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - [A14] Vieira et al. (2022), “A Pipeline for Data-Driven Analysis of Complex Dynamical Systems Using Morse Graphs.” arXiv:2202.08383. <https://arxiv.org/abs/2202.08383>
 - [A15] Heymann and Vanden-Eijnden (2008), “The Geometric Minimum Action Method.” *Communications on Pure and Applied Mathematics*. <https://doi.org/10.1002/cpa.20238>
 - [A16] Morr, Kuehn, and Datseris (2026), “Computing Resilience Measures in Dynamical Systems.” *Chaos* 36, 023102. <https://doi.org/10.1063/5.0303938>
+- [A17] Hellmann et al. (2016), “Survivability of Deterministic Dynamical
+  Systems.” *Scientific Reports* 6, 29654.
+  <https://doi.org/10.1038/srep29654>
+- [A18] Jiang and Wang (2001), “Input-to-State Stability for Discrete-Time
+  Nonlinear Systems.” *Automatica* 37(6), 857–869.
+  <https://doi.org/10.1016/S0005-1098(01)00028-0>
+- [A19] Li et al. (2025), “Control Invariant Sets for Neural Network
+  Dynamical Systems and Recursive Feasibility in Model Predictive Control.”
+  arXiv:2505.11546. <https://arxiv.org/abs/2505.11546>
 
 ## 14. 調査方法と確度
 
