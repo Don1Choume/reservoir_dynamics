@@ -65,6 +65,16 @@ full systemとcomponent計算の双方から確認した。計60個の有効構�
 0.390625–1.0へ変化する中でもmodule積に対する残差は0だった。これは独立
 moduleの零次模型を支持するが、弱結合残差や普遍予測器はまだ支持しない。
 
+[EXP-2026-014](docs/research/experiments/EXP-2026-014.md) では、この零次模型へ
+infinity normが既知の弱い二bridge結合を加えた。未使用30 seed、1,440点、
+368,640 challengeでraw fixed-point countは全点16を保ったが、平均絶対task積
+残差はcross strength 0から0.04にかけて0から0.0831へ単調非減少し、最大strength
+の非零残差率は0.65だった。座標別rectangleを実際のcross-edgeへ移送する保証と、
+結合normだけでmarginを減算する保証はいずれもtask保持率の下界を保った。
+従ってAtlasはcomponent profileとexactな積則だけでなく、結合norm、積則残差、
+移送可能なcertificateを保持する必要がある。ただし非対称結合、異なるmodule
+size、確率外乱への一般化は未確認である。
+
 このmodule方向は、構造connectomeへの多遺伝子的影響、発達中の階層的な
 機能結合再編、多尺度構造固有モードによる機能ダイナミクス制約、乳幼児
 moduleの個体差という2024–2026年の一次研究 [R38–R42] と対応付ける。ただし、

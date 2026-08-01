@@ -62,11 +62,13 @@ established
 - `theory/orthant-box-margin.md`: 非対角RNNのorthant別robust repertoire
 - `theory/modular-factorization.md`: 独立moduleの積則とgauge同値性
 - `theory/signed-coordinate-conjugacy.md`: 符号共役、cycle不変量、有効構造標本数
+- `theory/weak-module-coupling.md`: 弱いmodule間結合のrectangle保証と積則残差
 - `experiments/EXP-2026-010.md`: 4 network familyの未知seed task確認
 - `experiments/EXP-2026-011.md`: family・seed二重holdout予測確認
 - `experiments/EXP-2026-012.md`: candidate未使用modular familyへの陰性外挿確認
 - `experiments/AUDIT-2026-001.md`: 既存5 familyの符号共役class監査
 - `experiments/EXP-2026-013.md`: 異質独立moduleの積則確認事前登録
+- `experiments/EXP-2026-014.md`: 弱いmodule間結合による積則残差確認
 - `experiments/TEMPLATE.md`: 実験記録テンプレート
 - `directions/innate-core-plastic-reserve.md`: 生得的構造と生涯学習の長期仮説
 - `../papers/robust-repertoire-memory-ja.md`: robust repertoire論文草稿

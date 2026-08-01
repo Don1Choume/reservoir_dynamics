@@ -1,0 +1,108 @@
+{
+  "autonomous_steps": 500,
+  "challenge_count": 122880,
+  "convergence_tolerance": 1e-09,
+  "decisions": {
+    "norm_shifted_certificate_lower_bound": true,
+    "structure_gate": true,
+    "transported_certificate_lower_bound": true,
+    "transported_dominates_norm_shifted": true,
+    "zero_coupling_recovers_product": true
+  },
+  "diagonal_gain": 1.5,
+  "dimension": 4,
+  "experiment_id": "EXP-2026-014",
+  "maximum_absolute_task_product_residual": 0.375,
+  "minimum_task_minus_norm_shifted_certificate": 0.0,
+  "minimum_task_minus_transported_certificate": 0.0,
+  "minimum_transported_minus_norm_shifted_certificate": 0.0,
+  "phase": "pilot",
+  "point_count": 480,
+  "strength_summaries": [
+    {
+      "coupled_raw_attractor_count_values": [16],
+      "coupled_task_retention_range": [0.390625, 1.0],
+      "cross_coupling_strength": 0.0,
+      "maximum_absolute_task_product_residual": 0.0,
+      "mean_absolute_task_product_residual": 0.0,
+      "mean_norm_shifted_certified_fraction": 0.66875,
+      "mean_signed_task_product_residual": 0.0,
+      "mean_transported_rectangle_certified_fraction": 0.66875,
+      "nonzero_residual_fraction": 0.0,
+      "point_count": 80
+    },
+    {
+      "coupled_raw_attractor_count_values": [16],
+      "coupled_task_retention_range": [0.390625, 1.0],
+      "cross_coupling_strength": 0.0025,
+      "maximum_absolute_task_product_residual": 0.125,
+      "mean_absolute_task_product_residual": 0.00830078125,
+      "mean_norm_shifted_certified_fraction": 0.653125,
+      "mean_signed_task_product_residual": -0.00595703125,
+      "mean_transported_rectangle_certified_fraction": 0.65625,
+      "nonzero_residual_fraction": 0.1125,
+      "point_count": 80
+    },
+    {
+      "coupled_raw_attractor_count_values": [16],
+      "coupled_task_retention_range": [0.390625, 1.0],
+      "cross_coupling_strength": 0.005,
+      "maximum_absolute_task_product_residual": 0.15625,
+      "mean_absolute_task_product_residual": 0.016796875,
+      "mean_norm_shifted_certified_fraction": 0.625,
+      "mean_signed_task_product_residual": -0.007421875,
+      "mean_transported_rectangle_certified_fraction": 0.6359375,
+      "nonzero_residual_fraction": 0.175,
+      "point_count": 80
+    },
+    {
+      "coupled_raw_attractor_count_values": [16],
+      "coupled_task_retention_range": [0.390625, 1.0],
+      "cross_coupling_strength": 0.01,
+      "maximum_absolute_task_product_residual": 0.21875,
+      "mean_absolute_task_product_residual": 0.0216796875,
+      "mean_norm_shifted_certified_fraction": 0.6,
+      "mean_signed_task_product_residual": -0.0083984375,
+      "mean_transported_rectangle_certified_fraction": 0.61875,
+      "nonzero_residual_fraction": 0.225,
+      "point_count": 80
+    },
+    {
+      "coupled_raw_attractor_count_values": [16],
+      "coupled_task_retention_range": [0.390625, 1.0],
+      "cross_coupling_strength": 0.02,
+      "maximum_absolute_task_product_residual": 0.34375,
+      "mean_absolute_task_product_residual": 0.0390625,
+      "mean_norm_shifted_certified_fraction": 0.575,
+      "mean_signed_task_product_residual": -0.0298828125,
+      "mean_transported_rectangle_certified_fraction": 0.60625,
+      "nonzero_residual_fraction": 0.4,
+      "point_count": 80
+    },
+    {
+      "coupled_raw_attractor_count_values": [16],
+      "coupled_task_retention_range": [0.3984375, 1.0],
+      "cross_coupling_strength": 0.04,
+      "maximum_absolute_task_product_residual": 0.375,
+      "mean_absolute_task_product_residual": 0.082421875,
+      "mean_norm_shifted_certified_fraction": 0.446875,
+      "mean_signed_task_product_residual": -0.0365234375,
+      "mean_transported_rectangle_certified_fraction": 0.521875,
+      "nonzero_residual_fraction": 0.6625,
+      "point_count": 80
+    }
+  ],
+  "structure_gate": {
+    "cross_coupling_strengths": [0.0, 0.0025, 0.005, 0.01, 0.02, 0.04],
+    "cross_norms_valid": true,
+    "effective_class_counts": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+    "internal_coupling_gains": [0.05, 0.07],
+    "magnitude_pairs_unique": true,
+    "passed": true,
+    "positive_connectivity_valid": true,
+    "raw_network_counts": [10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10],
+    "trial_seeds": [1501, 1502, 1503, 1504, 1505, 1506, 1507, 1508, 1509, 1510],
+    "zero_components_valid": true
+  },
+  "task_steps": 100
+}

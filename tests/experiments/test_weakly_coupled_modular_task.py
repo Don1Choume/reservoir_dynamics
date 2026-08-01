@@ -5,6 +5,9 @@ from reservoir_dynamics.experiments.weakly_coupled_modular_task import (
     build_weakly_coupled_modular_weights,
     run_weak_coupling_factorization,
 )
+from reservoir_dynamics.experiments.weakly_coupled_modular_cli import (
+    summary_payload,
+)
 from reservoir_dynamics.metrics.structural_equivalence import (
     weakly_connected_components,
 )
@@ -66,6 +69,18 @@ class WeaklyCoupledModularTaskTest(unittest.TestCase):
         self.assertTrue(result.decisions.transported_certificate_lower_bound)
         self.assertTrue(result.decisions.norm_shifted_certificate_lower_bound)
         self.assertTrue(result.decisions.transported_dominates_norm_shifted)
+        self.assertIsInstance(
+            result.decisions.maximum_strength_mean_absolute_residual,
+            bool,
+        )
+        self.assertIsInstance(
+            result.decisions.maximum_strength_nonzero_residual_prevalence,
+            bool,
+        )
+        self.assertIsInstance(
+            result.decisions.mean_absolute_residual_non_decreasing,
+            bool,
+        )
         zero_points = tuple(
             point for point in result.points
             if point.cross_coupling_strength == 0.0
@@ -73,6 +88,10 @@ class WeaklyCoupledModularTaskTest(unittest.TestCase):
         self.assertTrue(
             all(point.task_product_residual == 0.0 for point in zero_points)
         )
+        summary = summary_payload(result)
+        self.assertEqual(summary["point_count"], 4)
+        self.assertEqual(summary["challenge_count"], 1_024)
+        self.assertEqual(len(summary["strength_summaries"]), 2)
 
     def test_rejects_nonzero_first_strength(self) -> None:
         with self.assertRaisesRegex(ValueError, "0から"):

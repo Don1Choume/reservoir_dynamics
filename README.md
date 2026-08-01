@@ -29,6 +29,7 @@
 - 対称・疎・非対称・非正規4 familyの事前登録外的妥当性確認
 - family・seed二重holdoutと、candidate未使用modular familyでの陰性外挿確認
 - 独立moduleの固定点・robust fraction・符号保持率の積則
+- 弱いmodule間結合の積則残差と座標別rectangle certificate
 - task-preserving共役を検出する有効構造多様性の監査規約
 - 結合norm、局所Jacobian、固定点座標、非正規性の比較baseline
 - 出典、実装、反証条件を接続する研究主張台帳
@@ -55,12 +56,16 @@
 - [EXP-2026-010](docs/research/experiments/EXP-2026-010.md)
 - [EXP-2026-011](docs/research/experiments/EXP-2026-011.md)
 - [EXP-2026-012](docs/research/experiments/EXP-2026-012.md)
+- [AUDIT-2026-001](docs/research/experiments/AUDIT-2026-001.md)
+- [EXP-2026-013](docs/research/experiments/EXP-2026-013.md)
+- [EXP-2026-014](docs/research/experiments/EXP-2026-014.md)
 - [日本語論文草稿](docs/papers/robust-repertoire-memory-ja.md)
 - [日本語論文DOCX](docs/papers/robust-repertoire-memory-ja.docx)
 - [core–reserve保護条件](docs/research/theory/core-reserve-protection.md)
 - [双安定coreのロバスト不変margin](docs/research/theory/bistable-core-margin.md)
 - [非対角tanh RNNのorthant-box margin](docs/research/theory/orthant-box-margin.md)
 - [独立moduleの積分解とgauge同値性](docs/research/theory/modular-factorization.md)
+- [弱いmodule間結合と積則残差](docs/research/theory/weak-module-coupling.md)
 - [生得的機能コアと可塑的力学余剰](docs/research/directions/innate-core-plastic-reserve.md)
 - [論文化ゲート](docs/research/publication-readiness.md)
 

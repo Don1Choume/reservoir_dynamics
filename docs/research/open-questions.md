@@ -192,12 +192,17 @@
 - EXP-2026-013の確認: module結合絶対値を変えた各gain30 class、計60 networkで、
   fixed point count、component certificate、全corner task retentionの積則が成立し、
   task積残差最大0、保持率範囲0.390625–1.0だった。
-- 次のgenerator: module size、module内非対称性、局所gain、弱いmodule間結合を
-  独立に乱数化し、gauge同値でないnetworkを作る。
+- EXP-2026-014の確認: 未使用30 seed、1,440点でraw count 16を保ちながら、
+  cross strength 0から0.04に対する平均絶対task積残差が0から0.0831へ単調
+  非減少した。最大strengthの非零残差率は0.65で、二種類のrectangle下界に
+  368,640 challengeで違反はなかった。
+- 次のgenerator: module size、module内非対称性、非対称bridge、局所gainを
+  独立に乱数化し、対称二bridge以外のgauge同値でないnetworkを作る。
 - 主要量: component数、component別 \(R_j(e)\)、積予測
   \(\prod_jR_j(e)\)、全系観測 \(R(e)\)、積則残差、task retention、energy。
-- 主要仮説: 弱結合領域では積則残差が結合normにより制御され、非直積familyで
-  fitしたglobal linear modelよりcomponent-aware modelの未知構造MAEが小さい。
+- 維持する仮説: symmetric two-bridge弱結合では積則残差が結合normとともに
+  増えた。次に、component-aware modelの未知非対称構造MAEがglobal feature
+  modelより小さいかを確認する。
 - 反証条件: module分解を加えても、同一budgetのglobal feature modelに対する
   増分予測力がない。または弱結合で積則残差が不連続・非有界に増える。
 
@@ -208,8 +213,10 @@
   AUDIT-2026-001では600 networkが192 classへ縮約された。
 - 未解決部分: signed permutation、一般similarity、近似共役、入力・readoutを含む
   task固有対称性を自動列挙できていない。
-- 次の実験: EXP-2026-013ではmodule coupling magnitudeをseedごとに変え、
-  task前構造gateで各gain30 classを要求する。
+- 追加確認: EXP-2026-013とEXP-2026-014では連続的なmodule coupling magnitudeを
+  seedごとに変え、task前構造gateで各群30 classを確認した。
+- 次の実験: signed permutation、node automorphism、入力・readoutを含むtask固有
+  対称群へ監査範囲を拡張する。
 - 主要量: raw seed数、有効class数、最大class size、class entropy、
   task閉性の成立条件、class-cluster bootstrap差。
 - 反証条件: 監査で異なるclassとされたnetworkが、より広い明示的対称群の下で

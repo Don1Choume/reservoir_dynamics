@@ -84,6 +84,14 @@
   certified fractionの差が0だったが、一般の等号は主張しない。
 - `EXP-2026-013` 実行前に全165テストと11 subtestを通過し、branch coverageは
   88%だった。
+- `EXP-2026-014` では未使用30 seed、2 internal gain、6 cross strength、4外乱の
+  1,440点でraw count 16を保ったまま、平均絶対task積残差が0から0.0831へ
+  単調非減少した。strength 0.04の非零残差率は0.65、最大絶対残差は0.375だった。
+- transported rectangleとnorm-shifted certificateは368,640 challengeでtask
+  保持率の下界を保ち、実際のcross-edge符号を使う前者はstrength 0.04で平均
+  0.5250を認証し、normだけの後者0.4406より保守性を緩和した。
+- `EXP-2026-014` 実行前に全171テストと11 subtestを通過し、branch coverageは
+  88%だった。
 
 ### 陰性結果
 
@@ -101,7 +109,7 @@
 ### 未検証
 
 - アトラクタprofileが符号保持以外の計算・記憶能力も予測するか
-- 弱結合、非対称、module size違いを含む複数modular family間の実効
+- 非対称結合、module size違いを含む複数modular family間の実効
   レパートリー比較
 - 遷移時間尺度とタスク時間尺度の整合
 - アトラクタ指向調整のbaselineに対する優位性
@@ -188,8 +196,11 @@ predictorとしての投稿判断は見送る。
 `EXP-2026-013` はその監査結果を受け、task前に符号共役classを構造gateとして
 固定し、異質な独立moduleで固定点数、certificate、task保持率の積則を確認した。
 これにより完全隔離系のcomponent分解は検証済みとなったが、これは零結合の
-exact baselineである。次の判別力ある検証は、弱結合に対する積則残差の増大を
-摂動量と対応付けることである。
+exact baselineである。`EXP-2026-014` は対称二bridgeの弱結合で、raw countを
+変えずに積則残差が結合normとともに増えることと、移送rectangle保証がtask
+下界を保つことを確認した。従って次の判別力ある検証は、非対称bridgeまたは
+module size差へ残差表現を外挿し、global baselineに対する増分妥当性を測ること
+である。
 
 日本語草稿は
 [アトラクタ数を越えたリザバー評価](../papers/robust-repertoire-memory-ja.md)
@@ -220,8 +231,8 @@ exact baselineである。次の判別力ある検証は、弱結合に対する
 
 草稿は開始するが、投稿前に次を満たす。
 
-- 完全隔離で得たcomponent積則を基準に、弱結合、非対称、module size違いで
-  積則残差とcoupling normの関係を事前登録確認する
+- 完全隔離と対称弱結合で得たcomponent残差表現を、非対称bridgeまたはmodule
+  size違いへ外挿し、global feature baselineと事前登録比較する
 - time-varying stochastic外乱でsurvival curveと保証の保守性を測る
 - family、coupling、local Jacobian、固定点座標を含む非線形baselineを
   nested cross-validationで比較する

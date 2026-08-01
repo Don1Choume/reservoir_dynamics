@@ -930,3 +930,32 @@ falsification_criteria = [
   "固定manifestとspecで再生し、6主要判定のいずれかが成立しない。",
   "block diagonal前提を満たす別の独立moduleでfixed pointまたはtask積則が破れる。",
 ]
+
+[[claims]]
+id = "C-RC-028"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-014の未使用30 seed、2 internal gain、6 cross strength、4外乱からなる1,440点では、raw fixed-point countを全点16に保ったまま、task積則の平均絶対残差がcross strength 0から0.04にかけて0から0.083105へ単調非減少し、最大strengthの非零残差率は0.65だった。transported rectangleとnorm-shifted certificateは368,640 challengeでtask保持率の下界を保った。"
+sources = [
+  "docs/research/artifacts/EXP-2026-014-confirmation-summary.json",
+  "docs/research/theory/weak-module-coupling.md",
+]
+implementations = [
+  "src/reservoir_dynamics/theory/orthant_rectangle.py",
+  "src/reservoir_dynamics/experiments/weakly_coupled_modular_task.py",
+  "src/reservoir_dynamics/experiments/weakly_coupled_modular_cli.py",
+]
+tests = [
+  "tests/theory/test_orthant_rectangle.py",
+  "tests/experiments/test_weakly_coupled_modular_task.py",
+]
+limitations = [
+  "4次元、異質な二つの2-node symmetric module、対称な二bridge、一定corner外乱、100 step符号保持taskに限定される。",
+  "平均signed残差は負だったが正負両方向の残差があり、cross couplingが全network・全challengeで必ず有害とは示さない。",
+  "task保持率は有限challenge集合上の階段関数であり、cross strengthに対する微分可能性または線形応答を主張しない。",
+  "非対称bridge、異なるmodule size、確率外乱、学習介入、人間規模条件は未確認である。",
+]
+falsification_criteria = [
+  "固定manifest a64556683a20ab733581ad6fe71ddc37dfb27cb3138b6dde50faaf6a02efe538とspecで再生し、8主要判定のいずれかが成立しない。",
+  "transportedまたはnorm-shifted certificateが認証したchallengeで符号保持違反が生じる。",
+]
