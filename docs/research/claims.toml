@@ -700,8 +700,9 @@ falsification_criteria = [
   "certificateが保守的過ぎ、Monte Carlo survivabilityまたはtask性能の順位を一貫して逆転させる。",
 ]
 limitations = [
-  "EXP-2026-009とEXP-2026-010は符号記憶について部分支持したが、4次元tanh RNNとhyperbox certificateに限定される。",
-  "basin-weighted safe mass、未知task family、familyを丸ごと未知にした予測は未確認である。",
+  "EXP-2026-009からEXP-2026-011は符号記憶について部分支持したが、4次元tanh RNNとhyperbox certificateに限定される。",
+  "EXP-2026-011はfold内でfamily labelをholdoutしたが、candidate選択には4 familyすべてを用いた。",
+  "basin-weighted safe mass、未知task family、candidate選択にも未使用の第五familyは未確認である。",
 ]
 
 [[claims]]
@@ -804,9 +805,41 @@ limitations = [
   "sparse familyは他familyと異なるcoupling gridと外乱budgetを用い、family間絶対性能を比較できない。",
   "couplingとlocal Jacobianに対するpooled優位は事前登録secondary endpointである。",
   "feedforward familyではlocal Jacobianとminimum coordinateのfamily内MAEがmean marginより小さかった。",
-  "leave-one-family-out、stochastic外乱、未知task、高次元、生物回路は未確認である。",
+  "当該実験単独ではleave-one-family-outを行っていない。EXP-2026-011でfold内holdoutを確認したが、完全未知の第五family、stochastic外乱、未知task、高次元、生物回路は未確認である。",
 ]
 falsification_criteria = [
   "同じ事前登録specの再実装でraw count一致、certificate下界、全family相関、pooled raw改善のいずれかが再現しない。",
   "未知familyまたは未知taskでmargin predictorがraw count、coupling、局所安定性baselineを一貫して下回る。",
+]
+
+[[claims]]
+id = "C-RC-024"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-011では、各foldの対象network familyをfitから除外し、他3 familyの既観測60 seedでfitしたnormalized mean marginとcertified robust fractionのridge modelを未使用seed 1201–1230へ適用した。全480条件のraw countが16のまま、family別Spearmanは0.8225–0.9572、pooled MAEは0.0822で、seed単位paired bootstrapによるraw-countおよび5-feature structural baselineのMAE差95%区間下限はそれぞれ0.0468と0.0319だった。"
+sources = [
+  "https://doi.org/10.1038/srep29654",
+  "https://doi.org/10.1063/5.0314081",
+  "https://doi.org/10.1103/PhysRevE.86.011909",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/standardized_ridge.py",
+  "src/reservoir_dynamics/experiments/family_holdout_robust_task.py",
+  "src/reservoir_dynamics/experiments/family_holdout_pilot.py",
+  "src/reservoir_dynamics/experiments/family_holdout_confirmation.py",
+]
+tests = [
+  "tests/metrics/test_standardized_ridge.py",
+  "tests/experiments/test_family_holdout_robust_task.py",
+  "tests/experiments/test_family_holdout_confirmation.py",
+]
+limitations = [
+  "4次元tanh RNN、既知の4構成family、一定corner外乱、符号保持taskに限定される。",
+  "candidateは4 familyすべてのpilot holdout成績から選択したため、family集合そのものが完全に未知ではない。",
+  "sparse symmetricのMAEは0.1289で他familyより大きく、family間較正差が残る。",
+  "高次元、確率外乱、別task、生物回路、人間規模への一般化は未確認である。",
+]
+falsification_criteria = [
+  "同じ事前登録specで5主要判定のいずれかが再現しない。",
+  "candidate選択にも使っていない第五familyでrobust pairがraw countまたはstructural baselineを上回らない。",
 ]

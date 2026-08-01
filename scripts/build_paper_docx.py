@@ -9,7 +9,7 @@ from pathlib import Path
 from docx import Document
 from docx.enum.section import WD_SECTION
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_TAB_ALIGNMENT
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
@@ -25,6 +25,61 @@ INK_BLUE = "0B2545"
 MUTED = "5B6573"
 TABLE_FILL = "F4F6F9"
 TABLE_BORDER = "CBD2DA"
+SUBSCRIPT_CHARACTERS = {
+    "0": "₀",
+    "1": "₁",
+    "2": "₂",
+    "3": "₃",
+    "4": "₄",
+    "5": "₅",
+    "6": "₆",
+    "7": "₇",
+    "8": "₈",
+    "9": "₉",
+    "+": "₊",
+    "-": "₋",
+    "=": "₌",
+    "(": "₍",
+    ")": "₎",
+    "a": "ₐ",
+    "e": "ₑ",
+    "h": "ₕ",
+    "i": "ᵢ",
+    "j": "ⱼ",
+    "k": "ₖ",
+    "l": "ₗ",
+    "m": "ₘ",
+    "n": "ₙ",
+    "o": "ₒ",
+    "p": "ₚ",
+    "r": "ᵣ",
+    "s": "ₛ",
+    "t": "ₜ",
+    "u": "ᵤ",
+    "v": "ᵥ",
+    "x": "ₓ",
+    "∞": "∞",
+}
+SUPERSCRIPT_CHARACTERS = {
+    "0": "⁰",
+    "1": "¹",
+    "2": "²",
+    "3": "³",
+    "4": "⁴",
+    "5": "⁵",
+    "6": "⁶",
+    "7": "⁷",
+    "8": "⁸",
+    "9": "⁹",
+    "+": "⁺",
+    "-": "⁻",
+    "=": "⁼",
+    "(": "⁽",
+    ")": "⁾",
+    "d": "ᵈ",
+    "i": "ⁱ",
+    "n": "ⁿ",
+}
 
 
 def build_document(source_path: Path, output_path: Path) -> None:
@@ -51,7 +106,7 @@ def _configure_page(document: Document) -> None:
     section.page_height = Inches(11)
     section.top_margin = Inches(1)
     section.right_margin = Inches(1)
-    section.bottom_margin = Inches(1)
+    section.bottom_margin = Inches(1.2)
     section.left_margin = Inches(1)
     section.header_distance = Inches(0.492)
     section.footer_distance = Inches(0.492)
@@ -131,8 +186,16 @@ def _configure_styles(document: Document) -> None:
     bibliography.paragraph_format.left_indent = Inches(0.3)
     bibliography.paragraph_format.first_line_indent = Inches(-0.3)
     bibliography.paragraph_format.space_before = Pt(0)
-    bibliography.paragraph_format.space_after = Pt(5)
+    bibliography.paragraph_format.space_after = Pt(3)
     bibliography.paragraph_format.line_spacing = 1.167
+    bibliography.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
+
+    reproducibility = document.styles.add_style("Reproducibility", 1)
+    _set_style_font(reproducibility, BODY_FONT, CJK_FONT, 10, "222222")
+    reproducibility.paragraph_format.space_before = Pt(0)
+    reproducibility.paragraph_format.space_after = Pt(8)
+    reproducibility.paragraph_format.line_spacing = 1.25
+    reproducibility.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
 
     table_text = document.styles.add_style("Scientific Table Text", 1)
     _set_style_font(table_text, BODY_FONT, CJK_FONT, 9, "111111")
@@ -176,8 +239,17 @@ def _set_style_font(
 
 
 def _set_header_footer(document: Document) -> None:
+    # LibreOffice 26.2では既定ヘッダーの偶数ページ継承が不安定なため、
+    # 偶数ページ用partを明示して本文が上余白へ侵入することも防ぐ。
+    document.settings.odd_and_even_pages_header_footer = True
     section = document.sections[0]
-    header = section.header
+    _populate_header(section.header)
+    _populate_header(section.even_page_header)
+    _populate_footer(section.footer)
+    _populate_footer(section.even_page_footer)
+
+
+def _populate_header(header) -> None:
     paragraph = header.paragraphs[0]
     paragraph.paragraph_format.space_after = Pt(0)
     paragraph.paragraph_format.tab_stops.add_tab_stop(
@@ -190,7 +262,8 @@ def _set_header_footer(document: Document) -> None:
     right_run = paragraph.add_run("研究草稿")
     _format_run(right_run, 8.5, MUTED)
 
-    footer = section.footer
+
+def _populate_footer(footer) -> None:
     footer_paragraph = footer.paragraphs[0]
     footer_paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
     footer_paragraph.paragraph_format.space_before = Pt(0)
@@ -230,6 +303,10 @@ def _render_markdown(
     while line_index < len(lines):
         line = lines[line_index].strip()
         if not line:
+            line_index += 1
+            continue
+        if line == "<!-- pagebreak -->":
+            document.add_page_break()
             line_index += 1
             continue
         if line.startswith("|") and line_index + 1 < len(lines):
@@ -286,6 +363,8 @@ def _render_markdown(
             continue
         if re.match(r"^\[\d+\]\s", line):
             paragraph = document.add_paragraph(style="Bibliography")
+            # LibreOfficeでも最終行が中央寄せにならないよう段落側にも固定する。
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
             _add_inline_runs(paragraph, line)
             line_index += 1
             continue
@@ -299,6 +378,7 @@ def _render_markdown(
                 or next_line.startswith("|")
                 or next_line.startswith("- ")
                 or next_line == r"\["
+                or next_line == "<!-- pagebreak -->"
                 or re.match(r"^\[\d+\]\s", next_line)
             ):
                 break
@@ -310,9 +390,13 @@ def _render_markdown(
             if text.startswith("研究草稿") or re.match(r"^20\d{2}年", text)
             else "Keywords"
             if text.startswith("キーワード:")
+            else "Reproducibility"
+            if text.startswith("実験spec、seed")
             else None
         )
         paragraph = document.add_paragraph(style=style_name)
+        if style_name == "Reproducibility":
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
         _add_inline_runs(paragraph, text)
 
 
@@ -368,20 +452,19 @@ def _format_run(
 
 
 def _add_equation(document: Document, equation_lines: list[str]) -> None:
-    text = "\n".join(
-        _plain_math(line)
+    fragments = tuple(
+        fragment
         for line in equation_lines
         if line not in (r"\begin{aligned}", r"\end{aligned}")
+        if (fragment := _plain_math(line))
     )
+    text = " ".join(fragments)
     paragraph = document.add_paragraph(style="Display Equation")
-    for index, line in enumerate(text.splitlines()):
-        if index:
-            paragraph.add_run().add_break(WD_BREAK.LINE)
-        run = paragraph.add_run(line)
-        run.font.name = MATH_FONT
-        run._element.rPr.rFonts.set(qn("w:ascii"), MATH_FONT)
-        run._element.rPr.rFonts.set(qn("w:hAnsi"), MATH_FONT)
-        run.font.size = Pt(10.5)
+    run = paragraph.add_run(text)
+    run.font.name = MATH_FONT
+    run._element.rPr.rFonts.set(qn("w:ascii"), MATH_FONT)
+    run._element.rPr.rFonts.set(qn("w:hAnsi"), MATH_FONT)
+    run.font.size = Pt(10.5)
 
 
 def _plain_math(text: str) -> str:
@@ -407,12 +490,14 @@ def _plain_math(text: str) -> str:
         (r"\sum", "Σ"),
         (r"\max", "max"),
         (r"\min", "min"),
+        (r"\int", "∫"),
         (r"\rho", "ρ"),
         (r"\mu", "μ"),
         (r"\eta", "η"),
         (r"\ge", "≥"),
         (r"\le", "≤"),
         (r"\in", "∈"),
+        (r"\,", " "),
         (r"\|", "‖"),
         (r"\{", "{"),
         (r"\}", "}"),
@@ -428,8 +513,56 @@ def _plain_math(text: str) -> str:
     output = re.sub(r"\\mathrm\{([^{}]+)\}", r"\1", output)
     output = re.sub(r"\\frac\{([^{}]+)\}\{([^{}]+)\}", r"(\1)/(\2)", output)
     output = re.sub(r"\\([A-Za-z]+)", r"\1", output)
+    output = re.sub(
+        r"_\{([^{}]+)\}",
+        lambda match: _convert_script(
+            match.group(1),
+            SUBSCRIPT_CHARACTERS,
+            "_",
+        ),
+        output,
+    )
+    output = re.sub(
+        r"\^\{([^{}]+)\}",
+        lambda match: _convert_script(
+            match.group(1),
+            SUPERSCRIPT_CHARACTERS,
+            "^",
+        ),
+        output,
+    )
+    output = re.sub(
+        r"_([A-Za-z0-9∞]+)",
+        lambda match: _convert_script(
+            match.group(1),
+            SUBSCRIPT_CHARACTERS,
+            "_",
+        ),
+        output,
+    )
+    output = re.sub(
+        r"\^([A-Za-z0-9+\-]+)",
+        lambda match: _convert_script(
+            match.group(1),
+            SUPERSCRIPT_CHARACTERS,
+            "^",
+        ),
+        output,
+    )
     output = output.replace("{", "").replace("}", "")
     return re.sub(r"\s+", " ", output).strip()
+
+
+def _convert_script(
+    content: str,
+    character_map: dict[str, str],
+    fallback_marker: str,
+) -> str:
+    """意味を壊さず表現できる添字だけをUnicodeへ変換する。"""
+
+    if not all(character in character_map for character in content):
+        return f"{fallback_marker}{content}"
+    return "".join(character_map[character] for character in content)
 
 
 def _add_markdown_table(document: Document, lines: list[str]) -> None:
@@ -639,7 +772,7 @@ def _set_document_properties(document: Document) -> None:
     properties.keywords = (
         "reservoir computing; attractor; robust invariant set; RNN"
     )
-    properties.comments = "研究草稿 v0.1"
+    properties.comments = "研究草稿 v0.2"
 
 
 def main() -> None:

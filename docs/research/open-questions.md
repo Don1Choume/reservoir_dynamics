@@ -156,9 +156,13 @@
   480条件ではmean marginとのSpearmanが0.8933–0.9771だった。seed単位pooled
   MAEはraw count、coupling、worst local Jacobianよりそれぞれ0.0851、
   0.0080、0.0051小さかった。
-- 未知部分: hyperbox certificateの順位がfamilyを丸ごと未知にした予測、
-  stochastic noise、cue、readout taskでも保たれるか未確認である。
-- 次の識別実験: leave-one-family-out予測と、time-varying stochastic外乱に
+- 確認済み: `EXP-2026-011` では各foldの対象familyをfitから除外し、新規
+  seed 1201–1230へ適用したrobust pairのfamily別Spearmanが0.8225–0.9572、
+  pooled MAEが0.0822だった。raw countと5-feature structural baselineに対する
+  seed単位MAE改善区間下限は0.0468と0.0319だった。
+- 未知部分: candidate選択にも使っていない第五family、stochastic noise、
+  cue、readout taskでも順位が保たれるか未確認である。
+- 次の識別実験: 完全隔離した第五familyと、time-varying stochastic外乱に
   対するsurvival curveを行う。続いてcue routingとlinear readout保持率を測る。
 - baseline: raw count、平均局所Jacobian spectral radius、\(\|W\|_\infty\)、
   basin stability、minimum fixed-point coordinate。

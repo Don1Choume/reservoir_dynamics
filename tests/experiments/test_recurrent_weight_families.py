@@ -56,6 +56,33 @@ class RecurrentWeightFamiliesTest(unittest.TestCase):
         )
         self.assertTrue(_is_symmetric(sparse))
 
+        modular = matrices["modular_paired"]
+        self.assertEqual(
+            sum(
+                modular[row][column] != 0.0
+                for row in range(4)
+                for column in range(4)
+                if row != column
+            ),
+            4,
+        )
+        self.assertTrue(_is_symmetric(modular))
+        self.assertTrue(
+            all(
+                modular[row][column] == 0.0
+                for row, column in (
+                    (0, 2),
+                    (0, 3),
+                    (1, 2),
+                    (1, 3),
+                    (2, 0),
+                    (3, 0),
+                    (2, 1),
+                    (3, 1),
+                )
+            )
+        )
+
         asymmetric = matrices["asymmetric_dense"]
         self.assertFalse(_is_symmetric(asymmetric))
         self.assertTrue(

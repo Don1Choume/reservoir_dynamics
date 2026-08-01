@@ -1,0 +1,151 @@
+{
+  "artifact_type": "derived_pilot_summary",
+  "experiment_id": "EXP-2026-011",
+  "executed_at": "2026-07-30",
+  "phase": "pilot",
+  "evidence_boundary": {
+    "source_experiment_id": "EXP-2026-010",
+    "training_seeds": {
+      "first": 801,
+      "last": 830,
+      "count": 30
+    },
+    "testing_seeds": {
+      "first": 901,
+      "last": 930,
+      "count": 30
+    },
+    "new_confirmation_seeds_observed": false,
+    "source_point_count": 960
+  },
+  "candidates": [
+    {
+      "name": "raw_count",
+      "feature_names": [
+        "raw_attractor_count"
+      ],
+      "penalty": 0.001,
+      "pooled_test_mae": 0.12945439091435185,
+      "pooled_test_spearman": -0.2865880271447177,
+      "folds": {
+        "asymmetric_dense": {
+          "test_mae": 0.16484375,
+          "test_spearman": 0.0
+        },
+        "dense_symmetric": {
+          "test_mae": 0.12457682291666666,
+          "test_spearman": 0.0
+        },
+        "feedforward_nonnormal": {
+          "test_mae": 0.11970847800925925,
+          "test_spearman": 0.0
+        },
+        "sparse_symmetric": {
+          "test_mae": 0.10868851273148146,
+          "test_spearman": 0.0
+        }
+      }
+    },
+    {
+      "name": "normalized_margin",
+      "feature_names": [
+        "normalized_mean_margin"
+      ],
+      "penalty": 0.001,
+      "pooled_test_mae": 0.08665072423722082,
+      "pooled_test_spearman": 0.774131316930835,
+      "folds": {
+        "asymmetric_dense": {
+          "test_mae": 0.0818969445677858,
+          "test_spearman": 0.9556771656204547
+        },
+        "dense_symmetric": {
+          "test_mae": 0.05765785710811191,
+          "test_spearman": 0.8932611742475979
+        },
+        "feedforward_nonnormal": {
+          "test_mae": 0.07266304850683775,
+          "test_spearman": 0.9770924273273739
+        },
+        "sparse_symmetric": {
+          "test_mae": 0.13438504676614785,
+          "test_spearman": 0.894309595768397
+        }
+      }
+    },
+    {
+      "name": "certified_fraction",
+      "feature_names": [
+        "certified_robust_fraction"
+      ],
+      "penalty": 0.001,
+      "pooled_test_mae": 0.12416132560608743,
+      "pooled_test_spearman": 0.3962804213993101
+    },
+    {
+      "name": "robust_pair",
+      "feature_names": [
+        "normalized_mean_margin",
+        "certified_robust_fraction"
+      ],
+      "penalty": 0.001,
+      "pooled_test_mae": 0.08068962437071149,
+      "pooled_test_spearman": 0.7999343305146797,
+      "folds": {
+        "asymmetric_dense": {
+          "test_mae": 0.07610109052388532,
+          "test_spearman": 0.9661319184064322
+        },
+        "dense_symmetric": {
+          "test_mae": 0.049914018390790314,
+          "test_spearman": 0.9269509509073695
+        },
+        "feedforward_nonnormal": {
+          "test_mae": 0.06638824169863285,
+          "test_spearman": 0.9518872881465855
+        },
+        "sparse_symmetric": {
+          "test_mae": 0.13035514686953745,
+          "test_spearman": 0.8168118602577409
+        }
+      }
+    },
+    {
+      "name": "structural",
+      "feature_names": [
+        "normalized_coupling_gain",
+        "normalized_off_diagonal_norm",
+        "maximum_local_jacobian_infinity_norm",
+        "minimum_fixed_point_coordinate",
+        "nonnormality_commutator_norm"
+      ],
+      "penalty": 0.001,
+      "pooled_test_mae": 0.11864380547789392,
+      "pooled_test_spearman": 0.6691811785446233
+    },
+    {
+      "name": "hybrid",
+      "feature_names": [
+        "normalized_mean_margin",
+        "certified_robust_fraction",
+        "normalized_coupling_gain",
+        "normalized_off_diagonal_norm",
+        "maximum_local_jacobian_infinity_norm",
+        "minimum_fixed_point_coordinate",
+        "nonnormality_commutator_norm"
+      ],
+      "penalty": 0.001,
+      "pooled_test_mae": 0.09886012779295947,
+      "pooled_test_spearman": 0.7317670054191384
+    }
+  ],
+  "selected_candidate": {
+    "name": "robust_pair",
+    "feature_names": [
+      "normalized_mean_margin",
+      "certified_robust_fraction"
+    ],
+    "penalty": 0.001,
+    "selection_rule": "minimum pooled leave-one-family-out test MAE"
+  }
+}

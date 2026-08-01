@@ -321,8 +321,15 @@ robust fractionと符号記憶保持率のSpearman 0.8823、高外乱で平均ma
 Spearman 0.9347を得た。これはP5の人工RNNにおける機構的構成例とtask接続で
 ある。`EXP-2026-010` では4 network familyの未使用30 seedへ拡張し、
 mean marginとのSpearman 0.8933–0.9771、raw count、coupling、局所Jacobianに
-対するpooled MAE改善を確認した。それでも生物学的margin、発生、遺伝、
-学習余剰を直接示していない。
+対するpooled MAE改善を確認した。`EXP-2026-011` では、各foldの対象familyを
+fitから除外し、normalized marginとcertified fractionの二成分modelを新規seed
+へ適用した。family別Spearmanは0.8225–0.9572で、raw countと5-feature
+structural baselineに対するseed単位MAE改善も事前登録条件を満たした。
+
+この二成分は、core状態の平均安全余裕と、要求budgetを満たす状態割合を分離
+する。工学的には「必須状態を持つこと」と「その状態および余剰状態が利用可能
+であること」を同時に設計する必要性を示す。それでも生物学的margin、発生、
+遺伝、学習余剰を直接示していない。
 
 外乱budget \(e\) に対するレパートリーを
 
@@ -340,9 +347,10 @@ S_{\mathrm{rob}}(e)
 \sum_k p_k\mathbf 1[\mu_k\ge e]
 \]
 
-とする。符号保持taskへの予測は4構成familyで確認した。今後は、このcurveが
-未知family、学習feedback、stochastic noise、cue routing、readout性能でも
-多変量baselineを超えて予測するか検証する。
+とする。符号保持taskへの予測は4構成familyで確認し、fold内のfamily holdout
+fitでも再現した。今後は、このcurveがcandidate選択にも未使用の第五family、
+学習feedback、stochastic noise、cue routing、readout性能でも多変量baselineを
+超えて予測するか検証する。
 
 ## 5. 実験ロードマップ
 

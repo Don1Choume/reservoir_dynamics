@@ -25,6 +25,10 @@ from reservoir_dynamics.metrics.network_diagnostics import (
 )
 from reservoir_dynamics.metrics.repertoire import effective_repertoire_size
 from reservoir_dynamics.metrics.replica import pairwise_replica_distance_curve
+from reservoir_dynamics.metrics.standardized_ridge import (
+    StandardizedRidgeModel,
+    fit_standardized_ridge,
+)
 from reservoir_dynamics.metrics.top_conditional_lyapunov import (
     top_conditional_lyapunov_exponent,
 )
@@ -34,10 +38,12 @@ __all__ = [
     "BootstrapMeanInterval",
     "LinearMemoryResult",
     "SharedReadoutMemoryResult",
+    "StandardizedRidgeModel",
     "bootstrap_mean_interval",
     "effective_repertoire_size",
     "estimate_basin_stability",
     "finite_time_conditional_lyapunov_exponent",
+    "fit_standardized_ridge",
     "linear_memory_curve",
     "local_jacobian_infinity_norm",
     "matrix_nonnormality_commutator_norm",

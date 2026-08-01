@@ -310,7 +310,41 @@ E_{\mathrm{local\ Jacobian}}-E_{\bar\mu}
 local Jacobian MAEの方が小さかった。普遍的優位ではなく、4 familyにわたる
 再現可能なprofile指標として解釈する。
 
-## 11. 人間規模仮説への接続
+## 11. EXP-2026-011: curveの高さと面積の移送
+
+正規化curveを \(R(e)=N_{\mathrm{rob}}(e)/|\mathcal A|\) とする。有限な
+非負marginについてtail積分を取ると、
+
+\[
+\bar\mu
+=
+\frac1{|\mathcal A|}\sum_k\max(\mu_k,0)
+=
+\int_0^\infty R(z)\,dz
+\]
+
+であり、要求budget \(e>0\) に対して
+
+\[
+\frac{\bar\mu}{e}
+=
+\int_0^\infty R(eu)\,du
+\]
+
+となる。従ってrobust fraction \(R(e)\) は要求点でのcurveの高さ、
+normalized mean marginは要求scaleでのcurve面積である。
+
+`EXP-2026-011` はこの二成分を標準化ridgeへ入れ、各foldの対象familyを
+fitから除外した。未使用seed 1201–1230ではfamily別Spearmanが
+0.8225–0.9572、pooled MAEが0.0822だった。seed単位paired bootstrapで、
+raw countおよび5-feature structural modelよりMAEが小さく、差の95%区間
+下限は0.0468と0.0319だった。
+
+これはcurveの局所値と全体量が相補的な経験証拠である。candidate選択には
+4 familyすべてのpilot成績を用いたため、完全未知familyへの定理または
+外的妥当性ではない。
+
+## 12. 人間規模仮説への接続
 
 必須機能 \(k\) のmargin \(\mu_k\) と、学習moduleからのfeedback load \(e_k\)
 を比較し、
@@ -326,7 +360,7 @@ local Jacobian MAEの方が小さかった。普遍的優位ではなく、4 fam
 これは人間脳の必要条件として確立していない。今後、task数、module数、
 network dimension、energyとともにこれらのcurveがどうscaleするかを測る。
 
-## 12. 適用限界
+## 13. 適用限界
 
 - hyperboxと成分別一様外乱に限定した十分条件である。
 - 共通境界 \(m\) は座標別境界より保守的になり得る。
@@ -340,3 +374,5 @@ network dimension、energyとともにこれらのcurveがどうscaleするか�
 - EXP-009は別seedで事前登録確認したが、coupling baselineへの増分優位は
   未確立だった。EXP-010のpooled secondary解析では優位を得たが、family内で
   一貫した支配ではない。
+- EXP-011はfold内のfamily holdoutを確認したが、candidate選択にも未使用の
+  第五family、非線形baseline、別taskでは未確認である。

@@ -14,6 +14,7 @@ from reservoir_dynamics.theory.orthant_box import Matrix
 RecurrentWeightFamily = Literal[
     "dense_symmetric",
     "sparse_symmetric",
+    "modular_paired",
     "asymmetric_dense",
     "feedforward_nonnormal",
 ]
@@ -21,6 +22,7 @@ RecurrentWeightFamily = Literal[
 RECURRENT_WEIGHT_FAMILIES: tuple[RecurrentWeightFamily, ...] = (
     "dense_symmetric",
     "sparse_symmetric",
+    "modular_paired",
     "asymmetric_dense",
     "feedforward_nonnormal",
 )
@@ -55,6 +57,13 @@ def build_recurrent_weights(
     random_generator = random.Random(trial_seed)
     if network_family == "sparse_symmetric":
         return _sparse_symmetric_weights(
+            dimension=dimension,
+            diagonal_gain=diagonal_gain,
+            coupling_gain=coupling_gain,
+            random_generator=random_generator,
+        )
+    if network_family == "modular_paired":
+        return _modular_paired_weights(
             dimension=dimension,
             diagonal_gain=diagonal_gain,
             coupling_gain=coupling_gain,
@@ -95,6 +104,37 @@ def _sparse_symmetric_weights(
     edge_signs = {
         edge: random_generator.choice((-1.0, 1.0))
         for edge in undirected_edges
+    }
+    return tuple(
+        tuple(
+            _symmetric_entry(
+                row_index=row_index,
+                column_index=column_index,
+                diagonal_gain=diagonal_gain,
+                coupling_gain=coupling_gain,
+                edge_signs=edge_signs,
+            )
+            for column_index in range(dimension)
+        )
+        for row_index in range(dimension)
+    )
+
+
+def _modular_paired_weights(
+    *,
+    dimension: int,
+    diagonal_gain: float,
+    coupling_gain: float,
+    random_generator: random.Random,
+) -> Matrix:
+    # 独立な2-node moduleは局所結合とmodule間分離を同時に固定できる。
+    paired_edges = tuple(
+        (index, index + 1)
+        for index in range(0, dimension - 1, 2)
+    )
+    edge_signs = {
+        edge: random_generator.choice((-1.0, 1.0))
+        for edge in paired_edges
     }
     return tuple(
         tuple(

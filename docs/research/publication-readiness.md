@@ -66,7 +66,12 @@
   [0.0828, 0.0873]、couplingより0.0080 [0.0030, 0.0133]、worst local
   Jacobianより0.0051 [0.0020, 0.0085] 小さかった。後二つはsecondary
   endpointである。
-- 実装は全129テストを通過し、branch coverageは90%である。
+- `EXP-2026-011` では各foldの対象familyをfitから除外し、他3 familyでfitした
+  robust pairを未使用seed 1201–1230へ適用した。family別Spearmanは
+  0.8225–0.9572、pooled MAEは0.0822だった。
+- raw countと5-feature structural baselineに対するseed単位MAE改善区間は
+  [0.0468, 0.0505] と [0.0319, 0.0404] で、事前登録5判定はすべて成立した。
+- 実装は全145テストと11 subtestを通過し、branch coverageは88%である。
 
 ### 陰性結果
 
@@ -78,8 +83,8 @@
 
 ### 未検証
 
-- アトラクタprofileが計算・記憶能力を予測するという中心仮説
-- 生のアトラクタ数と実効レパートリーの比較
+- アトラクタprofileが符号保持以外の計算・記憶能力も予測するか
+- candidate選択にも使っていない第五familyでの実効レパートリー比較
 - 遷移時間尺度とタスク時間尺度の整合
 - アトラクタ指向調整のbaselineに対する優位性
 - `EXP-2026-004` の所見が非直交、疎、学習済み、spiking、物理reservoirで
@@ -90,8 +95,7 @@
 - task-specificな機能的アトラクタ商の数学的整備とatlas上での安定推定
 - 生得的機能コアとplastic reserveの操作定義が新規学習と忘却を予測するか
 - 高次元・非対角・非normalな多重安定coreでの安全集合margin推定
-- robust repertoireと符号記憶の関係がfamilyを丸ごと未知にした予測で
-  維持されるか
+- robust repertoireと符号記憶の関係が完全隔離した第五familyで維持されるか
 - robust repertoireがstochastic外乱、cue、readout、逐次学習taskを予測するか
 - random matched mask、部分空間保護、EWC、replayに対するcore–reserve
   構造の増分優位
@@ -99,9 +103,10 @@
 
 ## 推論
 
-現状は局所安定性、状態同期、固定readoutの機能移送性を分離できる再現可能な
-研究基盤である。30 seed条件と区間推定は得られたが、単一network familyの
-選択済み条件に限られる。
+現状は局所安定性、状態同期、固定readoutの機能移送性に加え、4 network
+familyのrobust repertoireを分離できる再現可能な研究基盤である。30 seed条件、
+区間推定、fold内family holdoutは得られたが、candidate選択にも未使用の
+network familyと別taskには一般化していない。
 
 Lymburnらはreservoir全体のconsistencyとreadout方向のconsistencyを既に
 分離しており、Generalized RCも非再現な基材応答から再現可能出力を得る原理を
@@ -147,10 +152,15 @@ interval hyperboxという既知の直接手法、一つの4次元生成分布�
 利用可能な記憶レパートリーを表す」という限定命題は、原著論文の中心仮説に
 置ける。
 
-ただし、sparse familyは別の外乱budgetを用い、feedforward family内では
-local Jacobianがmean marginより小さいMAEだった。従って「marginがあらゆる
-局所指標を常に支配する」「任意の力学系へ一般化する」とは主張しない。
-現時点で草稿を開始し、投稿判断は追加外的妥当性実験後に行う。
+`EXP-2026-011` は各foldの対象familyをfitから除外し、他3 familyでfitした
+robust pairを新規seedへ適用した。事前登録5判定はすべて成立し、raw countと
+5-feature structural baselineに対するseed単位MAE改善区間下限は0を上回った。
+このため「family固有の単回帰だけで成立する」という代替説明を弱めた。
+
+ただしcandidate選択には4 familyすべてのpilot成績を用いた。sparse familyは
+別の外乱budgetを用い、confirmation MAEも最大だった。従って「marginが
+あらゆる局所指標を常に支配する」「任意の力学系へ一般化する」とは主張しない。
+現時点で草稿を更新し、投稿判断は第五familyまたは確率外乱の追加後に行う。
 
 日本語草稿は
 [アトラクタ数を越えたリザバー評価](../papers/robust-repertoire-memory-ja.md)
@@ -173,17 +183,17 @@ local Jacobianがmean marginより小さいMAEだった。従って「marginが�
    条件付きアトラクタ構造、可観測性、読み出し複雑度の間に新しい上界・
    下界・十分条件を導出し、数値実験で適用範囲を示す。
 
-`EXP-2026-010` により条件2を限定的に満たした。4 familyと未知seedで
-margin profileの性能予測を再現し、単純なcoupling、local Jacobianに対する
-pooled secondary優位を得たため、原稿作成を開始する。
+`EXP-2026-010` と `EXP-2026-011` により条件2を限定的に満たした。4 familyと
+未知seedでmargin profileの性能予測を再現し、family holdout fitでもraw count、
+多変量structural baselineに対する事前登録優位を得たため、原稿を更新する。
 
 ## 投稿前の必須追加条件
 
 草稿は開始するが、投稿前に次を満たす。
 
-- leave-one-family-outまたは新しい第五familyで未知family予測を行う
+- candidate選択にも使っていない新しい第五familyで未知family予測を行う
 - time-varying stochastic外乱でsurvival curveと保証の保守性を測る
-- family、coupling、local Jacobian、固定点座標を含む多変量baselineを
+- family、coupling、local Jacobian、固定点座標を含む非線形baselineを
   nested cross-validationで比較する
 - hyperbox以外のset表現を一つ以上実装し、保守性と計算量を比較する
 - manuscriptの全数値をartifactから自動再生成する

@@ -2,16 +2,18 @@
 
 ## ロバスト・レパートリー余裕による外乱下記憶性能の予測
 
-研究草稿 v0.1  
+研究草稿 v0.2
 2026年7月30日
 
 ## 要旨
 
 リザバー計算に用いる力学系の能力を理解するうえで、アトラクタの数は直観的な指標である。しかし、自律系で同数のアトラクタを持つ二つの系が、入力、雑音、学習済みmoduleからのfeedbackを受けたときにも同数の状態を安全に利用できるとは限らない。本研究では、離散時間tanh RNNの各符号orthantについて、成分別有界外乱下でロバスト正不変となる共通境界hyperboxを構成し、その最大一様外乱余裕を導出した。外乱budget \(e\) に対して認証可能なアトラクタ数をロバスト・レパートリー \(N_{\mathrm{rob}}(e)\) と定義し、生の自律アトラクタ数から分離した。
 
-4次元RNNを用いた段階的な検証では、まず未使用30 seedで自律アトラクタ数を全条件16に一致させたまま、認証レパートリーを分離した。次に、全16 orthantと全16一定corner外乱方向からなる符号記憶taskを導入した。単一familyの未使用30 seedでは、低外乱で認証robust fractionと保持率のSpearman相関が0.8823、高外乱で平均marginとの相関が0.9347だった。さらにdense symmetric、sparse symmetric、asymmetric dense、feedforward non-normalの4 familyを事前登録条件で確認したところ、全480 network条件のraw countが16のまま、平均marginと保持率の相関は0.8933–0.9771となった。seed単位でpoolした未知seed予測では、平均marginのMAEはraw countより0.0851、coupling gainより0.0080、worst local Jacobian infinity normより0.0051小さかった。後二つはsecondary endpointである。
+4次元RNNを用いた段階的な検証では、まず未使用30 seedで自律アトラクタ数を全条件16に一致させたまま、認証レパートリーを分離した。次に、全16 orthantと全16一定corner外乱方向からなる符号記憶taskを導入した。単一familyの未使用30 seedでは、低外乱で認証robust fractionと保持率のSpearman相関が0.8823、高外乱で平均marginとの相関が0.9347だった。さらにdense symmetric、sparse symmetric、asymmetric dense、feedforward non-normalの4 familyを事前登録条件で確認したところ、全480 network条件のraw countが16のまま、平均marginと保持率の相関は0.8933–0.9771となった。
 
-以上は、有限外乱下で利用可能な記憶状態を評価するにはアトラクタ数だけでなく、外乱budgetを引数とするmargin profileが必要であることを支持する。一方、本結果は4次元tanh RNN、一定外乱、符号保持task、hyperbox十分条件に限定される。未知family、確率外乱、高次元系、生物回路、人間規模の必要条件への一般化は今後の課題である。
+最後に、各foldの対象familyをfitから除外し、他3 familyだけで標準化ridge回帰をfitするfamily・seed二重holdout確認を行った。要求外乱で無次元化した平均marginと認証robust fractionの二成分modelは、新規30 seedのpooled MAE 0.0822、family別Spearman 0.8225–0.9572を示した。seed単位paired bootstrapで、raw countおよび5-feature structural baselineのMAEよりそれぞれ0.0486 [0.0468, 0.0505]、0.0362 [0.0319, 0.0404]小さかった。
+
+以上は、有限外乱下で利用可能な記憶状態を評価するにはアトラクタ数だけでなく、外乱budgetを引数とするmargin profileが必要であることを支持する。一方、本結果は4次元tanh RNN、既知の4 family、一定外乱、符号保持task、hyperbox十分条件に限定される。candidate選択にも未使用の第五family、確率外乱、高次元系、生物回路、人間規模の必要条件への一般化は今後の課題である。
 
 キーワード: reservoir computing、multistability、robust invariant set、survivability、attractor repertoire、recurrent neural network
 
@@ -29,6 +31,7 @@ Reservoir Computing Generalizedを含む近年の理論は、計算基材を特�
 - raw count、認証count、外乱強度別robust repertoire curve、margin分布を分離する分析APIを実装した。
 - count-matchedな未使用seed確認と、122,880 challengeからなる4 familyの事前登録task確認を実施した。
 - 保証下界と経験的点予測を分離し、coupling、局所Jacobian、固定点座標、非正規性を比較baselineとして実装した。
+- 対象familyのlabelをfitから除外するfamily・seed二重holdoutで、robust repertoire二成分modelの移送性能を事前登録確認した。
 
 ## 2. 関連研究
 
@@ -129,6 +132,33 @@ S_{\mathrm{rob}}(e)
 
 を用いる。
 
+### 3.5 Curveの高さと面積
+
+正規化robust repertoire curveを
+
+\[
+R(e)=N_{\mathrm{rob}}(e)/|A|
+\]
+
+とする。marginが有限なら、非負確率変数のtail積分公式と同じ恒等式により、
+
+\[
+\bar\mu=(1/|A|)
+\sum_{k\in A}\max(\mu_k,0)
+=\int_0^\infty R(z)\,dz
+\]
+
+である。要求外乱budget \(e>0\) で無次元化すると、
+
+\[
+\bar\mu/e=\int_0^\infty R(eu)\,du
+\]
+
+を得る。従って、認証robust fraction \(R(e)\) は要求点でのcurveの高さ、
+normalized mean margin \(\bar\mu/e\) は要求scaleで測ったcurveの面積である。
+後述のrobust pairは、局所的な閾値通過割合とレパートリー全体の余裕総量を
+同時に表す。
+
 ## 4. 方法
 
 ### 4.1 段階的検証
@@ -136,6 +166,8 @@ S_{\mathrm{rob}}(e)
 研究は探索と確認を分離した。EXP-2026-007ではcoupling 0.04と0.08を比較したが、raw countも平均2.1333低下し、count-matched判定は不成立だった。この陰性結果を保持し、事後探索でraw countを保つ0.07を選んだ。
 
 EXP-2026-008では未使用seed 501–530を用い、coupling 0.04と0.07の両群で全seedのraw countを16に一致させた。EXP-2026-009ではdiscovery seed 401–430で外乱強度とfeatureを選び、未使用seed 601–630で符号記憶予測を確認した。EXP-2026-010ではpilot seed 801–808でfamily別条件を選び、discovery seed 801–830でpredictorをfitし、未使用seed 901–930で4 familyを確認した。
+
+EXP-2026-011のpilotは観測済みseed 801–830をfit、901–930をtestに用い、6 candidateからpooled leave-one-family-out MAE最小のrobust pairを選択した。その後、penalty、feature、baseline、閾値を固定し、他3 familyの既観測60 seedでfitしたmodelをheld-out familyの未使用seed 1201–1230へ適用した。
 
 ### 4.2 Network family
 
@@ -154,17 +186,32 @@ Sparse familyでは共通条件に天井効果または固定点消失が生じ�
 
 全16 orthantについて初期状態 \(0.9\boldsymbol{s}\) から自律系を500 step発展させ、最終残差 \(10^{-9}\) 以下かつ全時刻で符号を保つ場合に固定点を発見したとした。各固定点を4-bit符号記憶とみなした。
 
-外乱方向 \(\boldsymbol{d}\in\{-1,1\}^4\) の全16 cornerを列挙し、\(\boldsymbol{\eta}=e\boldsymbol{d}\) を100 step一定に印加した。全時刻で元のorthant符号を保てば成功とした。一network・一外乱強度あたり256 challengeであり、EXP-2026-010のconfirmation総数は122,880だった。
+外乱方向 \(\boldsymbol{d}\in\{-1,1\}^4\) の全16 cornerを列挙し、\(\boldsymbol{\eta}=e\boldsymbol{d}\) を100 step一定に印加した。全時刻で元のorthant符号を保てば成功とした。一network・一外乱強度あたり256 challengeであり、EXP-2026-010とEXP-2026-011の各confirmation総数は122,880だった。
 
 ### 4.4 Predictorとbaseline
 
 EXP-2026-010ではfamilyごとにdiscovery 120条件で切片付き単回帰をfitし、confirmation 120条件へ係数を固定して適用した。主要featureは平均margin \(\bar{\mu}\) である。Baselineはraw attractor count、coupling gain、off-diagonal infinity norm、全固定点にわたるworst local Jacobian infinity norm、minimum signed fixed-point coordinate、nonnormality commutator normとした。
+
+EXP-2026-011ではfamily名をfeatureへ入れず、held-out familyのtask保持率をfitから
+完全に除外した。各featureを学習fold内で標準化し、切片を罰しないridge回帰
+（penalty \(10^{-3}\)）をfitした。選択modelのfeatureは
+\(\bar\mu/e\) とcertified robust fractionである。Primary baselineはraw countと、
+normalized coupling、normalized off-diagonal norm、local Jacobian、minimum
+coordinate、nonnormalityからなる5-feature structural modelとした。
+Normalized margin単独はsecondary baselineである。全予測を保持率の定義域
+\([0,1]\) へclipした。
 
 ### 4.5 統計と事前判定
 
 Family別にSpearman順位相関とMAEを算出した。誤差差は同じseedの4 family・各4 gainを平均して一標本とし、30 seedを2,000回percentile bootstrapして95%区間を求めた。
 
 EXP-2026-010の事前判定は、confirmation全480 networkでraw count 16、certificate下界違反0、4 familyすべてでmean marginとtask retentionのSpearmanが0.75超、pooled raw-count MAE minus margin MAEの95%区間下限が0超、の4項目である。Couplingとlocal Jacobianに対する誤差差はsecondary endpointとして事前に固定した。
+
+EXP-2026-011では各confirmation seedの4 family・4 gainを平均して一標本とした
+paired誤差差を用いた。事前判定は、raw count 16、certificate違反0、全familyで
+robust-pair予測とのSpearman 0.75超、raw-count MAE minus robust-pair MAEの
+95%区間下限0超、structural MAE minus robust-pair MAEの区間下限0超、の5項目
+である。確認seedを観測する前にsource/test manifestを固定した。
 
 ## 5. 結果
 
@@ -199,13 +246,38 @@ Family別相関は0.8933–0.9771であり、事前閾値0.75をすべて上回�
 
 Poolした平均ではmargin predictorが三baselineを上回った。一方、feedforward non-normal family内ではlocal Jacobian MAE 0.0223とminimum coordinate MAE 0.0228がmargin MAE 0.0285より小さかった。従ってmarginが全familyで全baselineを支配したとはいえない。
 
+### 5.4 Family・seed二重holdout
+
+EXP-2026-011の事前登録5判定はすべて成立した。全480 confirmation条件でraw
+countは16、全122,880 challengeでcertificate下界違反は0だった。Robust pairの
+pooled MAEは0.0822、pooled Spearmanは0.7975だった。
+
+| Held-out family | Robust-pair Spearman | Robust-pair MAE |
+|---|---:|---:|
+| Dense symmetric | 0.9572 | 0.0537 |
+| Sparse symmetric | 0.8225 | 0.1289 |
+| Asymmetric dense | 0.9534 | 0.0777 |
+| Feedforward non-normal | 0.9469 | 0.0684 |
+
+Pilotで最大誤差だったsparse symmetricを除外せず、全familyで事前閾値0.75を
+上回った。Pooled baselineとseed単位paired誤差差を次に示す。
+
+| Baseline | Baseline MAE | Baseline minus robust-pair MAE | 95%区間 |
+|---|---:|---:|---:|
+| Raw count | 0.1308 | 0.0486 | [0.0468, 0.0505] |
+| Normalized margin | 0.0886 | 0.0064 | [0.0059, 0.0070] |
+| Structural | 0.1184 | 0.0362 | [0.0319, 0.0404] |
+
+Normalized margin比較はsecondary endpointである。全区間下限が0を上回ったが、
+事後に主要判定へ追加していない。
+
 ## 6. 考察
 
 ### 6.1 アトラクタ数から利用可能性へ
 
 本結果の中心は、全networkが同じ16個の自律符号固定点を持つ条件でも、外乱下保持率が大きく異なることである。Raw countは存在を数えるが、有限外乱に対する安全性を含まない。\(N_{\mathrm{rob}}(e)\) とmargin分布は、要求外乱budgetに応じて利用可能な状態を数え直す。
 
-低外乱ではthreshold付きrobust fractionが有効であり、高外乱では連続的な平均marginがより情報を持った。従って、分析ツールは単一scoreへ縮約せず、raw count、certified count、\(N_{\mathrm{rob}}(e)\) curve、margin分布、未認証率を保持すべきである。
+低外乱ではthreshold付きrobust fractionが有効であり、高外乱では連続的な平均marginがより情報を持った。EXP-2026-011では、curveの要求点での高さ \(R(e)\) と無次元化面積 \(\bar\mu/e\) の組が、いずれか単独より小さい未知seed MAEを示した。従って、分析ツールは単一scoreへ縮約せず、raw count、certified count、\(N_{\mathrm{rob}}(e)\) curve、margin分布、未認証率を保持すべきである。
 
 ### 6.2 保証と予測の分離
 
@@ -213,11 +285,13 @@ Hyperbox certificateは任意の時変成分別外乱に対する十分条件で
 
 従ってツールは二つの出力を分ける必要がある。第一は反例が出れば理論または実装が誤っている保証下界、第二はdataset上の相関や交差検証誤差として評価する経験予測である。この分離により、「認証不能」を「失敗」と誤解することを避けられる。
 
+<!-- pagebreak -->
+
 ### 6.3 局所安定性と有限外乱安全性
 
 Local Jacobianは固定点近傍の微小摂動増幅を測るが、符号境界までの有限距離とworst-case方向を直接含まない。Orthant marginは両者をhyperbox十分条件の形で含む。EXP-2026-010のpooled secondary解析でmarginがlocal Jacobianを上回ったことは、この差がtask予測に寄与する可能性を示す。
 
-ただしfamily内では局所baselineが優位な例もあった。次の検証では、family indicator、coupling、局所Jacobian、minimum coordinate、nonnormalityを同時に含む多変量modelへmarginを追加し、nested cross-validationで増分説明力を測る必要がある。
+ただしfamily内では局所baselineが優位な例もあった。EXP-2026-011ではcoupling、局所Jacobian、minimum coordinate、nonnormalityを同時に含むstructural modelを事前登録baselineとし、robust pairがpooled MAEを上回った。これは線形ridgeの範囲での増分予測力であり、非線形model、family indicatorを用いた階層model、nested cross-validationとの比較は残る。
 
 ### 6.4 生得的機能コアと可塑的余剰への含意
 
@@ -229,7 +303,7 @@ Local Jacobianは固定点近傍の微小摂動増幅を測るが、符号境界
 
 を安全負荷率候補とできる。\(\rho_k<1\) は本hyperbox familyにおける十分条件であり、\(\rho_k\ge1\) は必ず失敗する必要条件ではない。
 
-EXP-2026-010は、同じ状態数を持つ人工回路でもmargin分布により利用可能性が異なることを示した。この結果は上の仮説と整合するが、遺伝的設計、発生、可塑性、生物回路を観測していない。生物学的主張には、発生過程または学習maskを操作し、core margin、忘却、新規task獲得の因果関係を測る別研究が必要である。
+EXP-2026-010は、同じ状態数を持つ人工回路でもmargin分布により利用可能性が異なることを示した。EXP-2026-011はさらに、要求budgetで残る状態割合と余裕総量の二成分が、fitから除外した構造の新規seedへ移送できることを示した。この結果は上の仮説と整合するが、遺伝的設計、発生、可塑性、生物回路を観測していない。生物学的主張には、発生過程または学習maskを操作し、core margin、忘却、新規task獲得の因果関係を測る別研究が必要である。
 
 ### 6.5 人間規模の条件について
 
@@ -245,17 +319,21 @@ EXP-2026-010は、同じ状態数を持つ人工回路でもmargin分布によ�
 
 第三に、共通境界hyperboxは保守的であり、座標別box、zonotope、polytope、level set、viability kernelより小さい安全集合しか認証しない可能性がある。第四に、raw countは16個のorthant初期値から発見した固定点数であり、全アトラクタの完全列挙ではない。第五に、sparse familyの外乱budgetとcoupling gridは他familyと異なり、topology間の絶対性能差を因果的に比較できない。
 
-第六に、couplingとlocal Jacobianに対するpooled優位は事前登録secondary endpointである。第七に、familyを丸ごと未知にした予測、非線形多変量baseline、別task family、basin-weighted safe massは未検証である。第八に、生物学的core–reserve仮説と人間規模条件は本稿の実験から直接導かれない。
+第六に、EXP-2026-010のcouplingとlocal Jacobianに対するpooled優位は事前登録secondary endpointである。第七に、EXP-2026-011はfold内で対象familyをfitから除外したが、candidate選択には4 familyすべてのpilot成績を用いた。candidate選択にも未使用の第五family、非線形baseline、別task family、basin-weighted safe massは未検証である。第八に、生物学的core–reserve仮説と人間規模条件は本稿の実験から直接導かれない。
 
 ## 8. 結論
 
-自律アトラクタ数を完全に一致させても、有限外乱下で利用できる記憶状態は異なり得る。符号orthantごとのrobust invariant hyperbox marginを用いることで、この差を保証下界と経験予測の両面から記述できた。未使用seedと4 network familyで、平均marginは外乱下符号記憶保持率と高い順位相関を持ち、poolした予測ではraw count、coupling、局所Jacobianより小さいMAEを示した。
+自律アトラクタ数を完全に一致させても、有限外乱下で利用できる記憶状態は異なり得る。符号orthantごとのrobust invariant hyperbox marginを用いることで、この差を保証下界と経験予測の両面から記述できた。未使用seedと4 network familyで平均marginは外乱下符号記憶保持率と高い順位相関を持った。さらにcurveの高さと面積からなるrobust pairは、familyをfitから除外した未知seed予測でraw countと多変量structural baselineより小さいMAEを示した。
 
-本研究は「アトラクタの数」から「外乱budget付きの利用可能なアトラクタprofile」へ評価単位を移す。次の焦点は、未知family、確率外乱、高次元系、より豊かなset表現へ一般化し、最終的にmargin profileへの介入が同一予算baselineより学習、記憶、頑健性を改善するかを検証することである。
+本研究は「アトラクタの数」から「外乱budget付きの利用可能なアトラクタprofile」へ評価単位を移す。次の焦点は、candidate選択にも未使用の第五family、確率外乱、高次元系、より豊かなset表現へ一般化し、最終的にmargin profileへの介入が同一予算baselineより学習、記憶、頑健性を改善するかを検証することである。
+
+<!-- pagebreak -->
 
 ## データ・コードと再現性
 
-実験spec、seed、判定、導出済みartifact、主張台帳、実装、テストは本repositoryに保存した。主要記録はEXP-2026-008、EXP-2026-009、EXP-2026-010である。実行環境はDocker image digest、Git base commit、source manifest SHA-256 `88a8d1a49af59acec345d3ce79c1030cfab7b3c73e6ecf4fa85685446e5d2266` で固定した。全129テストが通過し、branch coverageは90%だった。
+実験spec、seed、判定、導出済みartifact、主張台帳、実装、テストは本repositoryに保存した。主要記録はEXP-2026-008、EXP-2026-009、EXP-2026-010、EXP-2026-011である。EXP-2026-011 confirmationはsource/test manifest SHA-256 `b022077a3279917d02805a021048382f0b50f33387283d5c900a82b3ff9d0fcd` で事前固定した。組版検証追加後の現行manifestは `7db1dc7182893688558eaf7cb7095a8f2ad16c2712620a49f79787df8b4d33f1` であり、全145テストと11 subtestが通過し、branch coverageは88%だった。
+
+<!-- pagebreak -->
 
 ## 参考文献
 

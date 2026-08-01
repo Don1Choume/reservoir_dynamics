@@ -61,6 +61,7 @@ established
 - `theory/bistable-core-margin.md`: 多重安定coreのロバスト不変集合と外力margin
 - `theory/orthant-box-margin.md`: 非対角RNNのorthant別robust repertoire
 - `experiments/EXP-2026-010.md`: 4 network familyの未知seed task確認
+- `experiments/EXP-2026-011.md`: family・seed二重holdout予測確認
 - `experiments/TEMPLATE.md`: 実験記録テンプレート
 - `directions/innate-core-plastic-reserve.md`: 生得的構造と生涯学習の長期仮説
 - `../papers/robust-repertoire-memory-ja.md`: robust repertoire論文草稿
