@@ -1,6 +1,6 @@
 # 継続的な文献対応付け
 
-最終確認: 2026-07-30
+最終確認: 2026-08-01
 
 ## 監視対象
 
@@ -23,7 +23,8 @@
 | 力学的干渉保護 | dynamical subspace, orthogonal gradient, modular continual learning | `C-BIO-003`, `H-BIO-004`, `H-BIO-005` |
 | motif再利用 | dynamical motif, compositional RNN, fast task transfer | `C-RC-017`, `H-BIO-002` |
 | plasticity枯渇 | loss of plasticity, feature renewal, continual learning | `C-CL-001`, `H-BIO-002` |
-| topology外的妥当性 | symmetry, sparsity, small-world, task dependence | `H-RC-007`, `EXP-2026-010` |
+| topology外的妥当性 | symmetry, sparsity, modularity, task dependence | `H-RC-007`, `EXP-2026-010`, `EXP-2026-012` |
+| 構造・機能・遺伝 | structural connectome genetics, eigenmodes, individual variability | `C-BIO-001`, `H-BIO-004`, `OQ-012` |
 | 非正規・非相反力学 | non-normality, reactivity, transient amplification | `H-RC-007`, `EXP-2026-010` |
 
 ## 2026-07-30 差分
@@ -40,6 +41,26 @@
 - Park et al. (2026, preprint) は、photonic reservoirでsmall-world topologyの
   memory・予測性能を報告した一方、最適topologyがtaskに依存することを示した。
   arXiv: <https://arxiv.org/abs/2607.23285>
+
+## 2026-08-01 差分
+
+- Wainberg et al. (2024) は26,333人、206 tractography指標のGWASから、
+  白質構造結合に広範で多遺伝子的、空間構造化された遺伝的影響を報告した。
+  DOI: <https://doi.org/10.1038/s41467-024-46023-2>
+- Sydnor et al. (2024) は4独立dataset、計3,355人の事前登録解析で、発達中の
+  機能結合変化がsensorimotor-association軸に沿って再現することを示した。
+  DOI: <https://doi.org/10.1038/s41467-024-47748-w>
+- Xia et al. (2026) は白質、微細構造類似性、空間近接性を統合した多尺度
+  structural connectome eigenmodeが安静時・task時活動を単一尺度近似より
+  よく捉えることを報告した。
+  DOI: <https://doi.org/10.1038/s42003-026-10558-5>
+- Bian et al. (2024, preprint) はBaby Connectome Projectで個体差を保持する
+  Bayesian module推定を提示した。発達共通性と個体差を分離する方法候補だが、
+  遺伝・学習寄与の因果分解ではない。
+  arXiv: <https://arxiv.org/abs/2407.13118>
+- Raghav et al. (2026, preprint) は反復fMRIの測定誤差を明示したtwin modelで、
+  遺伝・環境寄与が多尺度communityへ組織されることを報告した。査読前である。
+  arXiv: <https://arxiv.org/abs/2604.24614>
 
 ## 情報源の優先順位
 

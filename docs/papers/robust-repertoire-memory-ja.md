@@ -2,8 +2,8 @@
 
 ## ロバスト・レパートリー余裕による外乱下記憶性能の予測
 
-研究草稿 v0.2
-2026年7月30日
+研究草稿 v0.4
+2026年8月1日
 
 ## 要旨
 
@@ -13,7 +13,11 @@
 
 最後に、各foldの対象familyをfitから除外し、他3 familyだけで標準化ridge回帰をfitするfamily・seed二重holdout確認を行った。要求外乱で無次元化した平均marginと認証robust fractionの二成分modelは、新規30 seedのpooled MAE 0.0822、family別Spearman 0.8225–0.9572を示した。seed単位paired bootstrapで、raw countおよび5-feature structural baselineのMAEよりそれぞれ0.0486 [0.0468, 0.0505]、0.0362 [0.0319, 0.0404]小さかった。
 
-以上は、有限外乱下で利用可能な記憶状態を評価するにはアトラクタ数だけでなく、外乱budgetを引数とするmargin profileが必要であることを支持する。一方、本結果は4次元tanh RNN、既知の4 family、一定外乱、符号保持task、hyperbox十分条件に限定される。candidate選択にも未使用の第五family、確率外乱、高次元系、生物回路、人間規模の必要条件への一般化は今後の課題である。
+さらに候補選択にも未使用の第五の独立pair-module familyへ同じmodelを適用した。全120条件のraw countは16、30,720 challengeのcertificate違反は0だったが、二成分modelのSpearmanは0、MAEは0.2238で、raw countとstructural baselineを上回らなかった。Normalized margin単独は副次的にSpearman 0.8944を示した。またpair符号だけを変える30 seedは符号座標変換で同値であり、bootstrap区間は一点へ退化した。
+
+そこで既存5 familyを符号座標共役で監査したところ、600 network条件は192構造classへ縮約された。各gainの30 seedに対する有効class数はdense symmetric 8、sparse symmetric 2、asymmetric dense 29、feedforward non-normal 8、modular paired 1だった。続いてmodule結合絶対値をseedごとに変えた60個の有効構造networkで積則を事前登録確認した。240条件、61,440 challengeにおいてfull固定点数は常に4×4=16、全corner符号保持率のmodule積に対する最大残差は0、component certificate下界違反は0だった。保持率は0.390625–1.0に分布した。
+
+以上は、有限外乱下で利用可能な記憶状態を評価するにはアトラクタ数だけでなくmargin profileが必要である一方、既知構造で学習した低次元の線形較正を任意の力学系へ普遍化できないことを示す。またraw seed数をtask保存対称性で割り、component別profileと積則を保持する必要がある。本結果は4次元tanh RNN、一定外乱、符号保持task、hyperbox十分条件に限定される。
 
 キーワード: reservoir computing、multistability、robust invariant set、survivability、attractor repertoire、recurrent neural network
 
@@ -32,6 +36,8 @@ Reservoir Computing Generalizedを含む近年の理論は、計算基材を特�
 - count-matchedな未使用seed確認と、122,880 challengeからなる4 familyの事前登録task確認を実施した。
 - 保証下界と経験的点予測を分離し、coupling、局所Jacobian、固定点座標、非正規性を比較baselineとして実装した。
 - 対象familyのlabelをfitから除外するfamily・seed二重holdoutで、robust repertoire二成分modelの移送性能を事前登録確認した。
+- 符号座標共役の証人探索とclass監査を実装し、既存600 network条件の実効構造多様性を192 classと算定した。
+- 符号共役で異なる60個の異質独立module networkで、固定点、component certificate、全corner task保持率の積則を事前登録確認した。
 
 ## 2. 関連研究
 
@@ -169,6 +175,10 @@ EXP-2026-008では未使用seed 501–530を用い、coupling 0.04と0.07の両�
 
 EXP-2026-011のpilotは観測済みseed 801–830をfit、901–930をtestに用い、6 candidateからpooled leave-one-family-out MAE最小のrobust pairを選択した。その後、penalty、feature、baseline、閾値を固定し、他3 familyの既観測60 seedでfitしたmodelをheld-out familyの未使用seed 1201–1230へ適用した。
 
+EXP-2026-012では、EXP-2026-011で固定したfeature、penalty、baseline、閾値を変更せず、既知4 familyの既観測seed 801–830と901–930、計960条件でfitした。候補選択にもparameter調整にも使用していない `modular_paired` familyの未使用seed 1301–1330、計120条件を一度だけ評価した。
+
+AUDIT-2026-001では性能taskを再実行せず、EXP-2026-011/012の重み600条件を符号対角共役 \(W'=DWD\) でclass分割した。EXP-2026-013ではtask前に各gain30 classを確認した `modular_heterogeneous` のseed 1401–1430を用い、2 global gain、4外乱の240条件を一度だけ評価した。
+
 ### 4.2 Network family
 
 全networkは4次元、対角自己結合1.5のtanh RNNである。
@@ -179,14 +189,20 @@ EXP-2026-011のpilotは観測済みseed 801–830をfit、901–930をtestに用
 | Sparse symmetric | 次数2の無向ring、seed別符号 | 0.04, 0.06, 0.08, 0.10 | 0.12 |
 | Asymmetric dense | 全有向edge、方向別seed符号 | 0.04, 0.05, 0.06, 0.07 | 0.16 |
 | Feedforward non-normal | 上三角有向edge、seed別符号 | 0.04, 0.05, 0.06, 0.07 | 0.16 |
+| Modular paired | 独立2-node対称pair二個、pair別seed符号 | 0.04, 0.05, 0.06, 0.07 | 0.16 |
+| Modular heterogeneous | 独立2-node対称pair二個、pair別絶対値と符号 | 0.05, 0.07 | 0.08, 0.12, 0.16, 0.20 |
 
 Sparse familyでは共通条件に天井効果または固定点消失が生じたため、pilotで異なるcoupling gridと外乱budgetを固定した。従ってfamily間の絶対保持率をtopologyの因果効果として比較しない。
+
+Modular paired familyの重みは \(aI_4\) と二つの独立2次元blockからなる。module間結合は0であり、全系は二つの部分系の直積へ厳密に分解する。
+
+Modular heterogeneousでは各pairの結合絶対値をglobal gainの0.75–1.25倍からseed別に生成した。task実行前監査で各gain30 networkが30符号共役classとなり、unorderedな二module絶対値pairにも重複がないことを確認した。
 
 ### 4.3 固定点探索と符号記憶task
 
 全16 orthantについて初期状態 \(0.9\boldsymbol{s}\) から自律系を500 step発展させ、最終残差 \(10^{-9}\) 以下かつ全時刻で符号を保つ場合に固定点を発見したとした。各固定点を4-bit符号記憶とみなした。
 
-外乱方向 \(\boldsymbol{d}\in\{-1,1\}^4\) の全16 cornerを列挙し、\(\boldsymbol{\eta}=e\boldsymbol{d}\) を100 step一定に印加した。全時刻で元のorthant符号を保てば成功とした。一network・一外乱強度あたり256 challengeであり、EXP-2026-010とEXP-2026-011の各confirmation総数は122,880だった。
+外乱方向 \(\boldsymbol{d}\in\{-1,1\}^4\) の全16 cornerを列挙し、\(\boldsymbol{\eta}=e\boldsymbol{d}\) を100 step一定に印加した。全時刻で元のorthant符号を保てば成功とした。一network・一外乱強度あたり256 challengeであり、EXP-2026-010とEXP-2026-011の各confirmation総数は122,880、EXP-2026-012は30,720だった。
 
 ### 4.4 Predictorとbaseline
 
@@ -201,6 +217,8 @@ coordinate、nonnormalityからなる5-feature structural modelとした。
 Normalized margin単独はsecondary baselineである。全予測を保持率の定義域
 \([0,1]\) へclipした。
 
+EXP-2026-012ではrobust pairを既知4 familyの全60 seedでfitし、外部familyへ適用した。学習family集合と評価family集合、学習seed集合と評価seed集合がそれぞれ交わらないことを評価器で検査した。Baselineとclip規約はEXP-2026-011から変更していない。
+
 ### 4.5 統計と事前判定
 
 Family別にSpearman順位相関とMAEを算出した。誤差差は同じseedの4 family・各4 gainを平均して一標本とし、30 seedを2,000回percentile bootstrapして95%区間を求めた。
@@ -212,6 +230,10 @@ paired誤差差を用いた。事前判定は、raw count 16、certificate違反
 robust-pair予測とのSpearman 0.75超、raw-count MAE minus robust-pair MAEの
 95%区間下限0超、structural MAE minus robust-pair MAEの区間下限0超、の5項目
 である。確認seedを観測する前にsource/test manifestを固定した。
+
+EXP-2026-012も同じ5判定を用いたが、family別ではなく第五family全120点のSpearmanを用いた。各seedの4 gainを一標本とする2,000回paired bootstrapを事前登録した。Source/test manifest SHA-256は `30f1f7a11953dc6d8a5d1a7415ba8e12c311e718691475976883aa477295187d` である。
+
+EXP-2026-013は予測modelをfitせず、構造gate、固定点数の積、component box不変性、global common-boundary certificateの保守性、全corner task保持率の積、component certificate下界の6判定をtolerance \(10^{-12}\) で固定した。Source/test manifest SHA-256は `85fb1caea1ebfb68db4e4f1ffd722534a9d6265a9db800e82d14df40739555fa` である。
 
 ## 5. 結果
 
@@ -271,6 +293,57 @@ Pilotで最大誤差だったsparse symmetricを除外せず、全familyで事�
 Normalized margin比較はsecondary endpointである。全区間下限が0を上回ったが、
 事後に主要判定へ追加していない。
 
+### 5.5 Candidate選択から隔離したmodular family
+
+EXP-2026-012では、事前登録5判定のうちraw count一致とcertificate下界の2件が
+成立し、順位相関と二つのbaseline優位は不成立だった。全120条件でraw countは
+16、全30,720 challengeでcertificate下界違反は0だった。
+
+| Predictor | MAE | Spearman | Baseline minus robust-pair MAE |
+|---|---:|---:|---:|
+| Robust pair | 0.2238 | 0.0000 | — |
+| Raw count | 0.2188 | 0.0000 | -0.0050 |
+| Normalized margin | 0.1955 | 0.8944 | -0.0282 |
+| Structural | 0.2160 | 0.5774 | -0.0078 |
+
+Robust pairはraw countとstructural baselineの両方より大きいMAEとなった。
+Normalized margin単独は高い順位相関を示したが、同じconfirmation上のsecondary
+結果であり、新たに選択済みの普遍predictorとは扱わない。Task retentionの範囲は
+0.5625–1.0だった。
+
+三つのpaired bootstrap区間は、いずれも表の推定値と同じ一点へ退化した。
+原因は、seedが変える二つのpair coupling符号が符号座標変換で互いに共役であり、
+全orthant・全corner列挙の集約量がseed不変だったことである。従って30 seedを
+独立な構造標本とは扱わない。
+
+### 5.6 符号共役で割った有効構造多様性
+
+AUDIT-2026-001では各family・gainの30 seedを符号対角共役で分割した。
+
+| Family | Raw / gain | Effective / gain | Raw / effective |
+|---|---:|---:|---:|
+| Dense symmetric | 30 | 8 | 3.75 |
+| Sparse symmetric | 30 | 2 | 15.00 |
+| Asymmetric dense | 30 | 29 | 1.03 |
+| Feedforward non-normal | 30 | 8 | 3.75 |
+| Modular paired | 30 | 1 | 30.00 |
+
+全20 family-gain群の600 network条件は192 class、effective fraction 0.32だった。Dense、sparse、feedforward、modularのclass数はsigned graphのcycle-rankから得る理論値8、2、8、1と一致した。Asymmetric denseは理論上512 classを許し、30 seed中29 classを観測した。
+
+### 5.7 異質独立moduleの積則確認
+
+EXP-2026-013では各gain30 class、計60個の異質networkを確認した。全240条件でfull raw countは16、各moduleは4だった。61,440 challengeにおける主要結果を示す。
+
+| 判定量 | 結果 |
+|---|---:|
+| Full count minus module count product | 0 |
+| Task retention minus module retention product | 最大絶対値0 |
+| Component box minimum slack | -1.11e-16 |
+| Full task minus component certified fraction | 最小0 |
+| Full common fraction minus component fraction | 範囲0–0 |
+
+task retentionは0.390625–1.0に分布した。従ってtask積則は保持率が定数だったためではない。既存common-boundary fractionは今回の4閾値でcomponent積fractionと一致したが、異質module一般での等号は主張しない。
+
 ## 6. 考察
 
 ### 6.1 アトラクタ数から利用可能性へ
@@ -285,17 +358,50 @@ Hyperbox certificateは任意の時変成分別外乱に対する十分条件で
 
 従ってツールは二つの出力を分ける必要がある。第一は反例が出れば理論または実装が誤っている保証下界、第二はdataset上の相関や交差検証誤差として評価する経験予測である。この分離により、「認証不能」を「失敗」と誤解することを避けられる。
 
-<!-- pagebreak -->
-
 ### 6.3 局所安定性と有限外乱安全性
 
 Local Jacobianは固定点近傍の微小摂動増幅を測るが、符号境界までの有限距離とworst-case方向を直接含まない。Orthant marginは両者をhyperbox十分条件の形で含む。EXP-2026-010のpooled secondary解析でmarginがlocal Jacobianを上回ったことは、この差がtask予測に寄与する可能性を示す。
 
 ただしfamily内では局所baselineが優位な例もあった。EXP-2026-011ではcoupling、局所Jacobian、minimum coordinate、nonnormalityを同時に含むstructural modelを事前登録baselineとし、robust pairがpooled MAEを上回った。これは線形ridgeの範囲での増分予測力であり、非線形model、family indicatorを用いた階層model、nested cross-validationとの比較は残る。
 
-### 6.4 生得的機能コアと可塑的余剰への含意
+### 6.4 Module積則と較正の非普遍性
 
-本研究の長期仮説は、生物の神経系には発生的に形成された必須機能coreと、個体学習に利用できるplastic reserveがあり、新規学習からcoreへ流入する負荷が安全marginを消費するというものである。必須機能 \(k\) の外乱またはfeedback loadを \(e_k\)、marginを \(\mu_k\) とすれば、
+Block diagonalな二部分系では、固定点集合は直積となり、固定点数は積になる。
+各部分系のrobust fractionを \(R_1(e),R_2(e)\) とすれば、全系の同時
+certificate率は
+
+\[
+R(e)=R_1(e)R_2(e)
+\]
+
+である。全challengeを直積として一様列挙し、全module成功を全系成功と定義
+すれば、有限時間保持率も \(T(e)=T_1(e)T_2(e)\) となる。一方、全系の
+平均marginは
+
+\[
+\bar\mu=\int_0^\infty R_1(z)R_2(z)\,dz
+\]
+
+であり、部分系平均の単純な和や積ではない。
+
+この積則はmoduleごとに異なるbox境界を許すcomponent certificateに対する。既存のglobal certificateは全座標に一つの境界を課すため、一般にはcomponent margin以下の保守的下界となる。EXP-2026-013の単純な異質2-node moduleでは評価した4閾値でglobal fractionとcomponent積fractionが一致したが、一般の等号へ強化しない。
+
+EXP-2026-012の陰性結果はrobust repertoireの定義またはcertificate下界を否定
+しない。否定されたのは、非直積な既知4 familyでfitした
+\((\bar\mu/e,R(e))\) の線形較正を、積構造へそのまま移送できるという仮説で
+ある。任意の力学系を扱う分析ツールには、global summaryだけでなく、
+connected component、近似module、component別curve、積則残差を保持する必要が
+ある。
+
+また、pair符号のseed差がtask-preserving共役で消えたことは、parameter seed数
+と有効な構造多様性が異なることを示す。外的妥当性の標本数は、taskを保存する
+対称性で割ったnetwork同値類に基づいて監査すべきである。
+
+AUDIT-2026-001では600 network条件が192符号共役classへ縮約された。一方、結合絶対値を変えたEXP-2026-013は各gain30 classを保ち、task retentionが0.390625–1.0へ変化する中で \(T(e)=T_1(e)T_2(e)\) を最大残差0で確認した。従ってcomponent積則は、EXP-2026-012の退化した符号seedだけに依存する現象ではない。ただしこれはmodule間結合0の零次模型であり、次に測るべき量は弱結合で生じる積則残差である。
+
+### 6.5 生得的機能コアと可塑的余剰への含意
+
+本研究の長期仮説は、生物の神経系には発生的に形成された必須機能coreと、個体学習に利用できるplastic reserveがあり、新規学習からcoreへ流入する負荷が安全marginを消費するというものである。大規模画像研究は構造connectomeへの多遺伝子的影響と、多尺度構造固有モードによる機能ダイナミクス制約を支持する [16,17] が、アトラクタ余剰を直接測ってはいない。必須機能 \(k\) の外乱またはfeedback loadを \(e_k\)、marginを \(\mu_k\) とすれば、
 
 \[
 \rho_k=\frac{e_k}{\mu_k}
@@ -303,13 +409,19 @@ Local Jacobianは固定点近傍の微小摂動増幅を測るが、符号境界
 
 を安全負荷率候補とできる。\(\rho_k<1\) は本hyperbox familyにおける十分条件であり、\(\rho_k\ge1\) は必ず失敗する必要条件ではない。
 
-EXP-2026-010は、同じ状態数を持つ人工回路でもmargin分布により利用可能性が異なることを示した。EXP-2026-011はさらに、要求budgetで残る状態割合と余裕総量の二成分が、fitから除外した構造の新規seedへ移送できることを示した。この結果は上の仮説と整合するが、遺伝的設計、発生、可塑性、生物回路を観測していない。生物学的主張には、発生過程または学習maskを操作し、core margin、忘却、新規task獲得の因果関係を測る別研究が必要である。
+EXP-2026-010は、同じ状態数を持つ人工回路でもmargin分布により利用可能性が異なることを示した。EXP-2026-011はさらに、要求budgetで残る状態割合と余裕総量の二成分が、fitから除外した構造の新規seedへ移送できることを示した。しかしEXP-2026-012では積構造への線形較正移送が失敗したため、回路のmodule構成を無視した普遍scoreとしては使えない。この結果は上の仮説と整合も反証もしない。遺伝的設計、発生、可塑性、生物回路を観測していないため、発生過程または学習maskを操作し、core margin、忘却、新規task獲得の因果関係を測る別研究が必要である。
 
-### 6.5 人間規模の条件について
+### 6.6 人間規模の条件について
 
 現段階で人間規模の処理能力に必要なnode数、アトラクタ数、reserve次元を導くことはできない。導出可能なのは、候補となる必要条件の形式である。
 
 第一に、環境外乱budget \(e\) に対してtask-relevantな機能同値類を覆うだけの \(N_{\mathrm{rob}}(e)\) または \(S_{\mathrm{rob}}(e)\) が必要である。第二に、必須機能の安全負荷率 \(\rho_k\) を許容範囲に保つgating、抑制、疎結合、module分離が必要になり得る。第三に、未知taskを追加する能力には、既存機能を壊さず新しい機能同値類を形成できるplastic reserveと更新energyが必要である。
+
+独立同型な \(m\) moduleがすべて同時に成功する零次模型では、局所成功率
+\(r\) と全系成功率 \(q\) の間に \(q=r^m\) が成り立つ。従って目標 \(q\)
+には \(r\ge q^{1/m}\) が必要である。大規模系では局所信頼度を1へ近づける
+だけでなく、冗長性、誤り訂正、階層的gating、失敗相関の制御が必要になる。
+これは人間脳の実測下界ではなく、独立module仮定下の構成的scale条件である。
 
 これらは定量的な人間下界ではない。人間規模へ接続するには、task組合せ複雑度、時間尺度階層、通信bandwidth、energy、発生記述長、plastic reserve枯渇を同時に変化させるscale lawが必要である。
 
@@ -319,19 +431,17 @@ EXP-2026-010は、同じ状態数を持つ人工回路でもmargin分布によ�
 
 第三に、共通境界hyperboxは保守的であり、座標別box、zonotope、polytope、level set、viability kernelより小さい安全集合しか認証しない可能性がある。第四に、raw countは16個のorthant初期値から発見した固定点数であり、全アトラクタの完全列挙ではない。第五に、sparse familyの外乱budgetとcoupling gridは他familyと異なり、topology間の絶対性能差を因果的に比較できない。
 
-第六に、EXP-2026-010のcouplingとlocal Jacobianに対するpooled優位は事前登録secondary endpointである。第七に、EXP-2026-011はfold内で対象familyをfitから除外したが、candidate選択には4 familyすべてのpilot成績を用いた。candidate選択にも未使用の第五family、非線形baseline、別task family、basin-weighted safe massは未検証である。第八に、生物学的core–reserve仮説と人間規模条件は本稿の実験から直接導かれない。
+第六に、EXP-2026-010のcouplingとlocal Jacobianに対するpooled優位は事前登録secondary endpointである。第七に、EXP-2026-011はfold内で対象familyをfitから除外したが、candidate選択には4 familyすべてのpilot成績を用いた。第八に、EXP-2026-012の第五familyではrobust-pair線形modelが外挿に失敗した。さらに30 seedは符号共役で同値なため、modular family母集団に対する区間推定ではない。第九に、normalized margin単独の第五family相関は同じconfirmation上のsecondary結果であり、独立確認されていない。第十に、AUDIT-2026-001は符号対角共役だけを扱い、node permutation、一般similarity、近似共役は未監査である。第十一に、EXP-2026-013は独立な2+2 node moduleの積則を確認したが、弱結合残差またはcomponent-aware predictorの優位を検証していない。第十二に、別task family、basin-weighted safe mass、生物学的core–reserve仮説、人間規模条件は本稿の実験から直接導かれない。
 
 ## 8. 結論
 
 自律アトラクタ数を完全に一致させても、有限外乱下で利用できる記憶状態は異なり得る。符号orthantごとのrobust invariant hyperbox marginを用いることで、この差を保証下界と経験予測の両面から記述できた。未使用seedと4 network familyで平均marginは外乱下符号記憶保持率と高い順位相関を持った。さらにcurveの高さと面積からなるrobust pairは、familyをfitから除外した未知seed予測でraw countと多変量structural baselineより小さいMAEを示した。
 
-本研究は「アトラクタの数」から「外乱budget付きの利用可能なアトラクタprofile」へ評価単位を移す。次の焦点は、candidate選択にも未使用の第五family、確率外乱、高次元系、より豊かなset表現へ一般化し、最終的にmargin profileへの介入が同一予算baselineより学習、記憶、頑健性を改善するかを検証することである。
-
-<!-- pagebreak -->
+しかし、candidate選択にも未使用の独立module familyでは同じ線形modelが外挿に失敗した。さらに既存600 network条件は符号共役で192 classへ縮約された。異質独立moduleでは固定点、component certificate、task保持率の積則を確認できたため、Atlasはraw seed数とglobal scoreだけでなく、task保存対称性で割った有効構造class、component別profile、積則残差を保持すべきである。従って本研究の結論は「アトラクタ数から外乱budget付き・構造分解付きprofileへ評価単位を移す必要がある」までであり、「一つのglobal scoreまたは線形較正が任意の力学系へ通用する」ではない。次の焦点は弱結合残差、確率外乱、高次元系、より豊かなset表現へ一般化し、最終的にprofileへの介入が同一予算baselineより学習、記憶、頑健性を改善するか検証することである。
 
 ## データ・コードと再現性
 
-実験spec、seed、判定、導出済みartifact、主張台帳、実装、テストは本repositoryに保存した。主要記録はEXP-2026-008、EXP-2026-009、EXP-2026-010、EXP-2026-011である。EXP-2026-011 confirmationはsource/test manifest SHA-256 `b022077a3279917d02805a021048382f0b50f33387283d5c900a82b3ff9d0fcd` で事前固定した。組版検証追加後の現行manifestは `7db1dc7182893688558eaf7cb7095a8f2ad16c2712620a49f79787df8b4d33f1` であり、全145テストと11 subtestが通過し、branch coverageは88%だった。
+実験spec、seed、判定、導出済みartifact、主張台帳、実装、テストは本repositoryに保存した。主要記録はEXP-2026-008からEXP-2026-013とAUDIT-2026-001である。EXP-2026-011 confirmationはsource/test manifest SHA-256 `b022077a3279917d02805a021048382f0b50f33387283d5c900a82b3ff9d0fcd`、EXP-2026-012は `30f1f7a11953dc6d8a5d1a7415ba8e12c311e718691475976883aa477295187d` で事前固定した。EXP-2026-012実行前には全145テストが通過し、branch coverageは88%だった。初回出力転送失敗後、結果未観測のまま同一code・同一seedを決定論的にreplayしてartifactを回収した。EXP-2026-013は全165 testと11 subtest、branch coverage 88%を確認し、manifest `85fb1caea1ebfb68db4e4f1ffd722534a9d6265a9db800e82d14df40739555fa` を固定して一度だけ実行した。
 
 <!-- pagebreak -->
 
@@ -366,3 +476,7 @@ EXP-2026-010は、同じ状態数を持つ人工回路でもmargin分布によ�
 [14] Dohare S, et al. Loss of Plasticity in Deep Continual Learning. Nature 632, 768–774, 2024. https://doi.org/10.1038/s41586-024-07711-7
 
 [15] McClelland JL, McNaughton BL, O’Reilly RC. Why There Are Complementary Learning Systems in the Hippocampus and Neocortex. Psychological Review 102, 419–457, 1995. https://doi.org/10.1037/0033-295X.102.3.419
+
+[16] Wainberg M, et al. Genetic Architecture of the Structural Connectome. Nature Communications 15, 1962, 2024. https://doi.org/10.1038/s41467-024-46023-2
+
+[17] Xia J, et al. Multiscale Structural Connectome Eigenmodes Constrain Human Brain Functional Dynamics. Communications Biology, 2026. https://doi.org/10.1038/s42003-026-10558-5

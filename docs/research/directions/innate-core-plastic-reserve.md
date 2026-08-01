@@ -326,6 +326,17 @@ fitから除外し、normalized marginとcertified fractionの二成分modelを�
 へ適用した。family別Spearmanは0.8225–0.9572で、raw countと5-feature
 structural baselineに対するseed単位MAE改善も事前登録条件を満たした。
 
+一方、candidate選択にも未使用の `modular_paired` familyを用いた
+`EXP-2026-012` では、この二成分線形modelはSpearman 0、MAE 0.2238となり、
+raw countとstructural baselineを上回らなかった。全120条件のraw count 16と
+certificate下界違反0は維持されたため、保証そのものと、異なる構造族への
+経験的較正を分離しなければならない。
+
+さらに同familyでは、seedが変えたpair符号はtask-preservingな座標変換で
+同値だった。このため30 seedの有効構造標本数は1だった。生物学的個体差を
+model化する際も、parameterが異なることではなく、機能を保存する対称性で
+割った後に異なる回路であることを確認する必要がある。
+
 この二成分は、core状態の平均安全余裕と、要求budgetを満たす状態割合を分離
 する。工学的には「必須状態を持つこと」と「その状態および余剰状態が利用可能
 であること」を同時に設計する必要性を示す。それでも生物学的margin、発生、
@@ -446,6 +457,24 @@ hierarchy、局所gating、task条件付き結合が必要になる可能性が�
 また全機能が同じ最低marginを必要とするとは限らない。外乱budget別の
 \(N_{\mathrm{rob}}(e)\) と \(S_{\mathrm{rob}}(e)\) をscaleさせることで、
 少数の極端に脆弱な機能が全体のworst-case boundを支配する問題を分離する。
+
+独立な \(m\) moduleがすべて同時に成功する必要があり、各moduleの局所成功率が
+\(r\) なら、全系成功率は零次近似で
+
+\[
+q=r^m
+\]
+
+となる。従って目標 \(q\) を保つ局所必要率は
+
+\[
+r\ge q^{1/m}
+\]
+
+である。例えばmodule数が増えるほど各局所回路には1に極めて近い信頼度が
+必要となる。これは人間脳の数値的必要条件ではないが、大規模系では単なる
+module追加だけでなく、冗長性、誤り訂正、階層的gating、失敗相関の制御が
+必要になることを示す構成的なscale下限である。
 
 候補となる必要条件は、例えば
 

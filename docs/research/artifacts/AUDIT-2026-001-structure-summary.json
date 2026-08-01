@@ -1,0 +1,87 @@
+{
+  "audit_id": "AUDIT-2026-001",
+  "date": "2026-08-01",
+  "equivalence_relation": "second = D first D, D_ii in {-1, +1}",
+  "tolerance": 1e-12,
+  "dimension": 4,
+  "diagonal_gain": 1.5,
+  "task_equivalence_scope": "Full-orthant and full-corner evaluation is closed under the signed coordinate transformation. Other inputs, disturbances, readouts, or evaluation sets require a separate closure audit.",
+  "totals": {
+    "raw_network_count": 600,
+    "effective_class_count": 192,
+    "effective_fraction": 0.32,
+    "raw_to_effective_ratio": 3.125
+  },
+  "families": [
+    {
+      "network_family": "dense_symmetric",
+      "trial_seed_range": [1201, 1230],
+      "coupling_gains": [0.04, 0.05, 0.06, 0.07],
+      "raw_network_count_per_gain": 30,
+      "effective_class_count_per_gain": 8,
+      "class_sizes_per_gain": [4, 4, 6, 3, 5, 2, 5, 1],
+      "representative_seeds_per_gain": [1201, 1202, 1203, 1205, 1206, 1210, 1211, 1229],
+      "raw_network_count_total": 120,
+      "effective_class_count_total": 32,
+      "raw_to_effective_ratio": 3.75
+    },
+    {
+      "network_family": "sparse_symmetric",
+      "trial_seed_range": [1201, 1230],
+      "coupling_gains": [0.04, 0.06, 0.08, 0.1],
+      "raw_network_count_per_gain": 30,
+      "effective_class_count_per_gain": 2,
+      "class_sizes_per_gain": [18, 12],
+      "representative_seeds_per_gain": [1201, 1203],
+      "raw_network_count_total": 120,
+      "effective_class_count_total": 8,
+      "raw_to_effective_ratio": 15.0
+    },
+    {
+      "network_family": "asymmetric_dense",
+      "trial_seed_range": [1201, 1230],
+      "coupling_gains": [0.04, 0.05, 0.06, 0.07],
+      "raw_network_count_per_gain": 30,
+      "effective_class_count_per_gain": 29,
+      "non_singleton_class": {
+        "representative_seed": 1213,
+        "equivalent_seed": 1222,
+        "class_size": 2
+      },
+      "raw_network_count_total": 120,
+      "effective_class_count_total": 116,
+      "raw_to_effective_ratio": 1.0344827586206897
+    },
+    {
+      "network_family": "feedforward_nonnormal",
+      "trial_seed_range": [1201, 1230],
+      "coupling_gains": [0.04, 0.05, 0.06, 0.07],
+      "raw_network_count_per_gain": 30,
+      "effective_class_count_per_gain": 8,
+      "class_sizes_per_gain": [4, 4, 6, 3, 5, 2, 5, 1],
+      "representative_seeds_per_gain": [1201, 1202, 1203, 1205, 1206, 1210, 1211, 1229],
+      "raw_network_count_total": 120,
+      "effective_class_count_total": 32,
+      "raw_to_effective_ratio": 3.75
+    },
+    {
+      "network_family": "modular_paired",
+      "trial_seed_range": [1301, 1330],
+      "coupling_gains": [0.04, 0.05, 0.06, 0.07],
+      "raw_network_count_per_gain": 30,
+      "effective_class_count_per_gain": 1,
+      "class_sizes_per_gain": [30],
+      "representative_seeds_per_gain": [1301],
+      "raw_network_count_total": 120,
+      "effective_class_count_total": 4,
+      "raw_to_effective_ratio": 30.0
+    }
+  ],
+  "theoretical_checks": {
+    "dense_symmetric": "Six independent undirected K4 edge signs modulo rank-three switching yield 2^(6-3) = 8 classes; all eight were observed.",
+    "sparse_symmetric": "Four independent C4 edge signs modulo rank-three switching yield 2^(4-3) = 2 classes; both were observed.",
+    "feedforward_nonnormal": "Six directed acyclic K4 edge signs have the same rank-three signed-coordinate action, yielding 2^(6-3) = 8 classes; all eight were observed.",
+    "modular_paired": "Two independent forest-edge signs modulo a rank-two switching action yield 2^(2-2) = 1 class; all 30 seeds collapse to it.",
+    "asymmetric_dense": "Twelve directed edge signs modulo a rank-three switching action permit 2^(12-3) = 512 classes; 29 of 30 sampled seeds were distinct."
+  }
+}

@@ -15,6 +15,7 @@ RecurrentWeightFamily = Literal[
     "dense_symmetric",
     "sparse_symmetric",
     "modular_paired",
+    "modular_heterogeneous",
     "asymmetric_dense",
     "feedforward_nonnormal",
 ]
@@ -23,6 +24,7 @@ RECURRENT_WEIGHT_FAMILIES: tuple[RecurrentWeightFamily, ...] = (
     "dense_symmetric",
     "sparse_symmetric",
     "modular_paired",
+    "modular_heterogeneous",
     "asymmetric_dense",
     "feedforward_nonnormal",
 )
@@ -64,6 +66,13 @@ def build_recurrent_weights(
         )
     if network_family == "modular_paired":
         return _modular_paired_weights(
+            dimension=dimension,
+            diagonal_gain=diagonal_gain,
+            coupling_gain=coupling_gain,
+            random_generator=random_generator,
+        )
+    if network_family == "modular_heterogeneous":
+        return _modular_heterogeneous_weights(
             dimension=dimension,
             diagonal_gain=diagonal_gain,
             coupling_gain=coupling_gain,
@@ -151,6 +160,36 @@ def _modular_paired_weights(
     )
 
 
+def _modular_heterogeneous_weights(
+    *,
+    dimension: int,
+    diagonal_gain: float,
+    coupling_gain: float,
+    random_generator: random.Random,
+) -> Matrix:
+    # 符号共役では消えないmodule差を作るため、各pairの絶対結合も独立化する。
+    paired_edges = tuple(
+        (index, index + 1)
+        for index in range(0, dimension - 1, 2)
+    )
+    relative_edge_weights: dict[tuple[int, int], float] = {}
+    for edge in paired_edges:
+        magnitude_scale = 0.75 + 0.5 * random_generator.random()
+        edge_sign = random_generator.choice((-1.0, 1.0))
+        relative_edge_weights[edge] = magnitude_scale * edge_sign
+    return tuple(
+        tuple(
+            _symmetric_entry(
+                row_index=row_index,
+                column_index=column_index,
+                diagonal_gain=diagonal_gain,
+                coupling_gain=coupling_gain,
+                edge_signs=relative_edge_weights,
+            )
+            for column_index in range(dimension)
+        )
+        for row_index in range(dimension)
+    )
 def _symmetric_entry(
     *,
     row_index: int,

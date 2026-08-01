@@ -700,9 +700,10 @@ falsification_criteria = [
   "certificateが保守的過ぎ、Monte Carlo survivabilityまたはtask性能の順位を一貫して逆転させる。",
 ]
 limitations = [
-  "EXP-2026-009からEXP-2026-011は符号記憶について部分支持したが、4次元tanh RNNとhyperbox certificateに限定される。",
-  "EXP-2026-011はfold内でfamily labelをholdoutしたが、candidate選択には4 familyすべてを用いた。",
-  "basin-weighted safe mass、未知task family、candidate選択にも未使用の第五familyは未確認である。",
+ "EXP-2026-009からEXP-2026-011は符号記憶について部分支持したが、4次元tanh RNNとhyperbox certificateに限定される。",
+ "EXP-2026-011はfold内でfamily labelをholdoutしたが、candidate選択には4 familyすべてを用いた。",
+  "EXP-2026-012ではcandidate選択にも未使用のmodular_paired familyへrobust-pair線形modelが外挿せず、この特定の普遍較正仮説は棄却された。",
+  "basin-weighted safe mass、未知task family、component-awareな非線形・積則modelは未確認である。",
 ]
 
 [[claims]]
@@ -840,6 +841,92 @@ limitations = [
   "高次元、確率外乱、別task、生物回路、人間規模への一般化は未確認である。",
 ]
 falsification_criteria = [
-  "同じ事前登録specで5主要判定のいずれかが再現しない。",
-  "candidate選択にも使っていない第五familyでrobust pairがraw countまたはstructural baselineを上回らない。",
+ "同じ事前登録specで5主要判定のいずれかが再現しない。",
+ "candidate選択にも使っていない第五familyでrobust pairがraw countまたはstructural baselineを上回らない。",
+]
+
+[[claims]]
+id = "C-RC-025"
+status = "refuted"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-011で選択したnormalized mean marginとcertified robust fractionの線形ridge modelが、candidate選択にも未使用のmodular_paired familyへ外挿し、raw countおよびstructural baselineを上回るという仮説は、EXP-2026-012で棄却された。"
+sources = [
+  "https://doi.org/10.1038/s41467-024-46023-2",
+  "https://doi.org/10.1038/s42003-026-10558-5",
+]
+implementations = [
+  "src/reservoir_dynamics/experiments/recurrent_weight_families.py",
+  "src/reservoir_dynamics/experiments/external_family_robust_task.py",
+  "src/reservoir_dynamics/experiments/isolated_modular_family_confirmation.py",
+]
+tests = [
+  "tests/experiments/test_recurrent_weight_families.py",
+  "tests/experiments/test_external_family_robust_task.py",
+  "tests/experiments/test_isolated_modular_family_confirmation.py",
+]
+limitations = [
+  "4次元、二つの独立2-node module、一定corner外乱、符号保持taskに限定される。",
+  "seedはpair結合の符号だけを変え、全orthant・全corner列挙に対して座標変換で同値だったため、有効な構造標本数は1である。",
+  "normalized margin単独はSpearman 0.8944だったが、同じconfirmation上の副次結果であり独立確認ではない。",
+  "この結果はrobust repertoire curve一般を棄却せず、既知4 familyでfitした特定の二特徴量線形較正を棄却する。",
+]
+falsification_criteria = [
+  "固定済みEXP-2026-012 artifactまたは同一manifestの再生で、robust-pair Spearman 0、raw-count差 -0.005011、structural差 -0.007788が再現しない。",
+]
+
+[[claims]]
+id = "C-RC-026"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "AUDIT-2026-001では、EXP-2026-011/012の4次元5 network family、全600 networkを符号対角共役で監査した結果、192構造classへ縮約された。各gainの30 seedに対する有効class数はdense symmetric 8、sparse symmetric 2、asymmetric dense 29、feedforward non-normal 8、modular paired 1であり、signed graphの理論class数と整合した。"
+sources = [
+  "docs/research/artifacts/AUDIT-2026-001-structure-summary.json",
+  "docs/research/theory/signed-coordinate-conjugacy.md",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/structural_equivalence.py",
+  "src/reservoir_dynamics/experiments/network_family_structure_audit.py",
+]
+tests = [
+  "tests/metrics/test_structural_equivalence.py",
+  "tests/experiments/test_network_family_structure_audit.py",
+]
+limitations = [
+  "符号対角共役だけを監査し、node permutation、一般のsimilarity、近似共役は含まない。",
+  "task性能がclass内で保存されるには、入力、外乱、readout、評価集合が同じ変換で閉じる必要がある。",
+  "asymmetric denseの512理論classは全列挙せず、30 seed中29 classを観測した。",
+]
+falsification_criteria = [
+  "固定seedとgainで監査を再実行し、artifactのfamily別class数またはclass sizeが再現しない。",
+  "返された共役証人Dについてsecond = D first Dがtolerance 1e-12で成立しない。",
+]
+
+[[claims]]
+id = "C-RC-027"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-013の符号共役で異なる60個の異質独立module network、240外乱条件、61,440 challengeでは、full固定点数16が各moduleの4×4へ分解し、component boxの最小slackは-1.11e-16、全corner符号保持率のmodule積に対する最大残差は0、component certificate下界の最小gapは0だった。"
+sources = [
+  "docs/research/artifacts/EXP-2026-013-confirmation-summary.json",
+  "docs/research/theory/modular-factorization.md",
+]
+implementations = [
+  "src/reservoir_dynamics/experiments/recurrent_weight_families.py",
+  "src/reservoir_dynamics/experiments/sign_memory_evaluation.py",
+  "src/reservoir_dynamics/experiments/heterogeneous_modular_factorization.py",
+]
+tests = [
+  "tests/experiments/test_recurrent_weight_families.py",
+  "tests/experiments/test_sign_memory_evaluation.py",
+  "tests/experiments/test_heterogeneous_modular_factorization.py",
+]
+limitations = [
+  "4次元、独立な二つの2-node symmetric module、全orthant・全corner一定外乱、符号保持taskに限定される。",
+  "task retentionは0.390625から1.0へ変化したが、弱結合、非対称module、異なるmodule sizeは未確認である。",
+  "既存common-boundary certified fractionは今回の4閾値でcomponent積fractionと一致したが、一般の異質moduleで等号になるとは主張しない。",
+  "人間規模条件または生物学的core-reserve機構を直接支持しない。",
+]
+falsification_criteria = [
+  "固定manifestとspecで再生し、6主要判定のいずれかが成立しない。",
+  "block diagonal前提を満たす別の独立moduleでfixed pointまたはtask積則が破れる。",
 ]

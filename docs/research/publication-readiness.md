@@ -1,6 +1,6 @@
 # 論文化ゲート
 
-判定日: 2026-07-30  
+判定日: 2026-08-01  
 現在の判定: **限定的な原著論文の草稿開始可**
 
 ## 証拠
@@ -71,7 +71,19 @@
   0.8225–0.9572、pooled MAEは0.0822だった。
 - raw countと5-feature structural baselineに対するseed単位MAE改善区間は
   [0.0468, 0.0505] と [0.0319, 0.0404] で、事前登録5判定はすべて成立した。
-- 実装は全145テストと11 subtestを通過し、branch coverageは88%である。
+- `AUDIT-2026-001` では既存5 family・2 gain・30 seedの600条件を符号対角
+  共役で監査し、192有効classへ縮約した。`modular_paired` はgainごとに
+  1 class、dense symmetricとfeedforward nonnormalは各8 class、sparse
+  symmetricは各2 class、asymmetric denseは各29 classだった。
+- `EXP-2026-013` では結合絶対値を変えた `modular_heterogeneous` を導入し、
+  各gain30 class、計60有効構造を確認した。2 moduleの固定点数と符号記憶
+  保持率の積則は全240条件で成立し、61,440 challengeにおけるtask積残差は
+  0、保持率範囲は0.390625–1.0だった。
+- componentごとの積box certificateは全条件で成立した。全座標へ共通境界を
+  課すglobal certificateはcomponent margin以下であり、評価した4閾値では
+  certified fractionの差が0だったが、一般の等号は主張しない。
+- `EXP-2026-013` 実行前に全165テストと11 subtestを通過し、branch coverageは
+  88%だった。
 
 ### 陰性結果
 
@@ -80,11 +92,17 @@
 - 局所容量とshared worst容量の絶対差の95%区間下限が0.5を超えるという
   multistability penalty判定は、最大でも下限0.3284で不成立だった。
 - この2件は事後的に成功へ変更せず、次の確認実験の設計根拠とする。
+- `EXP-2026-012` ではcandidate選択にも未使用の `modular_paired` familyで
+  robust-pairのSpearmanが0、MAEが0.2238となり、raw countとstructural
+  baselineに対する主要優位も不成立だった。
+- 同familyの30 seedはtask-preservingな符号座標変換で同値であり、
+  seed bootstrap区間が一点へ退化した。従って独立構造標本30とは扱わない。
 
 ### 未検証
 
 - アトラクタprofileが符号保持以外の計算・記憶能力も予測するか
-- candidate選択にも使っていない第五familyでの実効レパートリー比較
+- 弱結合、非対称、module size違いを含む複数modular family間の実効
+  レパートリー比較
 - 遷移時間尺度とタスク時間尺度の整合
 - アトラクタ指向調整のbaselineに対する優位性
 - `EXP-2026-004` の所見が非直交、疎、学習済み、spiking、物理reservoirで
@@ -95,7 +113,7 @@
 - task-specificな機能的アトラクタ商の数学的整備とatlas上での安定推定
 - 生得的機能コアとplastic reserveの操作定義が新規学習と忘却を予測するか
 - 高次元・非対角・非normalな多重安定coreでの安全集合margin推定
-- robust repertoireと符号記憶の関係が完全隔離した第五familyで維持されるか
+- component-awareな摂動modelが弱結合modular familyへ外挿するか
 - robust repertoireがstochastic外乱、cue、readout、逐次学習taskを予測するか
 - random matched mask、部分空間保護、EWC、replayに対するcore–reserve
   構造の増分優位
@@ -103,10 +121,11 @@
 
 ## 推論
 
-現状は局所安定性、状態同期、固定readoutの機能移送性に加え、4 network
-familyのrobust repertoireを分離できる再現可能な研究基盤である。30 seed条件、
-区間推定、fold内family holdoutは得られたが、candidate選択にも未使用の
-network familyと別taskには一般化していない。
+現状は局所安定性、状態同期、固定readoutの機能移送性に加え、符号共役で
+割った有効構造多様性と、独立moduleに対するexactなcomponent積則を扱える
+再現可能な研究基盤である。30 seed条件、区間推定、fold内family holdout、
+単一modular family内の60有効構造は得られたが、弱結合module、candidate
+選択にも未使用の別task、任意の力学系には一般化していない。
 
 Lymburnらはreservoir全体のconsistencyとreadout方向のconsistencyを既に
 分離しており、Generalized RCも非再現な基材応答から再現可能出力を得る原理を
@@ -160,7 +179,17 @@ robust pairを新規seedへ適用した。事前登録5判定はすべて成立�
 ただしcandidate選択には4 familyすべてのpilot成績を用いた。sparse familyは
 別の外乱budgetを用い、confirmation MAEも最大だった。従って「marginが
 あらゆる局所指標を常に支配する」「任意の力学系へ一般化する」とは主張しない。
-現時点で草稿を更新し、投稿判断は第五familyまたは確率外乱の追加後に行う。
+`EXP-2026-012` は、この警告を実際の反例として確定した。raw count一定と
+certificate下界は未知familyでも維持されたが、特定の二特徴量線形較正は
+積構造へ外挿しなかった。従って草稿は陰性結果を含めて更新するが、普遍的
+predictorとしての投稿判断は見送る。
+
+`AUDIT-2026-001` は、符号seed数を独立構造数とみなす擬似反復を定量化した。
+`EXP-2026-013` はその監査結果を受け、task前に符号共役classを構造gateとして
+固定し、異質な独立moduleで固定点数、certificate、task保持率の積則を確認した。
+これにより完全隔離系のcomponent分解は検証済みとなったが、これは零結合の
+exact baselineである。次の判別力ある検証は、弱結合に対する積則残差の増大を
+摂動量と対応付けることである。
 
 日本語草稿は
 [アトラクタ数を越えたリザバー評価](../papers/robust-repertoire-memory-ja.md)
@@ -191,7 +220,8 @@ robust pairを新規seedへ適用した。事前登録5判定はすべて成立�
 
 草稿は開始するが、投稿前に次を満たす。
 
-- candidate選択にも使っていない新しい第五familyで未知family予測を行う
+- 完全隔離で得たcomponent積則を基準に、弱結合、非対称、module size違いで
+  積則残差とcoupling normの関係を事前登録確認する
 - time-varying stochastic外乱でsurvival curveと保証の保守性を測る
 - family、coupling、local Jacobian、固定点座標を含む非線形baselineを
   nested cross-validationで比較する

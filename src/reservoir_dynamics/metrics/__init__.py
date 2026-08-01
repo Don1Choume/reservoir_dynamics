@@ -29,6 +29,12 @@ from reservoir_dynamics.metrics.standardized_ridge import (
     StandardizedRidgeModel,
     fit_standardized_ridge,
 )
+from reservoir_dynamics.metrics.structural_equivalence import (
+    SignedCoordinateConjugacyAudit,
+    audit_signed_coordinate_conjugacy,
+    signed_coordinate_conjugacy_witness,
+    weakly_connected_components,
+)
 from reservoir_dynamics.metrics.top_conditional_lyapunov import (
     top_conditional_lyapunov_exponent,
 )
@@ -38,8 +44,10 @@ __all__ = [
     "BootstrapMeanInterval",
     "LinearMemoryResult",
     "SharedReadoutMemoryResult",
+    "SignedCoordinateConjugacyAudit",
     "StandardizedRidgeModel",
     "bootstrap_mean_interval",
+    "audit_signed_coordinate_conjugacy",
     "effective_repertoire_size",
     "estimate_basin_stability",
     "finite_time_conditional_lyapunov_exponent",
@@ -49,7 +57,9 @@ __all__ = [
     "matrix_nonnormality_commutator_norm",
     "off_diagonal_infinity_norm",
     "signed_minimum_coordinate",
+    "signed_coordinate_conjugacy_witness",
     "pairwise_replica_distance_curve",
     "shared_readout_memory_capacity",
     "top_conditional_lyapunov_exponent",
+    "weakly_connected_components",
 ]

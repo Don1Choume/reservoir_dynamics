@@ -1,6 +1,6 @@
 # アトラクタ指向リザバー・ダイナミクス研究計画
 
-最終更新: 2026-07-30
+最終更新: 2026-08-01
 
 位置づけ: 調査報告、仮説、ツール設計、実験計画を統合した研究ロードマップ
 
@@ -38,6 +38,37 @@
 形成してもmargin内なら既存coreを保護できる一方、無外力で同じbasinに属する
 だけでは学習外乱下の安全性を保証しなかった。詳細は
 [EXP-2026-006](docs/research/experiments/EXP-2026-006.md)に記録する。
+
+直近の外的妥当性確認では、既知4 familyで選択したrobust-pair線形modelを、
+候補選択にも未使用の `modular_paired` familyへ適用した。raw count 16と
+certificate下界違反0は維持したが、Spearman 0、MAE 0.2238となり、raw countと
+structural baselineを上回らなかった。この陰性結果により、「少数のglobal
+featureをfitすれば任意の力学系へ普遍的に外挿できる」という解釈を棄却する。
+
+一方、独立moduleでは固定点数、robust fraction、全corner符号保持率が積分解
+することを導いた。今後のAtlasはglobal scoreだけでなく、component別curve、
+module積則、task-preserving共役で割った有効構造多様性を持つ必要がある。
+詳細は [EXP-2026-012](docs/research/experiments/EXP-2026-012.md) と
+[独立moduleの積分解](docs/research/theory/modular-factorization.md) に記録する。
+
+この失敗を受けて既存generatorを符号座標共役で監査したところ、各gainの
+30 seedはdense symmetricで8、sparse symmetricで2、asymmetric denseで29、
+feedforward non-normalで8、modular pairedで1構造classだった。全600 networkは
+192 classへ縮約され、raw seed数が構造的な実効標本数を大幅に過大評価する
+familyがあることを確認した。監査API、理論、結果は
+[AUDIT-2026-001](docs/research/experiments/AUDIT-2026-001.md) と
+[符号座標共役](docs/research/theory/signed-coordinate-conjugacy.md) に固定した。
+次の [EXP-2026-013](docs/research/experiments/EXP-2026-013.md) は、module結合の
+絶対値をseedごとに変え、task実行前に各gain30 classを要求したうえで積則を
+full systemとcomponent計算の双方から確認した。計60個の有効構造network、
+240条件、61,440 challengeで6主要判定が全て成立し、task保持率が
+0.390625–1.0へ変化する中でもmodule積に対する残差は0だった。これは独立
+moduleの零次模型を支持するが、弱結合残差や普遍予測器はまだ支持しない。
+
+このmodule方向は、構造connectomeへの多遺伝子的影響、発達中の階層的な
+機能結合再編、多尺度構造固有モードによる機能ダイナミクス制約、乳幼児
+moduleの個体差という2024–2026年の一次研究 [R38–R42] と対応付ける。ただし、
+これらは本研究の「生得coreとplastic reserve」仮説を直接証明しない。
 
 ## 1. 既存の前提をどう修正するか
 
@@ -798,6 +829,23 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - [R37] Clark (2026), “Transient Dynamics of Associative Memory Models.”
   *Physical Review E* 113, 054301.
   <https://doi.org/10.1103/42y2-bsh1>
+- [R38] Wainberg et al. (2024), “Genetic Architecture of the Structural
+  Connectome.” *Nature Communications* 15, 1962.
+  <https://doi.org/10.1038/s41467-024-46023-2>
+- [R39] Sydnor et al. (2024), “Functional Connectivity Development along
+  the Sensorimotor-Association Axis Enhances the Cortical Hierarchy.”
+  *Nature Communications* 15.
+  <https://doi.org/10.1038/s41467-024-47748-w>
+- [R40] Xia et al. (2026), “Multiscale Structural Connectome Eigenmodes
+  Constrain Human Brain Functional Dynamics.” *Communications Biology*.
+  <https://doi.org/10.1038/s42003-026-10558-5>
+- [R41] Bian et al. (2024), “Evaluating the Evolution and
+  Inter-individual Variability of Infant Functional Module Development
+  from 0 to 5 Years Old.” arXiv:2407.13118.
+  <https://arxiv.org/abs/2407.13118>
+- [R42] Raghav et al. (2026), “The Genetic and Environmental Architecture
+  of the Human Functional Connectome.” arXiv:2604.24614.
+  <https://arxiv.org/abs/2604.24614>
 
 ### 13.3 力学系・遷移・トポロジーの分析
 

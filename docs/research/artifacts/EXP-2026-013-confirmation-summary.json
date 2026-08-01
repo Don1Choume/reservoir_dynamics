@@ -1,0 +1,50 @@
+{
+  "experiment_id": "EXP-2026-013",
+  "phase": "confirmation",
+  "date": "2026-08-01",
+  "source_test_manifest_sha256": "85fb1caea1ebfb68db4e4f1ffd722534a9d6265a9db800e82d14df40739555fa",
+  "test_gate": {
+    "tests_passed": 165,
+    "subtests_passed": 11,
+    "branch_coverage_percent": 88
+  },
+  "dimension": 4,
+  "diagonal_gain": 1.5,
+  "trial_seed_range": [1401, 1430],
+  "trial_seed_count": 30,
+  "coupling_gains": [0.05, 0.07],
+  "disturbance_bounds": [0.08, 0.12, 0.16, 0.2],
+  "task_steps": 100,
+  "autonomous_steps": 500,
+  "convergence_tolerance": 1e-9,
+  "point_count": 240,
+  "challenge_count": 61440,
+  "structure_gate": {
+    "passed": true,
+    "raw_network_counts": [30, 30],
+    "effective_class_counts": [30, 30],
+    "components_valid": true,
+    "magnitude_pairs_unique": true,
+    "module_magnitude_range": [
+      0.03841317659682557,
+      0.08732194422072183
+    ]
+  },
+  "decisions": {
+    "effective_structure_gate": true,
+    "fixed_point_product": true,
+    "component_margin_product": true,
+    "global_certificate_is_conservative": true,
+    "task_retention_product": true,
+    "certificate_lower_bound_valid": true
+  },
+  "full_raw_attractor_count_values": [16],
+  "module_raw_attractor_count_values": [4],
+  "maximum_task_product_residual": 0.0,
+  "maximum_common_margin_excess": 0.0,
+  "minimum_component_box_slack": -1.1102230246251565e-16,
+  "minimum_component_certificate_gap": 0.0,
+  "common_minus_component_fraction_range": [0.0, 0.0],
+  "task_retention_range": [0.390625, 1.0],
+  "evidence_boundary": "Confirms exact factorization and component-certificate implementation for independent 2+2-node tanh modules under full-orthant, full-corner constant-disturbance sign-memory evaluation. It does not establish a predictor, weak-coupling law, high-dimensional scaling, or a biological core-reserve mechanism."
+}

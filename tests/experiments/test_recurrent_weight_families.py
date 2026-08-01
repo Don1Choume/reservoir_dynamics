@@ -142,6 +142,41 @@ class RecurrentWeightFamiliesTest(unittest.TestCase):
                 trial_seed=419,
             )
 
+    def test_heterogeneous_modules_vary_magnitude_within_fixed_range(
+        self,
+    ) -> None:
+        matrix = build_recurrent_weights(
+            network_family="modular_heterogeneous",
+            dimension=4,
+            diagonal_gain=1.5,
+            coupling_gain=0.07,
+            trial_seed=1401,
+        )
+
+        first_magnitude = abs(matrix[0][1])
+        second_magnitude = abs(matrix[2][3])
+        self.assertGreaterEqual(first_magnitude, 0.07 * 0.75)
+        self.assertLess(first_magnitude, 0.07 * 1.25)
+        self.assertGreaterEqual(second_magnitude, 0.07 * 0.75)
+        self.assertLess(second_magnitude, 0.07 * 1.25)
+        self.assertNotEqual(first_magnitude, second_magnitude)
+        self.assertEqual(matrix[0][1], matrix[1][0])
+        self.assertEqual(matrix[2][3], matrix[3][2])
+        self.assertTrue(
+            all(
+                matrix[row][column] == 0.0
+                for row, column in (
+                    (0, 2),
+                    (0, 3),
+                    (1, 2),
+                    (1, 3),
+                    (2, 0),
+                    (3, 0),
+                    (2, 1),
+                    (3, 1),
+                )
+            )
+        )
 
 def _is_symmetric(matrix: tuple[tuple[float, ...], ...]) -> bool:
     return all(

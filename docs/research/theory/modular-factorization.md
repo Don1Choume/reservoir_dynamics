@@ -1,6 +1,6 @@
 # 独立モジュール型リザバーの積分解
 
-更新日: 2026-07-30
+更新日: 2026-08-01
 
 ## 1. 目的
 
@@ -189,6 +189,22 @@ EXP-2026-011で選択された
 `normalized_mean_margin + certified_robust_fraction` は、この意味で
 曲線の無次元面積と要求外乱位置での高さを同時に観測する。
 
+### 6.1 共通境界certificateとの区別
+
+上の積則は、moduleごとに独立なbox境界を許す直積certificateに対するもので
+ある。現行 `robust_orthant_box_certificate` を4次元行列へ直接適用すると、
+全座標に一つの共通境界 \(m\) を課す。異質moduleでは各moduleの最適境界が
+異なり得るため、global common-boundary marginを \(M_{\mathrm{common}}\) とすれば
+
+\[
+M_{\mathrm{common}}\le
+M_{\mathrm{component}}=\min(M_1,M_2)
+\]
+
+となり、一般には等号でない。従ってAtlasは、global certificateとcomponent別
+certificateを別の保証として保持する必要がある。EXP-2026-013は、task結果を
+観測する前にこの差を主要判定へ反映した。
+
 ## 7. スペクトルと構造診断
 
 各2次元ブロックの固有値は符号 \(s_k\) に依存せず
@@ -205,6 +221,12 @@ EXP-2026-011で選択された
 グラフの非連結性と力学系の厳密な積分解は既知4族に含まれない。
 従ってEXP-2026-012は、単なる疎性の追加試験ではなく、積構造への外挿試験
 として解釈する。
+
+ただし、pair符号だけを変えた30 seedは符号座標共役で同じclassになる。
+AUDIT-2026-001では各gainの30 networkが1 classへ縮約されることを実装でも
+確認した。従って積構造の母集団を作るには、符号だけでなくmodule内部結合の
+絶対値、block size、内部topology、またはmodule間結合を変える必要がある。
+共役条件と監査算法は `theory/signed-coordinate-conjugacy.md` に分離した。
 
 ## 8. 生物学的仮説との対応
 
@@ -232,7 +254,46 @@ EXP-2026-011で選択された
 4. 学習後に新しいアトラクタを追加しても、coreアトラクタのmarginを
    certificate付きで保存できるか。
 
-## 9. 未解決事項
+## 9. 符号gauge同値性とEXP-2026-012
+
+各pairのcoupling符号だけが異なる二つの `modular_paired` 行列を考える。
+符号対角行列 \(P=P^{-1}\) を適切に選べば、
+
+\[
+W_s=P W_+ P
+\]
+
+と書ける。成分ごとのtanhは
+
+\[
+\tanh(Pz)=P\tanh(z)
+\]
+
+を満たすため、座標変換 \(x'=Px\)、\(u'=Pu\) により二つの力学系は共役で
+ある。全orthantと全corner外乱を列挙する評価では、\(P\) は評価対象を置換する
+だけなので、raw count、robust fraction、margin分布、task retentionの集約値は
+seedに依存しない。
+
+EXP-2026-012ではこの不変性が数値結果にも現れ、30 seedのpaired bootstrap
+区間がすべて一点へ退化した。従って、符号だけを乱数化した30 seedを独立な
+構造標本と数えてはならない。
+
+この事実は、network generatorの多様性をparameter seed数だけで評価できない
+ことを示す。今後は少なくとも、
+
+\[
+N_{\mathrm{effective}}
+=\left|\{\text{network}/\text{task-preserving conjugacy}\}\right|
+\]
+
+という同値類数、または同値性を近似した有効構造多様性を監査対象にする。
+
+同実験ではraw count 16とcertificate下界違反0を維持した一方、既知4 familyで
+fitしたrobust-pair ridge modelはSpearman 0、MAE 0.2238で外挿に失敗した。
+normalized margin単独のSpearmanは0.8944だった。これは積則自体の反証ではなく、
+非直積familyでfitしたglobal線形較正が積構造を認識しないことの反例である。
+
+## 10. 未解決事項
 
 - 弱いモジュール間結合を加えたとき、積則からの誤差を結合normで
   上下から評価できるか。
@@ -242,7 +303,7 @@ EXP-2026-011で選択された
 - 人間規模の必要条件を、ニューロン数ではなく、有効モジュール数、
   局所ロバスト率、階層深さ、可塑的自由度、エネルギー制約で表す方法。
 
-## 10. 参照した一次研究
+## 11. 参照した一次研究
 
 - Wainberg et al., “Genetic architecture of the structural connectome,”
   *Nature Communications* 15, 1962 (2024).

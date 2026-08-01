@@ -1,0 +1,20 @@
+{
+  "experiment_id": "EXP-2026-013",
+  "phase": "pre-task-structure-gate",
+  "date": "2026-08-01",
+  "task_values_observed": false,
+  "components_valid": true,
+  "coupling_gains": [0.05, 0.07],
+  "effective_class_counts": [30, 30],
+  "magnitude_pairs_unique": true,
+  "module_magnitude_range": [
+    0.03841317659682557,
+    0.08732194422072183
+  ],
+  "passed": true,
+  "raw_network_counts": [30, 30],
+  "trial_seed_range": [1401, 1430],
+  "trial_seed_count": 30,
+  "equivalence_relation": "second = D first D, D_ii in {-1, +1}",
+  "additional_permutation_guard": "The unordered pair of module coupling magnitudes is unique across all 30 seeds within each global gain."
+}

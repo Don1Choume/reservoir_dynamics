@@ -15,13 +15,21 @@ from reservoir_dynamics.theory.orthant_box import (
     RobustOrthantBoxCertificate,
     robust_orthant_box_certificate,
 )
+from reservoir_dynamics.theory.orthant_rectangle import (
+    OrthantRectangleCertificate,
+    matrix_infinity_norm_difference,
+    orthant_rectangle_certificate,
+)
 
 __all__ = [
     "BistableTanhCertificate",
+    "OrthantRectangleCertificate",
     "RobustOrthantBoxCertificate",
     "bistable_tanh_certificate",
     "core_deviation_bound_curve",
     "iterated_lipschitz_distance_bound",
+    "matrix_infinity_norm_difference",
+    "orthant_rectangle_certificate",
     "positive_bistable_fixed_point",
     "robust_orthant_box_certificate",
 ]

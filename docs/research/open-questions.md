@@ -160,10 +160,18 @@
   seed 1201–1230へ適用したrobust pairのfamily別Spearmanが0.8225–0.9572、
   pooled MAEが0.0822だった。raw countと5-feature structural baselineに対する
   seed単位MAE改善区間下限は0.0468と0.0319だった。
-- 未知部分: candidate選択にも使っていない第五family、stochastic noise、
-  cue、readout taskでも順位が保たれるか未確認である。
-- 次の識別実験: 完全隔離した第五familyと、time-varying stochastic外乱に
-  対するsurvival curveを行う。続いてcue routingとlinear readout保持率を測る。
+- 陰性確認: `EXP-2026-012` のcandidate選択にも未使用だった
+  `modular_paired` familyでは、robust pairのSpearmanが0、MAEが0.2238となり、
+  raw countとstructural baselineに対する事前登録優位を得られなかった。
+- 維持された境界: 全120点のraw countは16、30,720 challengeのcertificate
+  下界違反は0だった。従ってcertificateの安全側保証と、family横断の線形較正
+  を別々に評価する必要がある。
+- 副次結果: normalized margin単独はSpearman 0.8944、MAE 0.1955だったが、
+  同じconfirmation上で観測したため新しい選択済みmodelとは扱わない。
+- 未知部分: component-awareな積則model、stochastic noise、cue、readout taskで
+  順位と較正が保たれるか未確認である。
+- 次の識別実験: module内部構造とmodule間結合に真の独立変動を与え、直積則、
+  compositional predictor、time-varying stochastic外乱を順に確認する。
 - baseline: raw count、平均局所Jacobian spectral radius、\(\|W\|_\infty\)、
   basin stability、minimum fixed-point coordinate。
 - 主要判定: 未知family・未知外乱時系列で、\(N_{\mathrm{rob}}(e)\) または
@@ -172,6 +180,40 @@
 - 外的妥当性: 高次元、学習済み、spiking、物理reservoirへ拡張する。
 - 主要評価: core attractor survival、basin stability差、機能的商の保持、
   novel容量、energy。
+
+### OQ-012 module積則からのずれは計算能力を予測するか
+
+- 対応仮説: `H-BIO-004`, `H-RC-007`
+- 理論基準: block diagonal系では固定点数、robust fraction、全corner符号保持率
+  がmodule間で積分解する。平均marginは
+  \(\int_0^\infty\prod_jR_j(z)\,dz\) となる。
+- EXP-2026-012の発見: pair符号だけをseedで変えても、全orthant・全corner列挙
+  では符号座標変換により同値であり、有効な構造標本数は1だった。
+- EXP-2026-013の確認: module結合絶対値を変えた各gain30 class、計60 networkで、
+  fixed point count、component certificate、全corner task retentionの積則が成立し、
+  task積残差最大0、保持率範囲0.390625–1.0だった。
+- 次のgenerator: module size、module内非対称性、局所gain、弱いmodule間結合を
+  独立に乱数化し、gauge同値でないnetworkを作る。
+- 主要量: component数、component別 \(R_j(e)\)、積予測
+  \(\prod_jR_j(e)\)、全系観測 \(R(e)\)、積則残差、task retention、energy。
+- 主要仮説: 弱結合領域では積則残差が結合normにより制御され、非直積familyで
+  fitしたglobal linear modelよりcomponent-aware modelの未知構造MAEが小さい。
+- 反証条件: module分解を加えても、同一budgetのglobal feature modelに対する
+  増分予測力がない。または弱結合で積則残差が不連続・非有界に増える。
+
+### OQ-013 taskを保存する構造同値類をどこまで自動監査できるか
+
+- 対応主張: `C-RC-026`
+- 解決済み部分: 符号対角共役の証人探索、閉路矛盾検出、class分割を実装した。
+  AUDIT-2026-001では600 networkが192 classへ縮約された。
+- 未解決部分: signed permutation、一般similarity、近似共役、入力・readoutを含む
+  task固有対称性を自動列挙できていない。
+- 次の実験: EXP-2026-013ではmodule coupling magnitudeをseedごとに変え、
+  task前構造gateで各gain30 classを要求する。
+- 主要量: raw seed数、有効class数、最大class size、class entropy、
+  task閉性の成立条件、class-cluster bootstrap差。
+- 反証条件: 監査で異なるclassとされたnetworkが、より広い明示的対称群の下で
+  同値と判明する。またはclass単位推論でもpseudoreplicationが残る。
 
 ## 運用規則
 
