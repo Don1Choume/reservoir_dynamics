@@ -222,12 +222,21 @@
 - 方向別保証: 983,040 challengeで
   \(T\ge R_{rect}\ge R_{dir}\ge R_{global}\) に違反はなく、最大strengthでの
   平均認証率は0.6694、0.5089、0.4822だった。
-- 未解決部分: 別generator、3個以上のmodule、未知分割、確率外乱、学習task、
-  非線形global baselineでもcomponent-aware MAE改善が維持されるか。
-- 事前登録中: `EXP-2026-017` は、affinity gapだけから座標permutation後の
-  2+2+3分割をtask前に回復し、EXP-2026-016の固定modelを再fitせず三moduleへ
-  適用する。方向別certificateを \(2^7\) 直積と局所16 orthantの因子化計算で
-  照合し、未知分割とmodule数の軸を直接検証する。
+- EXP-2026-017の確認: 強い一意affinity gapを埋め込んだ座標permutation後の
+  2+2+3 familyで、task前に240/240分割を完全回復した。局所16 orthantからの
+  因子化certificateは全系128 orthantの直積列挙と960点すべてで一致した。
+  EXP-2026-016の固定modelを再fitせず適用したcomponent-aware MAEは0.01626で、
+  global 0.07993、product-only 0.02102より小さく、12判定はすべて成立した。
+- EXP-2026-018の確認: 最大gapと競合gapからentrywise十分半径を導出し、未使用
+  180 base networkの10,080摂動条件で8判定を確認した。半径0.9倍以下の
+  5,760条件は全て同じpartitionで、2倍では回復率0.7375、4倍では0.1653だった。
+  従って「同じpartitionを保証できる誤差範囲」は陽になったが、半径外のtask誤差は
+  未測定である。
+- 残る未解決部分: 誤分割時のprofile・certificate・predictor誤差、別generator、
+  不均衡な方向別流入、4個以上の
+  module、確率外乱、学習task、非線形global baselineでも較正優位と合成保証が
+  維持されるか。本generatorでは全moduleの最大流入が同じため、directionalと
+  global certificateの差は検証できていない。
 - 反証条件: 同じ分割情報とtraining budgetを持つ強いglobal baselineへ
   component特徴を追加しても増分予測力がない。またはcertificate chainが破れる。
 

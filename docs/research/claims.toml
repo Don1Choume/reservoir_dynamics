@@ -1036,6 +1036,82 @@ falsification_criteria = [
 ]
 
 [[claims]]
+id = "C-RC-031"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-017では、座標順を隠した2+2+3三module tanh RNNの未使用240 networkをtask前のaffinity-gap法で240/240完全分割し、局所16 orthantから得た因子化certificateが全系128 orthantの直積列挙と960点すべてで一致した。EXP-2026-016で固定した二module用component-aware predictorを再fitせず適用したところ、491,520 challengeに対する保持率のMAEは0.01626で、global profileの0.07993とisolated product-onlyの0.02102より小さかった。seed単位baseline minus component MAEの95% bootstrap下限は0.06167と0.004194で、事前登録12判定はすべて成立した。"
+sources = [
+  "docs/research/artifacts/EXP-2026-017-confirmation-structure-gate.json",
+  "docs/research/artifacts/EXP-2026-017-confirmation-summary.json",
+  "docs/research/theory/multicomponent-composition.md",
+  "https://proceedings.mlr.press/v211/zhang23a.html",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/module_partition.py",
+  "src/reservoir_dynamics/theory/multicomponent_coupling.py",
+  "src/reservoir_dynamics/experiments/multicomponent_modular_family.py",
+  "src/reservoir_dynamics/experiments/multicomponent_profile.py",
+  "src/reservoir_dynamics/experiments/multicomponent_transfer.py",
+  "src/reservoir_dynamics/experiments/multicomponent_transfer_cli.py",
+  "src/reservoir_dynamics/experiments/aligned_sign_memory.py",
+]
+tests = [
+  "tests/metrics/test_module_partition.py",
+  "tests/theory/test_multicomponent_coupling.py",
+  "tests/experiments/test_multicomponent_modular_family.py",
+  "tests/experiments/test_multicomponent_profile.py",
+  "tests/experiments/test_multicomponent_transfer.py",
+  "tests/experiments/test_aligned_sign_memory.py",
+]
+limitations = [
+  "分割回復はmodule内最小affinityがmodule間最大affinityを上回り、そのgapが一意に最大というgenerator埋め込みの強い十分条件に依存する。一般のRNNに対するcommunity回復ではない。",
+  "7次元、三module、一generator、4個の整列符号方向taskに限定され、確率外乱、cue、readout、逐次学習を扱わない。",
+  "全moduleの最大総流入loadを同じstrengthへ揃えたためdirectional certificateとglobal certificateが一致し、方向別負荷の保守性改善は検証していない。",
+  "component-aware modelはMAEで二baselineを上回ったが、Spearmanはglobal 0.9468に対して0.8797であり、順位を支配しない。",
+  "人工tanh RNNの静的構造であり、発生、可塑性、生物回路、人間規模性能を直接支持しない。",
+]
+falsification_criteria = [
+  "固定manifest ee21b3bb6962dc3c483f194d8684217a6177d6e86fbea00343e14582543329a0、固定model hash db0b50a648fb085ca687922a531fab5482af2a134bd01eefc3efe3dd85675a01、artifact SHA-256 7c5a5719b09690917f26a1a631a7904cf7f208204260b1f8388e6061bc091cf0と登録specで再生し、12判定のいずれかが成立しない。",
+  "因子化certificateと直積列挙値が一致しない、またはtransported certificateが認証したchallengeでtask保持が破れる。",
+  "同じtask-free分割情報とtraining budgetを持つ事前固定baselineに対するcomponent-aware MAE優位が独立generatorで再現しない。",
+]
+
+[[claims]]
+id = "C-RC-032"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-018では、最大affinity-gap分割の最大gapをg1、二番目をg2として、重みのentrywise摂動に対する十分半径r_part=min(g1/2,(g1-g2)/4)を導出・実装した。固定manifestと未使用30 seedの2+2+3三module 180 network、8摂動方向、7相対振幅からなる10,080条件で8事前登録判定がすべて成立し、半径0.9倍以下の5,760条件ではpartition回復率1、label-free pair disagreement 0だった。探索的に半径2倍では回復率0.7375、4倍では0.1653へ低下した。"
+sources = [
+  "docs/research/artifacts/EXP-2026-018-confirmation-structure.json",
+  "docs/research/theory/multicomponent-composition.md",
+  "https://doi.org/10.1103/PhysRevE.77.046119",
+  "https://doi.org/10.1103/PhysRevX.11.021003",
+]
+implementations = [
+  "src/reservoir_dynamics/metrics/module_partition.py",
+  "src/reservoir_dynamics/simulation/weight_perturbation.py",
+  "src/reservoir_dynamics/experiments/partition_robustness.py",
+  "src/reservoir_dynamics/experiments/partition_robustness_cli.py",
+]
+tests = [
+  "tests/metrics/test_module_partition.py",
+  "tests/simulation/test_weight_perturbation.py",
+  "tests/experiments/test_partition_robustness.py",
+]
+limitations = [
+  "半径は最大affinity-gap推定器の同一partitionを保つ十分条件であり、必要条件、一般community検出の統計的一致性、機能moduleとの一致ではない。",
+  "7次元2+2+3三module、一つの人工generator、独立一様entrywise摂動に限定され、欠測edge、node追加削除、相関した推定誤差を扱わない。",
+  "半径外の回復率はランダム8方向の探索結果で、最悪摂動確率または単調な崩壊則ではない。",
+  "task、attractor、certificate、readout値を生成していないため、分割不変性を機能不変性と解釈しない。",
+  "遺伝的blueprint、発生module、個体差、人間脳または人間規模性能を直接測定していない。",
+]
+falsification_criteria = [
+  "固定manifest 7583c4c5e500b60d504462b263c8e056139254eec18f1d474fd890fcac3b7110、artifact SHA-256 0830936f84f06f293cdaf79e2e50138a80c11cfa3df37ebab938b4b6d9cf635f、登録specで再生し、8判定のいずれかが成立しない。",
+  "最大gapが一意でentrywise摂動がr_part未満にもかかわらず、最大gap thresholdのedge集合または連結成分partitionが変わる有限反例が得られる。",
+  "実測pair affinity変化が重みentrywise摂動上限を超える。",
+]
+
+[[claims]]
 id = "H-RC-008"
 status = "hypothesis"
 evidence_type = "hypothesis"

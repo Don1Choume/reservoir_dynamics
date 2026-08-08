@@ -100,6 +100,11 @@ def test_reproducibility_paragraph_uses_nonjustified_style(
                     "実験spec、seed、判定、導出済みartifactを保存した。"
                     "source manifest SHA-256 `abcdef` で固定した。"
                 ),
+                "",
+                (
+                    "EXP-2026-018では確認前に全テストを通過し、"
+                    "source/test manifest `123456` を固定した。"
+                ),
                 "## 参考文献",
                 "[1] Example. https://example.test",
             )
@@ -115,6 +120,11 @@ def test_reproducibility_paragraph_uses_nonjustified_style(
         for paragraph in rendered.paragraphs
         if paragraph.text.startswith("実験spec")
     )
+    experiment_audit = next(
+        paragraph
+        for paragraph in rendered.paragraphs
+        if paragraph.text.startswith("EXP-2026-018")
+    )
     bibliography = next(
         paragraph
         for paragraph in rendered.paragraphs
@@ -122,6 +132,8 @@ def test_reproducibility_paragraph_uses_nonjustified_style(
     )
     assert reproducibility.style.name == "Reproducibility"
     assert reproducibility.alignment == WD_ALIGN_PARAGRAPH.LEFT
+    assert experiment_audit.style.name == "Reproducibility"
+    assert experiment_audit.alignment == WD_ALIGN_PARAGRAPH.LEFT
     assert bibliography.alignment == WD_ALIGN_PARAGRAPH.LEFT
 
 
@@ -158,11 +170,11 @@ def test_document_metadata_matches_current_draft_version(tmp_path: Path) -> None
     source_path = tmp_path / "paper.md"
     output_path = tmp_path / "paper.docx"
     source_path.write_text(
-        "# 題名\n## 副題\n研究草稿 v0.7\n本文。",
+        "# 題名\n## 副題\n研究草稿 v0.9\n本文。",
         encoding="utf-8",
     )
 
     build_document(source_path, output_path)
 
     rendered = Document(output_path)
-    assert rendered.core_properties.comments == "研究草稿 v0.7"
+    assert rendered.core_properties.comments == "研究草稿 v0.9"

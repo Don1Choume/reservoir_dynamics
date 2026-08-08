@@ -63,6 +63,36 @@ class ComponentPredictorEvaluation:
     predictions: tuple[ComponentPrediction, ...]
 
 
+def fixed_predictor_feature_shift_bound(
+    model: NamedComponentPredictor,
+    first: ComponentProfilePoint,
+    second: ComponentProfilePoint,
+) -> float:
+    """固定standardized ridgeの特徴変化に対する予測差上界を返す。"""
+
+    first_row = _feature_row(first, model.name)
+    second_row = _feature_row(second, model.name)
+    if len(first_row) != len(second_row) or len(first_row) != len(
+        model.model.coefficients
+    ):
+        raise ValueError("比較する特徴量次元を固定modelと一致させてください")
+    if any(
+        not math.isfinite(value)
+        for value in first_row + second_row
+    ):
+        raise ValueError("比較する特徴量は有限値にしてください")
+    return math.fsum(
+        abs(coefficient) * abs(first_value - second_value) / scale
+        for coefficient, scale, first_value, second_value in zip(
+            model.model.coefficients,
+            model.model.feature_scales,
+            first_row,
+            second_row,
+            strict=True,
+        )
+    )
+
+
 def fit_preregistered_component_models(
     points: tuple[ComponentProfilePoint, ...],
 ) -> tuple[NamedComponentPredictor, ...]:

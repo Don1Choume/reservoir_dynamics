@@ -132,6 +132,53 @@ A_{uv}=\max(|W_{uv}|,|W_{vu}|)
 必要である。一般の脳・RNNでこの分離を仮定せず、回復confidenceと感度を必ず
 報告する。
 
+### 5.1 最大gap推定器のentrywise摂動保証
+
+全pair affinityを重複を残して昇順に並べ、その隣接gapの最大値を \(g_1\)、
+二番目を \(g_2\) とする。最大gapが一意なとき
+
+\[
+r_{\mathrm{edge}}=\frac{g_1}{2},\qquad
+r_{\mathrm{select}}=\frac{g_1-g_2}{4},
+\]
+
+\[
+\boxed{r_{\mathrm{part}}=
+\min(r_{\mathrm{edge}},r_{\mathrm{select}})}
+\]
+
+と定義する。重み摂動を \(\Delta W\) とすると、
+
+\[
+\left|\max(|W_{uv}+\Delta W_{uv}|,
+|W_{vu}+\Delta W_{vu}|)-A_{uv}\right|
+\le\|\Delta W\|_{\max}
+\]
+
+である。従って \(\|\Delta W\|_{\max}<r_{\mathrm{part}}\) なら、選択gapは
+最大 \(2\|\Delta W\|_{\max}\) しか縮まず、任意の競合gapも最大同量しか
+拡大しない。gap順位とthreshold前後のedge集合が保存されるため、連結成分も
+不変である。等号ではtieが生じ得るので保証しない。
+
+この半径は必要条件ではない。\(r_{\mathrm{part}}\) を越えてもpartitionが保たれる
+場合があり、半径が0でも別の推定法なら安定に回復できる可能性がある。従って
+分析器は一点partitionだけでなく、\(g_1\)、\(g_2\)、gap dominance、絶対・相対
+保証半径を返す必要がある。
+
+### 5.2 分割差のlabel-free測定
+
+二partition \(P,Q\) について、unordered node pairの同一component判定が異なる
+割合
+
+\[
+d_{\mathrm{pair}}(P,Q)=\binom n2^{-1}
+\sum_{u<v}\mathbf 1\{[u\sim_Pv]\ne[u\sim_Qv]\}
+\]
+
+を用いる。これはmodule labelに依存せず、0なら二partitionは同値である。
+ただし一点間の距離だけでは複数の競合consensusを要約できないため、摂動半径外では
+partition頻度、node-pair共所属確率、複数modeを保存する必要がある。
+
 ## 6. 人間規模へ向けた計算量条件
 
 全状態次元を (n=\sum_i d_i)、最大局所次元を (b=\max_i d_i) とする。
@@ -173,6 +220,21 @@ monolithicなorthant列挙は (2^n) だが、局所profileと方向別合成は
   時空間的gene co-expression meta-moduleを同定した。これは細胞型生成規則の
   生物学的根拠であり、力学moduleや安全marginの証拠ではない。
   <https://doi.org/10.1038/s41593-025-01933-2>
+- network communityの小摂動に対するrobustnessは、構造の統計的有意性を測る
+  既存の考え方である。本節は一般のcommunity分布ではなく、最大gap推定器に
+  限定した決定論的半径を与える。
+  <https://doi.org/10.1103/PhysRevE.77.046119>
+- competing partitionが多峰的な場合に単一consensusが不十分であることは、
+  半径外でpartition ensembleを保持すべき根拠になる。
+  <https://doi.org/10.1103/PhysRevX.11.021003>
+- 2025年の人工RNN研究では、構造module性だけでは機能specializationを保証せず、
+  環境分離、資源制約、情報流の時空間条件が必要だった。従って分割保証半径を
+  機能保証と同一視せず、task指標を別phaseで検証する。
+  <https://doi.org/10.1038/s41467-024-55188-9>
+- 2025年のhuman connectome研究では機能結合の個体差がwithin-networkから
+  between-networkへ連続的に変わり、構造結合変動とも関連した。これは個体差を
+  一様noiseではなく構造化摂動として扱う必要性を支持するが、本半径の実測検証
+  ではない。<https://doi.org/10.1073/pnas.2420228122>
 
 ## 8. 証拠境界
 

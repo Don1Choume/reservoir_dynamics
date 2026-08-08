@@ -1,8 +1,14 @@
+from types import SimpleNamespace
 import unittest
 
 from reservoir_dynamics.experiments.component_predictor import (
+    NamedComponentPredictor,
+    fixed_predictor_feature_shift_bound,
     predictors_from_payload,
     predictors_to_payload,
+)
+from reservoir_dynamics.experiments.component_profile import (
+    COMPONENT_FEATURE_NAMES,
 )
 from reservoir_dynamics.experiments.component_size_experiment import (
     run_component_size_confirmation,
@@ -12,9 +18,34 @@ from reservoir_dynamics.experiments.component_size_extrapolation_cli import (
     confirmation_summary_payload,
     pilot_summary_payload,
 )
+from reservoir_dynamics.metrics.standardized_ridge import StandardizedRidgeModel
 
 
 class ComponentSizeExperimentTest(unittest.TestCase):
+    def test_fixed_predictor_feature_shift_bound_controls_prediction_change(self) -> None:
+        feature_count = len(COMPONENT_FEATURE_NAMES)
+        model = NamedComponentPredictor(
+            name="component_aware",
+            feature_names=COMPONENT_FEATURE_NAMES,
+            model=StandardizedRidgeModel(
+                intercept=0.5,
+                coefficients=tuple(0.2 for _ in range(feature_count)),
+                feature_means=tuple(0.0 for _ in range(feature_count)),
+                feature_scales=tuple(1.0 for _ in range(feature_count)),
+                penalty=0.001,
+            ),
+        )
+        first_row = tuple(0.0 for _ in range(feature_count))
+        second_row = (0.1,) + tuple(0.0 for _ in range(feature_count - 1))
+        first = SimpleNamespace(component_feature_row=first_row)
+        second = SimpleNamespace(component_feature_row=second_row)
+
+        bound = fixed_predictor_feature_shift_bound(model, first, second)
+        realized = abs(model.predict(first) - model.predict(second))
+
+        self.assertAlmostEqual(bound, 0.02)
+        self.assertLessEqual(realized, bound + 1e-12)
+
     def test_small_pilot_fixes_models_after_seed_holdout_evaluation(self) -> None:
         result = run_component_size_pilot(
             trial_seeds=(2001, 2002, 2003),

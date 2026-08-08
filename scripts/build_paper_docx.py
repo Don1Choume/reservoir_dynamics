@@ -391,7 +391,13 @@ def _render_markdown(
             else "Keywords"
             if text.startswith("キーワード:")
             else "Reproducibility"
-            if text.startswith("実験spec、seed")
+            # 長いhashを含む監査証跡は両端揃えで文字間が破綻するため、
+            # 節内の位置ではなく内容から左揃えstyleへ一貫して振り分ける。
+            if (
+                text.startswith("実験spec、seed")
+                or "manifest" in text
+                or "SHA-256" in text
+            )
             else None
         )
         paragraph = document.add_paragraph(style=style_name)
@@ -772,7 +778,7 @@ def _set_document_properties(document: Document) -> None:
     properties.keywords = (
         "reservoir computing; attractor; robust invariant set; RNN"
     )
-    properties.comments = "研究草稿 v0.7"
+    properties.comments = "研究草稿 v0.9"
 
 
 def main() -> None:

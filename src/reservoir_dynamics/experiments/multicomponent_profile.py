@@ -96,8 +96,48 @@ def evaluate_multicomponent_profile(
 ) -> tuple[MultiComponentProfilePoint, ...]:
     """観測座標を保ったまま局所profileと結合後targetを評価する。"""
 
-    dimension = len(network.recurrent_weights)
-    normalized_partition = normalize_partition(partition, dimension=dimension)
+    return evaluate_multicomponent_partitions(
+        network=network,
+        recurrent_weights=network.recurrent_weights,
+        partitions=(partition,),
+        disturbance_bounds=disturbance_bounds,
+        task_steps=task_steps,
+        autonomous_steps=autonomous_steps,
+        convergence_tolerance=convergence_tolerance,
+    )[0]
+
+
+def evaluate_multicomponent_partitions(
+    *,
+    network: MultiComponentModularNetwork,
+    partitions: tuple[Partition, ...],
+    disturbance_bounds: tuple[float, ...],
+    task_steps: int,
+    autonomous_steps: int,
+    convergence_tolerance: float,
+    recurrent_weights: Matrix | None = None,
+) -> tuple[tuple[MultiComponentProfilePoint, ...], ...]:
+    """同じ結合後trajectoryを共有し、複数partitionの局所表現を比較する。"""
+
+    if not partitions:
+        raise ValueError("partitionsは1件以上必要です")
+    effective_weights = (
+        network.recurrent_weights
+        if recurrent_weights is None
+        else recurrent_weights
+    )
+    dimension = len(effective_weights)
+    if dimension != len(network.recurrent_weights) or any(
+        len(row) != dimension for row in effective_weights
+    ):
+        raise ValueError("recurrent_weightsはnetworkと同次元の正方行列にしてください")
+    if any(not math.isfinite(value) for row in effective_weights for value in row):
+        raise ValueError("recurrent_weightsは有限値にしてください")
+    normalized_partitions = tuple(
+        normalize_partition(partition, dimension=dimension)
+        for partition in partitions
+    )
+
     profile_arguments = {
         "disturbance_bounds": disturbance_bounds,
         "task_steps": task_steps,
@@ -105,41 +145,54 @@ def evaluate_multicomponent_profile(
         "convergence_tolerance": convergence_tolerance,
     }
     coupled_profile = evaluate_aligned_sign_memory_network(
-        recurrent_weights=network.recurrent_weights,
+        recurrent_weights=effective_weights,
         coordinate_indices=tuple(range(dimension)),
         **profile_arguments,
     )
-    component_profiles = tuple(
-        evaluate_aligned_sign_memory_network(
-            recurrent_weights=_submatrix_by_indices(
-                network.recurrent_weights,
-                component,
-            ),
-            coordinate_indices=component,
-            **profile_arguments,
+    profiles_by_partition: dict[
+        Partition,
+        tuple[MultiComponentProfilePoint, ...],
+    ] = {}
+    for normalized_partition in normalized_partitions:
+        if normalized_partition in profiles_by_partition:
+            continue
+        component_profiles = tuple(
+            evaluate_aligned_sign_memory_network(
+                recurrent_weights=_submatrix_by_indices(
+                    effective_weights,
+                    component,
+                ),
+                coordinate_indices=component,
+                **profile_arguments,
+            )
+            for component in normalized_partition
         )
-        for component in normalized_partition
-    )
-    load_matrix = component_inbound_load_matrix(
-        network.recurrent_weights,
-        normalized_partition,
-    )
+        load_matrix = component_inbound_load_matrix(
+            effective_weights,
+            normalized_partition,
+        )
+        profiles_by_partition[normalized_partition] = tuple(
+            _build_point(
+                network=network,
+                recurrent_weights=effective_weights,
+                partition=normalized_partition,
+                coupled_profile=coupled_profile,
+                component_profiles=component_profiles,
+                inbound_load_matrix=load_matrix,
+                disturbance_index=index,
+            )
+            for index in range(len(disturbance_bounds))
+        )
     return tuple(
-        _build_point(
-            network=network,
-            partition=normalized_partition,
-            coupled_profile=coupled_profile,
-            component_profiles=component_profiles,
-            inbound_load_matrix=load_matrix,
-            disturbance_index=index,
-        )
-        for index in range(len(disturbance_bounds))
+        profiles_by_partition[partition]
+        for partition in normalized_partitions
     )
 
 
 def _build_point(
     *,
     network: MultiComponentModularNetwork,
+    recurrent_weights: Matrix,
     partition: Partition,
     coupled_profile: AlignedSignMemoryProfile,
     component_profiles: tuple[AlignedSignMemoryProfile, ...],
@@ -164,7 +217,7 @@ def _build_point(
         inbound_load_matrix=inbound_load_matrix,
     )
     transported, enumerated_directional, global_shifted = _certificate_fractions(
-        recurrent_weights=network.recurrent_weights,
+        recurrent_weights=recurrent_weights,
         partition=partition,
         coupled_profile=coupled_profile,
         component_profiles=component_profiles,
@@ -195,10 +248,10 @@ def _build_point(
             coupled_profile.mean_uniform_disturbance_margin
         ),
         full_off_diagonal_infinity_norm=off_diagonal_infinity_norm(
-            network.recurrent_weights
+            recurrent_weights
         ),
         dimension_normalized_nonnormality=(
-            matrix_nonnormality_commutator_norm(network.recurrent_weights)
+            matrix_nonnormality_commutator_norm(recurrent_weights)
             / sum(module_sizes)
         ),
         maximum_directional_bridge_norm=directional_summary.global_load,

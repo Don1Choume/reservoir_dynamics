@@ -99,10 +99,34 @@ baseline minus component MAE区間下限はそれぞれ0.02474、0.004166だっ�
 [方向別component結合](docs/research/theory/directional-component-coupling.md)に、
 事前登録・固定model hash・結果artifactは実験記録へ固定した。
 
+[EXP-2026-017](docs/research/experiments/EXP-2026-017.md) では既知二module分割という
+制約を外し、座標順を隠した2+2+3三module familyへ進めた。task-freeの
+affinity-gap法は240/240 networkで真のpartitionを回復し、局所16 orthantからの
+因子化certificateは全系128 orthantの直積列挙と960点すべてで一致した。
+EXP-2026-016の固定predictorを再fitせず適用したcomponent-aware MAEは0.01626で、
+global 0.07993、product-only 0.02102より小さく、491,520 challengeで事前登録
+12判定はすべて成立した。ただしglobalのSpearmanが0.9468で最良であり、強い一意
+affinity gapと等しい最大総流入loadを埋め込んだgeneratorである。従ってこれは
+分割可能な小規模系での絶対較正とcertificate計算量分解の構成例であって、一般の
+community回復、方向別loadの利得、人間規模scale lawの証明ではない。
+
+[EXP-2026-018](docs/research/experiments/EXP-2026-018.md) では、この強いgapを
+二値条件のままにせず、最大gap \(g_1\) と二番目 \(g_2\) から
+\(r_{part}=\min(g_1/2,(g_1-g_2)/4)\) というentrywise分割保証半径を導出した。
+固定manifestと未使用30 seedの180 base network、10,080摂動条件で事前登録8判定は
+すべて成立し、半径0.9倍以下の5,760条件で回復率1、pair disagreement 0だった。
+探索的に半径2倍で回復率0.7375、4倍で0.1653へ低下した。これは観測またはmodel
+誤差に対して因子化解析を適用してよい構造範囲を陽にするが、半径外の失敗確率、
+task機能、一般community検出、生物学的個体差の数値則ではない。
+
 このmodule方向は、構造connectomeへの多遺伝子的影響、発達中の階層的な
 機能結合再編、多尺度構造固有モードによる機能ダイナミクス制約、乳幼児
 moduleの個体差という2024–2026年の一次研究 [R38–R42] と対応付ける。ただし、
 これらは本研究の「生得coreとplastic reserve」仮説を直接証明しない。
+さらに、領域の神経新生時期と成人構造connectomeの結合・中心性との対応 [R51]、
+発生期ヒト皮質の細胞subtype指定に関係するgene co-expression meta-module
+[R52] は、発生programが構造scaffoldへ制約を与えることと整合する。しかし
+発生module、構造module、力学的attractor moduleの同一性は示されていない。
 
 ## 1. 既存の前提をどう修正するか
 
@@ -706,10 +730,22 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
   系だけでfitした固定component modelを3+5系へ外挿し、component-aware MAE
   0.01232、global 0.03970、product-only 0.01699を得た。certificate chainの
   違反は0だったが、Spearmanでは二baselineを上回らなかった。
-- 全186 unittest、7 DOCX test、branch coverage 87%を確認し、EXP-2026-016の
-  確認用source/test manifest SHA-256を
-  `f013d7f40c2e2dd146fce6d61ea5d95288b3b8b0892b4413ea8c381817ebc170`
-  に固定した。
+- [EXP-2026-017](docs/research/experiments/EXP-2026-017.md) の確認では、未知の
+  2+2+3分割をtask前に240/240回復し、局所16 orthantの因子化certificateを
+  全系128 orthantの列挙と厳密一致させた。固定component-aware MAEは0.01626、
+  global 0.07993、product-only 0.02102で、12判定はすべて成立した。
+- [EXP-2026-018](docs/research/experiments/EXP-2026-018.md) の確認では、
+  最大gap推定器のentrywise分割保証半径を実装し、未使用10,080構造条件の
+  半径0.9倍以下で5,760/5,760完全回復、pair disagreement 0を得た。
+- 全216 unittest、branch coverage 87%を確認した。EXP-2026-018の確認用
+  source/test manifest SHA-256は
+  `7583c4c5e500b60d504462b263c8e056139254eec18f1d474fd890fcac3b7110`
+  である。EXP-2026-017の確認用
+  source/test manifest SHA-256を
+  `ee21b3bb6962dc3c483f194d8684217a6177d6e86fbea00343e14582543329a0`
+  に固定した。固定model hashは
+  `db0b50a648fb085ca687922a531fab5482af2a134bd01eefc3efe3dd85675a01`
+  だった。
 - canonical systems、artifact schema、seed manifestが未完了のためGate 0は未通過である。
 - 論文化判断は[論文化ゲート](docs/research/publication-readiness.md)で管理する。
 
@@ -924,6 +960,14 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
   Computation in Recurrent Networks Utilizes Shared Dynamical Motifs.”
   *Nature Neuroscience* 27, 1349–1363.
   <https://doi.org/10.1038/s41593-024-01668-6>
+- [R51] Diez et al. (2026), “Developmental Timing Shapes Structural
+  Connectivity and Centrality in the Human Connectome.”
+  *Nature Communications* 17.
+  <https://doi.org/10.1038/s41467-025-67785-3>
+- [R52] Nano et al. (2025), “Gene Co-expression Networks Underlying
+  Cell-type Specification in the Developing Human Cortex.”
+  *Nature Neuroscience*.
+  <https://doi.org/10.1038/s41593-025-01933-2>
 
 ### 13.3 力学系・遷移・トポロジーの分析
 
@@ -962,6 +1006,9 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - [A22] Pradhan, Dasgupta, and Sinha (2011), “Modular Organization Enhances
   the Robustness of Attractor Network Dynamics.” *Europhysics Letters* 94,
   38004. <https://doi.org/10.1209/0295-5075/94/38004>
+- [A23] Zhou, Liu, and Fan (2025), “Scalable Input-to-State Stability
+  Certificates for Interconnected Discrete-Time Systems.” arXiv preprint.
+  <https://arxiv.org/abs/2509.10118>
 
 ## 14. 調査方法と確度
 

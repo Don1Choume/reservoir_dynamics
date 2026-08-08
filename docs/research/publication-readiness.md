@@ -111,6 +111,20 @@
   なく、最大bridge strengthの平均認証率は0.6694、0.5089、0.4822だった。
 - 一方、Spearmanはcomponent-aware 0.8116に対してglobal 0.8542、product-only
   0.9062であり、component modelの順位支配は得られなかった。
+- `EXP-2026-017` は、座標順を隠した2+2+3三module familyの240 networkを
+  task-free affinity-gap法で240/240完全分割した。局所16 orthantの因子化
+  certificateは全系128 orthantの直積列挙と960点すべてで一致した。
+- EXP-2026-016の固定modelを再fitせず適用したcomponent-aware MAEは0.01626、
+  global 0.07993、product-only 0.02102だった。二つのbaseline minus component
+  MAEの95%区間下限は0.06167と0.004194で、事前固定12判定はすべて成立した。
+- ただし一意な強いaffinity gapをgeneratorへ埋め込み、最大総流入loadも全moduleで
+  等しくした。一般の分割回復、directional certificateのglobalに対する利得、
+  順位支配は確認していない。
+- `EXP-2026-018` は最大gapと二番目のgapからentrywise分割保証半径を導出し、
+  未使用180 base network、10,080摂動条件で8事前登録判定をすべて確認した。
+  半径0.9倍以下の5,760条件は回復率1、pair disagreement 0だった。
+- 探索域の回復率は半径2倍で0.7375、4倍で0.1653へ低下したが、この値には
+  事前閾値を置いておらず、task機能または一般community検出の結果ではない。
 
 ### 陰性結果
 
@@ -128,8 +142,9 @@
 ### 未検証
 
 - アトラクタprofileが符号保持以外の計算・記憶能力も予測するか
-- `EXP-2026-016` の較正優位が、別generator、3個以上のmodule、未知分割、
-  stochastic外乱、cue、readout task、非線形global baselineでも維持されるか。
+- `EXP-2026-016/017` の較正優位が、別generator、弱い・曖昧な未知分割、
+  4個以上のmodule、不均衡な方向別流入、stochastic外乱、cue、readout task、
+  非線形global baselineでも維持されるか。
 - 遷移時間尺度とタスク時間尺度の整合
 - アトラクタmarginを用いる学習済み調整器の強いbaselineに対する優位性。
   EXP-2026-015のfeedback-only局所gateは一様global対照を上回ったが、低rank、
@@ -142,8 +157,8 @@
 - task-specificな機能的アトラクタ商の数学的整備とatlas上での安定推定
 - 生得的機能コアとplastic reserveの操作定義が新規学習と忘却を予測するか
 - 高次元・非対角・非normalな多重安定coreでの安全集合margin推定
-- component-awareな摂動modelが、分割を未知とした弱結合系や3 module以上へ
-  外挿するか
+- component-awareな摂動modelが、誤分割を含む弱結合系、4 module以上、
+  不均衡な方向別loadへ外挿するか
 - robust repertoireがstochastic外乱、cue、非線形readout、逐次学習taskを
   予測するか。EXP-2026-015は確率外乱と線形reserve記憶を局所制御taskで扱ったが、
   repertoire predictorの確認ではない。
@@ -240,6 +255,20 @@ module size差へ残差表現を外挿し、global baselineに対する増分妥
 baselineは未確認である。従って当初のcomponent残差移植gateは満たしたが、
 普遍predictorの投稿gateとは扱わない。
 
+`EXP-2026-017` はmodule数と未知分割の二軸を次へ進めた。強い一意affinity gapを
+持つ三module familyでは、task値を見ずにpartitionを完全回復し、全系128 orthantを
+局所16 orthantへ正確に因子化できた。固定二module predictorの絶対較正優位も
+再現したため、構成的な合成可能性と計算量削減は草稿へ含める価値がある。ただし
+分割条件はgenerator埋め込みで、global順位相関が最良、directionalとglobal
+certificateも同値だった。従って一般community推定、方向別表現の普遍的利得、
+人間規模scale lawの投稿gateは解除しない。
+
+`EXP-2026-018` は上記のgenerator埋め込みgapを連続的な保証量へ変えた。最大gap
+推定器に限れば、どのentrywise誤差まで同じpartitionを必ず返すかを定理・実装・
+未使用seedで一致させたため、条件4の「構造推定感度」に新しい方法論的結果を
+追加できる。一方、半径外で誤分割したprofileがtaskをどれだけ誤るかは未検証で、
+機能保証または生物学的個体差へはまだ接続しない。
+
 日本語草稿は
 [アトラクタ数を越えたリザバー評価](../papers/robust-repertoire-memory-ja.md)
 として作成した。
@@ -266,14 +295,17 @@ baselineは未確認である。従って当初のcomponent残差移植gateは�
 多変量structural baselineに対する事前登録優位を得たため、原稿を更新する。
 `EXP-2026-015` により条件3も単一family・単純global対照に限って満たした。
 `EXP-2026-016` により、条件2のうちmodule-sizeを跨ぐcomponent-aware較正優位を
-一つの非対称generatorで追加確認した。
+一つの非対称generatorで追加確認した。`EXP-2026-017` により、条件4のうち
+未知三module分割下の因子化certificateと計算量分解を強い構造条件の下で
+追加確認した。`EXP-2026-018` により、同じ最大gap分割を保つentrywise十分半径と
+半径外感度のlabel-free測定を条件4へ追加した。
 
 ## 投稿前の必須追加条件
 
 草稿は開始するが、投稿前に次を満たす。
 
-- `EXP-2026-016` のcomponent較正優位を、別generator、3 module以上、未知分割、
-  非線形global baselineで再確認する
+- `EXP-2026-016/017` のcomponent較正優位を、別generator、保証半径外の誤分割、
+  4 module以上、不均衡な方向別load、非線形global baselineで再確認する
 - time-varying stochastic外乱について、EXP-2026-015のcore制御taskとは別に
   robust repertoire survival curveとrectangle保証の保守性を測る
 - 局所場を低rank制御、MPC、学習済み受容体mapと同一energyで比較する

@@ -60,6 +60,16 @@ synapse数と結合強度が選択的に変化する。
 
 - [Vargas-Barroso et al. 2026](https://doi.org/10.1038/s41467-026-71914-x)
 
+ヒト構造connectomeでは、皮質領域の発生時期が構造中心性と相関し、神経新生時期が
+近い領域ほど結合確率と結合重みが大きいという一次解析が報告された。またヒト皮質の
+発生transcriptomeでは、細胞subtype指定に関係する500超のgene co-expression
+networkとmeta-moduleが同定された。これらは発生時期と分子programが成人構造の
+scaffoldへ制約を与えることと整合するが、力学的attractor module、機能core、
+plastic reserveの存在を直接示す証拠ではない。
+
+- [Diez et al. 2026](https://doi.org/10.1038/s41467-025-67785-3)
+- [Nano et al. 2025](https://doi.org/10.1038/s41593-025-01933-2)
+
 multitask人工RNNでは、attractor、decision boundary、rotationなどの
 dynamical motifがtask間で再利用され、既存motifを入力で再構成することで
 新taskを速く学べる例が示された。これは、学習余剰が空のparameterや未使用
@@ -319,7 +329,7 @@ y^+=\tanh(Cx+Dy+\eta_y)
 \]
 
 とし、隔離時の座標別marginを \(M_x,M_y\)、方向別結合負荷を
-\(L_x=\lVert B\rVert_\infty\)、\(L_y=\lVert C\rVert_\infty\) とする。
+\(L_x=\|B\|_\infty\)、\(L_y=\|C\|_\infty\) とする。
 外乱budget \(e\) に対する十分条件は
 
 \[
@@ -346,6 +356,57 @@ isolated task積だけの0.01699を上回った。全983,040 challengeで上記c
 これは絶対値較正の支持であり、順位支配や任意規模へのscale lawの立証ではない。
 詳細は[方向別component結合](../theory/directional-component-coupling.md)と
 [EXP-2026-016](../experiments/EXP-2026-016.md)に記録する。
+
+### 未知三module分割と因子化合成
+
+任意個のmodule partition \(I_1,\ldots,I_m\) に対し、受信方向別loadを
+
+\[
+L_{ij}=\max_{r\in I_i}\sum_{c\in I_j}|W_{rc}|,
+\qquad \ell_i=\sum_{j\ne i}L_{ij}
+\]
+
+と定義する。module \(i\) の局所margin profileから外乱 \(e+\ell_i\) を
+耐える割合を \(r_i(e+\ell_i)\) とすれば、方向別因子化certificateは
+
+\[
+R_{\mathrm{dir}}(e)=\prod_{i=1}^{m}r_i(e+\ell_i)
+\]
+
+で得られる。局所次元を \(d_i\)、最大局所次元を \(b\) とすると、全系の
+\(2^{\sum_i d_i}\) orthantを列挙せず、\(\sum_i2^{d_i}\le m2^b\) の局所列挙で
+計算できる。これは各moduleの局所安全性を合成する構成的十分条件であり、
+一般の非矩形安全集合または誤分割に対する保証ではない。
+
+`EXP-2026-017` では一意なinter/intra affinity gapを持つ座標permutation済み
+2+2+3 tanh RNNについて、task前に240/240 partitionを完全回復した。局所16
+orthantからの因子化値は全系128 orthantの直積列挙と960点すべてで一致した。
+EXP-2026-016で固定した二module用predictorを再fitせず適用したMAEは0.01626で、
+global 0.07993、product-only 0.02102より小さかった。一方、globalのSpearmanが
+0.9468で最も高く、全moduleの最大流入loadを等しくした設計ではdirectionalと
+global certificateも一致した。従って、本結果は絶対較正と計算量分解の支持であり、
+順位支配、一般community回復、方向別loadの利得、人間規模則の証明ではない。
+詳細は[多成分合成](../theory/multicomponent-composition.md)と
+[EXP-2026-017](../experiments/EXP-2026-017.md)に記録する。
+
+### 分割の摂動保証半径
+
+`EXP-2026-018` では、最大affinity gapを \(g_1\)、二番目を \(g_2\) として
+
+\[
+r_{part}=\min\left(\frac{g_1}{2},\frac{g_1-g_2}{4}\right)
+\]
+
+を導出した。entrywise重み誤差がこの半径未満なら、pair affinityのthreshold前後と
+最大gapの選択が同時に保たれるため、推定partitionも不変である。未使用30 seed、
+180 base network、10,080摂動条件の事前登録確認では、半径0.9倍以下の5,760条件で
+回復率1、pair disagreement 0だった。半径2倍では回復率0.7375、4倍では0.1653へ
+低下した。
+
+この量は「生得的scaffoldが個体差またはmodel誤差をどこまで許容できるか」の
+人工系における候補指標である。ただし同じ構造partitionを保つだけで、同じ機能、
+attractor、task、発生経路を保つとは限らない。詳細は
+[EXP-2026-018](../experiments/EXP-2026-018.md)に記録する。
 
 ## 4. 反証可能な予測
 
@@ -605,10 +666,14 @@ module追加だけでなく、冗長性、誤り訂正、階層的gating、失�
 
 `EXP-2026-016` は、この零次積則を弱結合・非対称・異なるmodule sizeへ移す際、
 局所margin、方向別負荷、size imbalanceを保持する表現が絶対保持率の較正に
-役立つ一例を示した。人間規模へ使うには、(i) module分割が未知でも回復できる、
-(ii) 3 module以上でcertificate合成の計算量が局所的に保たれる、(iii) stochastic
-外乱とcue/readout taskでも外挿誤差が増大しない、(iv) 誤同定された分割に対する
-誤差上界を持つ、という追加条件が必要である。現時点ではいずれも未証明である。
+役立つ一例を示した。`EXP-2026-017` は、(i) task-freeでmodule分割を回復し、
+(ii) 3 moduleでcertificate合成を局所16 orthantへ因子化する構成を、強い一意
+affinity gapを持つ7次元人工familyに限って確認した。`EXP-2026-018` はさらに
+同じpartitionを保証するentrywise誤差半径を与えた。人間規模へ使うには、
+(iii) stochastic外乱とcue/readout taskでも外挿誤差が増大しない、(iv) 半径外で
+誤同定された分割に対する機能誤差上界を持つ、(v) module数増加時に局所次元、総流入load、局所
+失敗率を規模非依存に制御できる、という追加条件が必要である。(i)と(ii)も一般条件
+ではなく構成例であり、分割不変半径を除く(iii)–(v)は未証明である。
 
 候補となる必要条件は、例えば
 
