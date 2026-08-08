@@ -17,6 +17,13 @@ from reservoir_dynamics.metrics.linear_memory import (
     linear_memory_curve,
     shared_readout_memory_capacity,
 )
+from reservoir_dynamics.metrics.module_partition import (
+    AffinityGapPartition,
+    PartitionSeparation,
+    infer_affinity_gap_partition,
+    partition_separation,
+    partitions_equivalent,
+)
 from reservoir_dynamics.metrics.network_diagnostics import (
     local_jacobian_infinity_norm,
     matrix_nonnormality_commutator_norm,
@@ -43,6 +50,8 @@ __all__ = [
     "BasinStabilityEstimate",
     "BootstrapMeanInterval",
     "LinearMemoryResult",
+    "AffinityGapPartition",
+    "PartitionSeparation",
     "SharedReadoutMemoryResult",
     "SignedCoordinateConjugacyAudit",
     "StandardizedRidgeModel",
@@ -53,12 +62,15 @@ __all__ = [
     "finite_time_conditional_lyapunov_exponent",
     "fit_standardized_ridge",
     "linear_memory_curve",
+    "infer_affinity_gap_partition",
     "local_jacobian_infinity_norm",
     "matrix_nonnormality_commutator_norm",
     "off_diagonal_infinity_norm",
     "signed_minimum_coordinate",
     "signed_coordinate_conjugacy_witness",
     "pairwise_replica_distance_curve",
+    "partition_separation",
+    "partitions_equivalent",
     "shared_readout_memory_capacity",
     "top_conditional_lyapunov_exponent",
     "weakly_connected_components",

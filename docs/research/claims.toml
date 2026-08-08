@@ -959,3 +959,96 @@ falsification_criteria = [
   "固定manifest a64556683a20ab733581ad6fe71ddc37dfb27cb3138b6dde50faaf6a02efe538とspecで再生し、8主要判定のいずれかが成立しない。",
   "transportedまたはnorm-shifted certificateが認証したchallengeで符号保持違反が生じる。",
 ]
+
+[[claims]]
+id = "C-RC-029"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-015の未使用30 seed、異なる3+5 module size、非対称双方向bridge、3 feedback gain、3時変確率外乱からなる270条件では、feedback loadをsourceとする拡散場でreserve-to-core bridgeだけを局所gateすると8個の必須orthant safe boxを全条件で保持した。同じ時刻別Frobenius介入energyの一様global gain対照に対するcore保持差は0.3472、95% bootstrap下限0.2393、reserve線形記憶容量差は0.07683、下限0.06350であり、2,851,200座標遷移のcertificate違反は0だった。"
+sources = [
+  "docs/research/artifacts/EXP-2026-015-confirmation-summary.json",
+  "docs/research/theory/spatial-modulation-fields.md",
+  "https://doi.org/10.1038/s41586-024-07311-5",
+  "https://doi.org/10.1038/s41467-026-73435-z",
+]
+implementations = [
+  "src/reservoir_dynamics/systems/spatial_modulation.py",
+  "src/reservoir_dynamics/theory/spatial_core_protection.py",
+  "src/reservoir_dynamics/experiments/spatial_field_network.py",
+  "src/reservoir_dynamics/experiments/spatial_field_core_reserve_trial.py",
+  "src/reservoir_dynamics/experiments/spatial_field_core_reserve.py",
+]
+tests = [
+  "tests/systems/test_spatial_modulation.py",
+  "tests/theory/test_spatial_core_protection.py",
+  "tests/experiments/test_spatial_field_core_reserve.py",
+]
+limitations = [
+  "3次元対角双安定core、5次元tanh reserve、線形遅延記憶、feedback由来sourceを持つ一つの人工familyに限定される。",
+  "global対照は全recurrent weightの一様gain制御であり、最適制御、低rank制御、feedback blockだけの最適gate、学習済みcontrollerとは比較していない。",
+  "reserve parameterは固定generatorで作られ、学習過程、plasticity rule、逐次task追加を実装していない。",
+  "astrocyte、ion、neuromodulatorの一次研究は空間的・多時間尺度の着想を支持するが、本field stateまたは目的関数を生物学的に同定しない。",
+  "人間規模の必要条件、spiking系、物理reservoirへの一般化ではない。",
+]
+falsification_criteria = [
+  "固定manifest 823dc31303ae8d3c8c7b7610e8b6f8fcf8a297f5db240bd3a8c518989a3efca8とspecで再生し、10判定のいずれかが成立しない。",
+  "局所gateの座標別certificateが認証した遷移で、対応する双安定safe intervalから逸脱する。",
+]
+
+[[claims]]
+id = "C-RC-030"
+status = "reproduced"
+evidence_type = "local_reproduction"
+statement = "EXP-2026-016では、非対称2+2・2+3 moduleのpilot 640点だけでfitした方向別component-aware ridgeを、係数再fitなしで未使用30 seedの3+5 module 960点へ適用した。component-aware MAEは0.01232で、global profileの0.03970およびisolated productだけの0.01699より小さく、seed単位baseline minus component MAEの95% bootstrap下限はそれぞれ0.02474と0.004166だった。983,040 challengeでtransported、directional、global-shifted certificate chainとtask下界の違反は0だった。"
+sources = [
+  "docs/research/artifacts/EXP-2026-016-confirmation-summary.json",
+  "docs/research/theory/directional-component-coupling.md",
+  "https://doi.org/10.1137/090746483",
+  "https://proceedings.mlr.press/v211/zhang23a.html",
+  "https://doi.org/10.1038/s41593-024-01668-6",
+]
+implementations = [
+  "src/reservoir_dynamics/theory/component_coupling.py",
+  "src/reservoir_dynamics/experiments/aligned_sign_memory.py",
+  "src/reservoir_dynamics/experiments/asymmetric_modular_family.py",
+  "src/reservoir_dynamics/experiments/component_profile.py",
+  "src/reservoir_dynamics/experiments/component_predictor.py",
+  "src/reservoir_dynamics/experiments/component_size_experiment.py",
+  "src/reservoir_dynamics/experiments/component_size_extrapolation_cli.py",
+]
+tests = [
+  "tests/theory/test_component_coupling.py",
+  "tests/experiments/test_aligned_sign_memory.py",
+  "tests/experiments/test_component_size_extrapolation.py",
+  "tests/experiments/test_component_size_experiment.py",
+]
+limitations = [
+  "training familyは2+2・2+3、confirmationは一つの3+5 generatorであり、任意module数・size・topologyへの外挿ではない。",
+  "taskは全orthantに対する4個の固定符号相対方向、80 stepであり、全corner、確率外乱、cue、readout taskを扱わない。",
+  "component-aware modelはMAEで二baselineを上回ったが、Spearmanはglobal 0.8542、product-only 0.9062に対して0.8116であり、順位を支配しない。",
+  "global baselineは線形ridgeであり、非線形model、nested hyperparameter選択、未知module分割を含まない。",
+  "8次元tanh RNNの人工familyであり、学習中の重み変化、生物回路、人間規模条件を直接支持しない。",
+]
+falsification_criteria = [
+  "固定manifest f013d7f40c2e2dd146fce6d61ea5d95288b3b8b0892b4413ea8c381817ebc170、pilot model hash db0b50a648fb085ca687922a531fab5482af2a134bd01eefc3efe3dd85675a01、登録specで再生し、9判定のいずれかが成立しない。",
+  "transported、directional、global-shiftedのcertificate chain、またはいずれかが認証したchallengeに対するtask下界が破れる。",
+  "同じ分割情報とtraining budgetを持つ事前固定非線形global baselineに対するcomponent特徴の増分MAEが再現しない。",
+]
+
+[[claims]]
+id = "H-RC-008"
+status = "hypothesis"
+evidence_type = "hypothesis"
+statement = "局所次元が有界で、重みまたは活動からmodule分割を回復でき、各moduleへの総流入負荷が規模とともに発散しない力学系では、局所アトラクタmarginと方向別負荷行列を合成することで、全状態空間を列挙せずに生得的機能coreの安全性と有限外乱taskを較正できる。"
+falsification_criteria = [
+  "明示したinter/intra affinity gapを持つ三module確認familyで、task非依存の分割推定が真のpartitionを回復しない。",
+  "因子化方向別certificateが直積列挙値と一致しない、または認証したtask challengeで符号保持違反が生じる。",
+  "EXP-2026-016の固定component predictorが未知三module系でglobalまたは積則baselineへの事前登録MAE優位を示さない。",
+  "module数を増やしたとき局所次元・総流入・局所失敗率を規模非依存に制御しても、合成certificateの計算量または保証が指数的に全次元へ戻る。",
+]
+limitations = [
+  "分割回復はmodule内最小affinityがmodule間最大affinityを上回り、そのgapが一意に最大という強い十分条件から開始する。",
+  "局所orthant列挙は最大module次元には指数的で、連続・周期・カオスattractorをまだ扱わない。",
+  "EXP-2026-017は7次元三module tanh RNNと固定4方向符号taskであり、人間脳または人間規模性能を直接検証しない。",
+  "生物学的な発生module、細胞型module、計算moduleが一致するとは仮定しない。",
+]

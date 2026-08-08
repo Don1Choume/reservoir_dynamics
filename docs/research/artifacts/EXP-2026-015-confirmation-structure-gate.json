@@ -1,0 +1,16 @@
+{
+  "experiment_id": "EXP-2026-015",
+  "phase": "confirmation_structure_gate",
+  "trial_seeds": [1901, 1902, 1903, 1904, 1905, 1906, 1907, 1908, 1909, 1910, 1911, 1912, 1913, 1914, 1915, 1916, 1917, 1918, 1919, 1920, 1921, 1922, 1923, 1924, 1925, 1926, 1927, 1928, 1929, 1930],
+  "feedback_gains": [0.48, 0.64, 0.8],
+  "raw_network_count": 90,
+  "effective_magnitude_class_count": 90,
+  "magnitude_classes_by_feedback_gain": [[0.48, 30], [0.64, 30], [0.8, 30]],
+  "all_reserve_blocks_asymmetric": true,
+  "all_bridges_bidirectional_nonzero": true,
+  "unequal_module_sizes": true,
+  "test_count": 180,
+  "branch_coverage_percent": 88,
+  "source_test_file_count": 108,
+  "source_test_manifest_sha256": "823dc31303ae8d3c8c7b7610e8b6f8fcf8a297f5db240bd3a8c518989a3efca8"
+}

@@ -1,0 +1,62 @@
+{
+  "experiment_id": "EXP-2026-015",
+  "phase": "pilot",
+  "trial_seeds": [1801, 1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810],
+  "feedback_gains": [0.48, 0.64, 0.8],
+  "disturbance_bounds": [0.0, 0.04, 0.08],
+  "point_count": 90,
+  "certificate_challenge_count": 950400,
+  "certificate_violation_count": 0,
+  "maximum_energy_match_error": 4.440892098500626e-16,
+  "field_range": [0.0, 0.9984195752687679],
+  "structure_gate": {
+    "raw_network_count": 30,
+    "effective_magnitude_class_count": 30,
+    "magnitude_classes_by_feedback_gain": [[0.48, 10], [0.64, 10], [0.8, 10]],
+    "all_reserve_blocks_asymmetric": true,
+    "all_bridges_bidirectional_nonzero": true,
+    "unequal_module_sizes": true
+  },
+  "contrasts": {
+    "local_minus_ungated_core_retention": {
+      "estimate": 0.04722222222222222,
+      "lower": 0.0,
+      "upper": 0.14166666666666666,
+      "confidence_level": 0.95,
+      "resamples": 2000
+    },
+    "local_minus_global_core_retention": {
+      "estimate": 0.22916666666666666,
+      "lower": 0.09440972222222227,
+      "upper": 0.40555555555555556,
+      "confidence_level": 0.95,
+      "resamples": 2000
+    },
+    "local_minus_global_reserve_capacity": {
+      "estimate": 0.05847826527031184,
+      "lower": 0.03536949826936167,
+      "upper": 0.0785986953012148,
+      "confidence_level": 0.95,
+      "resamples": 2000
+    }
+  },
+  "condition_summaries": [
+    {"feedback_gain": 0.48, "disturbance_bound": 0.0, "local_safe_box_retention": 1.0, "ungated_safe_box_retention": 1.0, "global_safe_box_retention": 0.95, "local_reserve_capacity": 3.332474716248887, "ungated_reserve_capacity": 3.336725761664159, "global_reserve_capacity": 3.3196171314572824, "certified_challenge_fraction": 0.9999242424242425, "mean_gated_load_ratio": 0.7358758144786337},
+    {"feedback_gain": 0.48, "disturbance_bound": 0.04, "local_safe_box_retention": 1.0, "ungated_safe_box_retention": 1.0, "global_safe_box_retention": 0.95, "local_reserve_capacity": 2.7945391807890108, "ungated_reserve_capacity": 2.7974208146380413, "global_reserve_capacity": 2.7525338364337495, "certified_challenge_fraction": 0.9998295454545454, "mean_gated_load_ratio": 0.68256459961472},
+    {"feedback_gain": 0.48, "disturbance_bound": 0.08, "local_safe_box_retention": 1.0, "ungated_safe_box_retention": 1.0, "global_safe_box_retention": 0.9, "local_reserve_capacity": 2.4172756956629233, "ungated_reserve_capacity": 2.418893879361227, "global_reserve_capacity": 2.364861359461339, "certified_challenge_fraction": 0.998001893939394, "mean_gated_load_ratio": 0.6060978235471606},
+    {"feedback_gain": 0.64, "disturbance_bound": 0.0, "local_safe_box_retention": 1.0, "ungated_safe_box_retention": 0.95, "global_safe_box_retention": 0.9, "local_reserve_capacity": 3.3314761781084776, "ungated_reserve_capacity": 3.3389591349318684, "global_reserve_capacity": 3.3087515206384253, "certified_challenge_fraction": 0.9995359848484849, "mean_gated_load_ratio": 0.6622797285563409},
+    {"feedback_gain": 0.64, "disturbance_bound": 0.04, "local_safe_box_retention": 1.0, "ungated_safe_box_retention": 0.975, "global_safe_box_retention": 0.875, "local_reserve_capacity": 2.794324513185792, "ungated_reserve_capacity": 2.79944832408401, "global_reserve_capacity": 2.7220779682376675, "certified_challenge_fraction": 0.9978314393939394, "mean_gated_load_ratio": 0.6011054711661014},
+    {"feedback_gain": 0.64, "disturbance_bound": 0.08, "local_safe_box_retention": 1.0, "ungated_safe_box_retention": 0.95, "global_safe_box_retention": 0.8, "local_reserve_capacity": 2.417226799808653, "ungated_reserve_capacity": 2.420008327756555, "global_reserve_capacity": 2.3311664499070512, "certified_challenge_fraction": 0.9943371212121213, "mean_gated_load_ratio": 0.5201912216464545},
+    {"feedback_gain": 0.8, "disturbance_bound": 0.0, "local_safe_box_retention": 1.0, "ungated_safe_box_retention": 0.9, "global_safe_box_retention": 0.6625, "local_reserve_capacity": 3.330582414955358, "ungated_reserve_capacity": 3.3417862019210105, "global_reserve_capacity": 3.3095666554436165, "certified_challenge_fraction": 0.9977840909090909, "mean_gated_load_ratio": 0.5978660760686876},
+    {"feedback_gain": 0.8, "disturbance_bound": 0.04, "local_safe_box_retention": 1.0, "ungated_safe_box_retention": 0.9, "global_safe_box_retention": 0.55, "local_reserve_capacity": 2.7941795332259, "ungated_reserve_capacity": 2.801980870527472, "global_reserve_capacity": 2.6951462807396114, "certified_challenge_fraction": 0.9953219696969697, "mean_gated_load_ratio": 0.5337847327228892},
+    {"feedback_gain": 0.8, "disturbance_bound": 0.08, "local_safe_box_retention": 1.0, "ungated_safe_box_retention": 0.9, "global_safe_box_retention": 0.35, "local_reserve_capacity": 2.4171610891706776, "ungated_reserve_capacity": 2.421446703976829, "global_reserve_capacity": 2.2992145314041292, "certified_challenge_fraction": 0.9872348484848485, "mean_gated_load_ratio": 0.4576610240626665}
+  ],
+  "theory_decisions": {
+    "field_hypercube_invariant": true,
+    "intervention_energy_matched": true,
+    "certificate_lower_bound_valid": true,
+    "structures_effectively_distinct": true,
+    "reserve_blocks_asymmetric": true,
+    "bridges_bidirectional_nonzero": true
+  }
+}

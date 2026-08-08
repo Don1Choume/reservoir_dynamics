@@ -772,7 +772,7 @@ def _set_document_properties(document: Document) -> None:
     properties.keywords = (
         "reservoir computing; attractor; robust invariant set; RNN"
     )
-    properties.comments = "研究草稿 v0.2"
+    properties.comments = "研究草稿 v0.7"
 
 
 def main() -> None:

@@ -152,3 +152,17 @@ def test_pagebreak_marker_creates_word_page_break(tmp_path: Path) -> None:
         paragraph.text for paragraph in rendered.paragraphs
     )
     assert 'w:type="page"' in rendered._element.xml
+
+
+def test_document_metadata_matches_current_draft_version(tmp_path: Path) -> None:
+    source_path = tmp_path / "paper.md"
+    output_path = tmp_path / "paper.docx"
+    source_path.write_text(
+        "# 題名\n## 副題\n研究草稿 v0.7\n本文。",
+        encoding="utf-8",
+    )
+
+    build_document(source_path, output_path)
+
+    rendered = Document(output_path)
+    assert rendered.core_properties.comments == "研究草稿 v0.7"

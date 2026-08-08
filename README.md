@@ -30,6 +30,12 @@
 - family・seed二重holdoutと、candidate未使用modular familyでの陰性外挿確認
 - 独立moduleの固定点・robust fraction・符号保持率の積則
 - 弱いmodule間結合の積則残差と座標別rectangle certificate
+- row-stochastic kernelによる有界な拡散型空間変調場
+- 座標別row gateのcore保護上界とenergy-matched global制御
+- 非対称3+5 core–reserve RNNの局所場介入確認
+- affinity gapによる未知module分割推定と構造confidence
+- 多成分方向別負荷行列と直積を作らない因子化certificate
+- 二module固定predictorを未知三moduleへ移すEXP-2026-017実行系
 - task-preserving共役を検出する有効構造多様性の監査規約
 - 結合norm、局所Jacobian、固定点座標、非正規性の比較baseline
 - 出典、実装、反証条件を接続する研究主張台帳
@@ -59,13 +65,19 @@
 - [AUDIT-2026-001](docs/research/experiments/AUDIT-2026-001.md)
 - [EXP-2026-013](docs/research/experiments/EXP-2026-013.md)
 - [EXP-2026-014](docs/research/experiments/EXP-2026-014.md)
+- [EXP-2026-015](docs/research/experiments/EXP-2026-015.md)
+- [EXP-2026-016](docs/research/experiments/EXP-2026-016.md)
+- [EXP-2026-017](docs/research/experiments/EXP-2026-017.md)
 - [日本語論文草稿](docs/papers/robust-repertoire-memory-ja.md)
 - [日本語論文DOCX](docs/papers/robust-repertoire-memory-ja.docx)
 - [core–reserve保護条件](docs/research/theory/core-reserve-protection.md)
 - [双安定coreのロバスト不変margin](docs/research/theory/bistable-core-margin.md)
+- [方向別component結合と合成certificate](docs/research/theory/directional-component-coupling.md)
+- [未知分割を含む多成分合成certificate](docs/research/theory/multicomponent-composition.md)
 - [非対角tanh RNNのorthant-box margin](docs/research/theory/orthant-box-margin.md)
 - [独立moduleの積分解とgauge同値性](docs/research/theory/modular-factorization.md)
 - [弱いmodule間結合と積則残差](docs/research/theory/weak-module-coupling.md)
+- [空間変調場と局所core保護](docs/research/theory/spatial-modulation-fields.md)
 - [生得的機能コアと可塑的力学余剰](docs/research/directions/innate-core-plastic-reserve.md)
 - [論文化ゲート](docs/research/publication-readiness.md)
 

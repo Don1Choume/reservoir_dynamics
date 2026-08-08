@@ -102,6 +102,9 @@
 - 対応仮説: `C-BIO-001`, `C-BIO-002`, `H-BIO-001`
 - 候補: topology、細胞型、局所結線規則、初期重み、plasticity rule、
   critical period、neuromodulation。
+- 空間変調の候補: 局所受容体分布、アストロサイト・細胞外イオンによる
+  近傍場、広域neuromodulatorの到達範囲と時定数。人工系での操作定義は
+  `OQ-014` に分離する。
 - 識別実験: 同じgenotype記述長で符号化対象だけを変え、outer evolutionと
   inner lifetime learningの一般化を比較する。
 - 必要な対照: test taskをouter loopへ漏洩させず、進化的overfittingを測る。
@@ -119,6 +122,10 @@
 - 多重安定certificate: 必須安全集合 \(S_k\) が外力norm \(\mu_k\) まで
   ロバストなら、
   \(\sum_j\|G_j\|R_j\le\min_k\mu_k\) で全安全集合を保護できる。
+- 空間gateを含む候補条件: 時刻 \(t\) のreserve-to-core結合を
+  \(D(g_t)G\) とすると、座標別loadとmodel誤差の和が各core座標の
+  安全margin未満であることを要求する。これは通信・制御energyを含む
+  scale lawの構成要素であり、node数の下界そのものではない。
 - 注意: 上記は十分条件であり、人間規模の必要条件または生物学的実測則では
   ない。
 - 外部妥当性: network familyを跨ぐ予測と発生connectomeへの適合を要求する。
@@ -168,10 +175,17 @@
   を別々に評価する必要がある。
 - 副次結果: normalized margin単独はSpearman 0.8944、MAE 0.1955だったが、
   同じconfirmation上で観測したため新しい選択済みmodelとは扱わない。
-- 未知部分: component-awareな積則model、stochastic noise、cue、readout taskで
-  順位と較正が保たれるか未確認である。
-- 次の識別実験: module内部構造とmodule間結合に真の独立変動を与え、直積則、
-  compositional predictor、time-varying stochastic外乱を順に確認する。
+- component外挿の確認: `EXP-2026-016` では2+2・2+3 moduleのpilotだけでfitした
+  方向別component-aware modelを、未使用30 seedの3+5 moduleへ再fitなしで
+  適用した。MAEは0.01232でglobal profile 0.03970、product-only 0.01699より
+  小さく、seed単位改善区間下限は0.02474と0.004166だった。
+- 維持された境界: component-aware Spearman 0.8116はglobal 0.8542、product-only
+  0.9062より低かった。従って確認できたのは較正誤差の改善であり、順位の支配
+  ではない。
+- 未知部分: stochastic noise、cue、非線形readout、逐次学習taskでcomponent
+  特徴の較正優位が保たれるか未確認である。
+- 次の識別実験: time-varying stochastic外乱と別taskへ同じpilot modelを適用し、
+  非線形global baseline、未知module分割、sampled orthantとの比較を行う。
 - baseline: raw count、平均局所Jacobian spectral radius、\(\|W\|_\infty\)、
   basin stability、minimum fixed-point coordinate。
 - 主要判定: 未知family・未知外乱時系列で、\(N_{\mathrm{rob}}(e)\) または
@@ -196,15 +210,26 @@
   cross strength 0から0.04に対する平均絶対task積残差が0から0.0831へ単調
   非減少した。最大strengthの非零残差率は0.65で、二種類のrectangle下界に
   368,640 challengeで違反はなかった。
-- 次のgenerator: module size、module内非対称性、非対称bridge、局所gainを
-  独立に乱数化し、対称二bridge以外のgauge同値でないnetworkを作る。
+- EXP-2026-015で進んだ部分: 3+5 node、非対称かつ双方向bridge、確率外乱を
+  持つ90確認構造を導入したが、目的変数は局所gateによるcore保護とreserve
+  記憶であり、component積予測残差は計算していなかった。
+- EXP-2026-016の確認: module内部、方向別bridge、局所gainを独立生成した
+  3+5確認familyで、最大絶対積残差0.18555を観測した。2+2・2+3だけでfitした
+  component-aware predictorはglobal feature modelよりMAEを0.02738改善し、
+  95%区間下限は0.02474だった。
 - 主要量: component数、component別 \(R_j(e)\)、積予測
   \(\prod_jR_j(e)\)、全系観測 \(R(e)\)、積則残差、task retention、energy。
-- 維持する仮説: symmetric two-bridge弱結合では積則残差が結合normとともに
-  増えた。次に、component-aware modelの未知非対称構造MAEがglobal feature
-  modelより小さいかを確認する。
-- 反証条件: module分解を加えても、同一budgetのglobal feature modelに対する
-  増分予測力がない。または弱結合で積則残差が不連続・非有界に増える。
+- 方向別保証: 983,040 challengeで
+  \(T\ge R_{rect}\ge R_{dir}\ge R_{global}\) に違反はなく、最大strengthでの
+  平均認証率は0.6694、0.5089、0.4822だった。
+- 未解決部分: 別generator、3個以上のmodule、未知分割、確率外乱、学習task、
+  非線形global baselineでもcomponent-aware MAE改善が維持されるか。
+- 事前登録中: `EXP-2026-017` は、affinity gapだけから座標permutation後の
+  2+2+3分割をtask前に回復し、EXP-2026-016の固定modelを再fitせず三moduleへ
+  適用する。方向別certificateを \(2^7\) 直積と局所16 orthantの因子化計算で
+  照合し、未知分割とmodule数の軸を直接検証する。
+- 反証条件: 同じ分割情報とtraining budgetを持つ強いglobal baselineへ
+  component特徴を追加しても増分予測力がない。またはcertificate chainが破れる。
 
 ### OQ-013 taskを保存する構造同値類をどこまで自動監査できるか
 
@@ -221,6 +246,32 @@
   task閉性の成立条件、class-cluster bootstrap差。
 - 反証条件: 監査で異なるclassとされたnetworkが、より広い明示的対称群の下で
   同値と判明する。またはclass単位推論でもpseudoreplicationが残る。
+
+### OQ-014 空間変調場は生得coreとplastic reserveをどう制御するか
+
+- 対応仮説: `H-BIO-004`, `H-BIO-005`
+- 人工系で確認済み: `EXP-2026-015` の3+5 node非対称core–reserve RNNでは、
+  reserve-to-core bridgeだけを局所的にgateする拡散場が、同じ介入energyの
+  一様global recurrent gainより8必須orthantの保持とreserve線形記憶容量を
+  改善した。未使用30 seed、270条件、2,851,200座標遷移でcore保持差は
+  0.3472（95% bootstrap区間 [0.2393, 0.4681]）、reserve容量差は
+  0.07683（[0.06350, 0.09123]）だった。局所条件の保持率は全条件1で、
+  certificate違反は0だった。
+- 数学的に確認済み: row-stochastic拡散kernelと凸更新による場
+  \(z_t\in[0,1]^n\) の不変性、時変row gateのcore偏差上界、双安定座標の
+  外力margin、Frobenius energyを一致させるglobal対照を実装・テストした。
+- 証拠境界: これは「局所的な介入が一様介入より有利になり得る」人工系の
+  構成的十分例である。アストロサイト、細胞外Ca/Na/Cl、dopamine、AChの
+  いずれがこのgateを実装するか、生物回路が同じ方程式に従うかは示さない。
+- 未知部分: source生成、受容体分布、複数時定数、飽和、状態依存拡散、
+  synaptic plasticityとの相互作用、field自体の学習、最適制御、spiking・
+  高次元・物理reservoirへの一般化。
+- 次の識別実験: feedback-only局所場、同一energyの一様場、低rank場、
+  model-predictive control、学習された受容体mapを比較し、core保持、novel容量、
+  制御energy、場の帯域、plasticity枯渇を未知task列で測る。
+- 反証条件: 複数の非対称network familyと未知taskで、局所性を加えても
+  energy-matchedなglobalまたは低rank制御に増分優位がない。または場の
+  model誤差を含めるとcertificateが経験保持の下界にならない。
 
 ## 運用規則
 

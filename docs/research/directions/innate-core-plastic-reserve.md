@@ -1,6 +1,6 @@
 # 研究方向: 生得的機能コアと可塑的力学余剰
 
-最終確認: 2026-07-30  
+最終確認: 2026-08-02
 状態: 長期仮説。生物学的着想には支持証拠があるが、アトラクタ余剰としての
 定式化は未検証。
 
@@ -21,6 +21,9 @@
   保持したまま新しい安定応答を形成できる反実仮想的な適応容量である。
 - `H-BIO-004`: 発生中の構造化、疎化、modularity、可塑性maskは、同じ可塑
   parameter数の一様なネットワークより干渉を減らす。
+- `H-BIO-005`: coreへ到達する学習・活動負荷を、局所受容体、抑制、
+  neuromodulator、glia・細胞外イオン場に相当する空間gateでmargin内へ制御
+  できれば、一様な全体制御よりcore保持とreserve利用を両立しやすい。
 
 ## 2. 既存研究との対応
 
@@ -70,6 +73,31 @@ attractor研究ではないが、「余剰」は初期量だけでなく、利�
 追跡すべき動的資源であることを示す比較対象になる。
 
 - [Dohare et al. 2024](https://doi.org/10.1038/s41586-024-07711-7)
+
+神経回路の調整はsynapse重みだけではない。局所的で短いGABA・glutamate入力が
+より広く分単位のastrocyte Ca応答へ統合されること、locus coeruleus入力が
+海馬astrocyteの秒単位の求心的統合を調整すること、細胞外Caの局所変化が
+subsecondでstriatal cholinergic interneuronとdopamine放出を変えることが
+報告されている。
+
+- [Cahill et al. 2024](https://doi.org/10.1038/s41586-024-07311-5)
+- [Centripetal integration in hippocampal astrocytes 2024](https://doi.org/10.1038/s41593-024-01612-8)
+- [Rapid astrocyte modulation of extracellular Ca 2024](https://doi.org/10.1038/s41467-024-54253-7)
+
+さらにastrocyteのNa恒常性は細胞内・細胞間で不均一でK取り込みと結び付き、
+astrocyte Cl濃度もbrain stateに依存する。AChとdopamineの放出は局所releaseと
+reaction–diffusionで記述される時空間waveを形成し得る。またdopamineが
+plasticityとexcitabilityを介して潜在的な行動attractorを形成・顕在化させる
+例もある。
+
+- [Astrocytic sodium homeostasis 2026](https://doi.org/10.1038/s41467-026-73435-z)
+- [Brain-state-dependent astrocytic chloride 2023](https://doi.org/10.1038/s41467-023-37433-9)
+- [Acetylcholine–dopamine waves 2023](https://doi.org/10.1038/s41467-023-42311-5)
+- [Dopamine and latent behavioral attractors 2024](https://doi.org/10.1038/s41467-024-53976-x)
+
+これらは、調整信号が空間的に一様なscalarではなく、複数の時定数と局所性を
+持ち得ることを支持する。ただしcore–reserve分解、以下の拡散方程式、または
+局所gateの最適性を生物学的に示したものではない。
 
 ### 本研究の推論
 
@@ -257,6 +285,68 @@ am_*-\operatorname{atanh}(m_*)
 [双安定coreのロバスト不変margin](../theory/bistable-core-margin.md)と
 [EXP-2026-006](../experiments/EXP-2026-006.md)に記録する。
 
+### 空間変調場による座標別保護
+
+`EXP-2026-015` では変調場を
+
+\[
+z_{t+1}=(1-\alpha-\beta)z_t+\alpha Pz_t+\beta s_t,
+\qquad g_t=1-z_t
+\]
+
+とし、row-stochasticな \(P\)、\(\alpha,\beta\ge0\)、
+\(\alpha+\beta\le1\)、\(z_0,s_t\in[0,1]^n\) の下で
+\(z_t\in[0,1]^n\) が不変であることを示した。reserveからcoreへの行列の
+各受信座標を \(g_t\) でgateし、同じFrobenius介入energyを持つ一様global
+recurrent gainを対照とした。
+
+3+5 node、非対称かつ双方向bridge、3 feedback gain、3 stochastic noise、
+未使用30 seedの270条件では、局所gateの8必須core orthant保持率が全条件1だった。
+global対照との差は0.3472（95% bootstrap区間 [0.2393, 0.4681]）、reserve
+線形記憶容量差は0.07683（[0.06350, 0.09123]）で、2,851,200座標遷移に
+certificate違反はなかった。これは空間局所性の構成的十分例であり、特定の
+生体物質による実装証明ではない。理論と事前登録は
+[空間変調場](../theory/spatial-modulation-fields.md)および
+[EXP-2026-015](../experiments/EXP-2026-015.md)に記録する。
+
+### 成分別certificateと規模外挿
+
+二つのmoduleを
+
+\[
+x^+=\tanh(Ax+By+\eta_x),\qquad
+y^+=\tanh(Cx+Dy+\eta_y)
+\]
+
+とし、隔離時の座標別marginを \(M_x,M_y\)、方向別結合負荷を
+\(L_x=\lVert B\rVert_\infty\)、\(L_y=\lVert C\rVert_\infty\) とする。
+外乱budget \(e\) に対する十分条件は
+
+\[
+M_x\ge e+L_x,\qquad M_y\ge e+L_y
+\]
+
+となる。実際のcross-edgeを座標別に移送したrectangle、方向別norm、全結合を
+一つへ潰したglobal normの認証率を
+\(R_{\mathrm{rect}},R_{\mathrm{dir}},R_{\mathrm{global}}\) とすれば、
+実装したhyperbox familyでは
+
+\[
+T_{\mathrm{coupled}}\ge R_{\mathrm{rect}}
+\ge R_{\mathrm{dir}}\ge R_{\mathrm{global}}
+\]
+
+が成り立つ。この順序はcomponent間の向きと局所marginを残すほど保守性が緩む
+ことを表すが、一般の非矩形安全集合に自動的に拡張される定理ではない。
+
+`EXP-2026-016` では2+2・2+3系だけでfitした方向別component predictorを、再fit
+せず3+5系へ適用した。960点でMAEは0.01232となり、global profileの0.03970、
+isolated task積だけの0.01699を上回った。全983,040 challengeで上記chainとtask
+下界に違反はなかった。一方、Spearmanは0.8116で二baselineより低かったため、
+これは絶対値較正の支持であり、順位支配や任意規模へのscale lawの立証ではない。
+詳細は[方向別component結合](../theory/directional-component-coupling.md)と
+[EXP-2026-016](../experiments/EXP-2026-016.md)に記録する。
+
 ## 4. 反証可能な予測
 
 ### 予測P1: 逆U字型の適応frontier
@@ -363,6 +453,22 @@ fitでも再現した。今後は、このcurveがcandidate選択にも未使用
 学習feedback、stochastic noise、cue routing、readout性能でも多変量baselineを
 超えて予測するか検証する。
 
+### 予測P6: 同一energyでの空間選択性
+
+同じ総介入energyなら、core marginを直接消費するbridgeまたは受信座標へ
+選択的に作用する場は、全再帰結合を一様に弱める場よりcore保持を高め、
+reserve内部の計算・記憶を残す。
+
+`EXP-2026-015` は一つの人工RNN familyでこの予測を支持した。次に受容体mapを
+学習する局所場、低rank場、model-predictive controlを比較し、単純な
+feedback-only gateに固有の結果でないことを確認する。
+
+反証条件:
+
+- 未知family・未知taskで、energy-matchedなglobalまたは低rank制御に対する
+  core保持とreserve能力の同時優位が消える。
+- 場の遅延、model誤差、飽和を加えると安全certificateが経験保持を下回る。
+
 ## 5. 実験ロードマップ
 
 ### 段階A: 人工RNNでの機構的実証
@@ -384,6 +490,7 @@ budgetで比較する。
 - replica同期、最大条件付きLyapunov指数、IPC
 - 固定readout retentionとtask-specific機能同値類
 - 更新エネルギー、活動energy、配線量
+- 変調場の空間帯域、時定数、受容体map、介入energy
 - genotype記述長と生成回路の複雑度
 
 ### 段階B: 発生scheduleの介入
@@ -392,6 +499,7 @@ budgetで比較する。
 - module形成
 - plasticity critical period
 - 細胞型別またはmodule別の更新則
+- 局所・広域変調場と受容体分布の共同発達
 
 をfactorial designで操作し、CA3型の発生所見と対応付ける。
 
@@ -405,6 +513,7 @@ outer loopへtest taskを漏洩させず、進化的overfittingを検出する�
 - 発生段階別connectome
 - 細胞型別遺伝子発現
 - 可塑性window
+- neuromodulator、astrocyte、細胞外イオンの時空間計測
 - 行動獲得時期
 
 から、本モデルが予測する保存core、可変edge、疎化、module化の順序を検証する。
@@ -422,6 +531,8 @@ outer loopへtest taskを漏洩させず、進化的overfittingを検出する�
 6. energy、遅延、配線長
 7. 損傷、noise、分布shiftへの頑健性
 8. 発生generatorの記述長
+9. 空間変調の通信bandwidth、時定数、介入energy
+10. module分割の同定誤差とcomponent certificateの合成可能性
 
 さらに、多数のreserve moduleがcoreへ結合する場合には、
 
@@ -454,6 +565,22 @@ budgetと異なり、複数アトラクタ間の誤遷移を防ぐbudgetであ�
 hierarchy、局所gating、task条件付き結合が必要になる可能性がある。ただし、
 これは現時点の設計仮説であり、生物学的必要条件でも実測scale lawでもない。
 
+空間gate \(g_t\) を含む多重安定coreでは、reserve-to-core行列を \(G\)、
+reserve活動を \(r_t\)、model誤差上界を \(e_i\) として、例えば
+
+\[
+\sup_t\max_i
+\left(
+\left|\left[D(g_t)G r_t\right]_i\right|+e_i
+\right)
+\le
+\min_i\mu_i
+\]
+
+を座標別の十分条件候補とする。規模を増やすには、この条件だけでなく、場を
+形成・伝送するenergyと遅延、受容体mapの記述長、局所制御のmodel誤差も同時に
+scaleさせなければならない。
+
 また全機能が同じ最低marginを必要とするとは限らない。外乱budget別の
 \(N_{\mathrm{rob}}(e)\) と \(S_{\mathrm{rob}}(e)\) をscaleさせることで、
 少数の極端に脆弱な機能が全体のworst-case boundを支配する問題を分離する。
@@ -475,6 +602,13 @@ r\ge q^{1/m}
 必要となる。これは人間脳の数値的必要条件ではないが、大規模系では単なる
 module追加だけでなく、冗長性、誤り訂正、階層的gating、失敗相関の制御が
 必要になることを示す構成的なscale下限である。
+
+`EXP-2026-016` は、この零次積則を弱結合・非対称・異なるmodule sizeへ移す際、
+局所margin、方向別負荷、size imbalanceを保持する表現が絶対保持率の較正に
+役立つ一例を示した。人間規模へ使うには、(i) module分割が未知でも回復できる、
+(ii) 3 module以上でcertificate合成の計算量が局所的に保たれる、(iii) stochastic
+外乱とcue/readout taskでも外挿誤差が増大しない、(iv) 誤同定された分割に対する
+誤差上界を持つ、という追加条件が必要である。現時点ではいずれも未証明である。
 
 候補となる必要条件は、例えば
 

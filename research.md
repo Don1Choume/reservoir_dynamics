@@ -1,6 +1,6 @@
 # アトラクタ指向リザバー・ダイナミクス研究計画
 
-最終更新: 2026-08-01
+最終更新: 2026-08-02
 
 位置づけ: 調査報告、仮説、ツール設計、実験計画を統合した研究ロードマップ
 
@@ -73,7 +73,31 @@ infinity normが既知の弱い二bridge結合を加えた。未使用30 seed、
 結合normだけでmarginを減算する保証はいずれもtask保持率の下界を保った。
 従ってAtlasはcomponent profileとexactな積則だけでなく、結合norm、積則残差、
 移送可能なcertificateを保持する必要がある。ただし非対称結合、異なるmodule
-size、確率外乱への一般化は未確認である。
+size、確率外乱下でのcomponent積予測への一般化は未確認である。
+
+[EXP-2026-015](docs/research/experiments/EXP-2026-015.md) では、この未確認軸の
+一部を別のcore–reserve制御taskで進めた。3+5 node、非対称かつ双方向bridge、
+確率外乱を持つ90個の確認構造に対し、reserve-to-core bridgeへだけ作用する
+有界拡散場と、同じFrobenius介入energyの一様global recurrent gainを比較した。
+未使用30 seed、270条件、2,851,200座標遷移で、局所場は8必須core orthantを
+全条件で保持した。global対照との差は0.3472（95% bootstrap区間
+[0.2393, 0.4681]）、reserve線形記憶容量差は0.07683
+（[0.06350, 0.09123]）で、certificate違反は0だった。これは局所的な
+margin保護が一様制御より有利になり得る構成例であり、生体内のglia、
+細胞外イオン、neuromodulator機構そのものの証明ではない。
+
+[EXP-2026-016](docs/research/experiments/EXP-2026-016.md) では、非対称bridgeと
+module size差をcomponent積予測へ直接導入した。2+2・2+3 node系だけで固定した
+方向別component-aware ridgeを、係数再fitなしで未使用30 seedの3+5 node系へ
+適用したところ、960点・983,040 challengeでMAEは0.01232だった。global
+profileは0.03970、isolated task積だけのmodelは0.01699であり、seed bootstrapの
+baseline minus component MAE区間下限はそれぞれ0.02474、0.004166だった。
+一方、Spearmanはcomponent-aware 0.8116に対し二baselineが0.8542、0.9062で、
+順位予測の優位は得られなかった。従ってcomponent分解は小系から異なるsizeへの
+較正に増分情報を与えたが、普遍的なranking predictorや人間規模則ではない。
+理論と実装は
+[方向別component結合](docs/research/theory/directional-component-coupling.md)に、
+事前登録・固定model hash・結果artifactは実験記録へ固定した。
 
 このmodule方向は、構造connectomeへの多遺伝子的影響、発達中の階層的な
 機能結合再編、多尺度構造固有モードによる機能ダイナミクス制約、乳幼児
@@ -620,7 +644,7 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - 同じspecから同じartifactを再生成できる
 - solver、刻み幅、seed、過渡除去条件が全結果に記録される
 
-**進捗 2026-07-30**
+**進捗 2026-08-02**
 
 - 共通入力を複数初期状態へ与える離散時間replica simulatorを実装した。
 - スカラーtanhリザバーで大域的収縮上界を再現した
@@ -669,6 +693,23 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
   符号記憶保持率のSpearman 0.8933–0.9771を確認した。
 - pooled secondary解析ではmargin predictorがcouplingとworst local Jacobian
   より小さいMAEを示した。論文原稿の核にはなるが、人間規模条件ではない。
+- `EXP-2026-011` から `EXP-2026-014` ではfamily holdout、未知modular familyでの
+  陰性外挿、task-preserving共役監査、独立module積則、弱結合積則残差を順に
+  検証し、global scoreとcomponent構造を分離した。
+- row-stochastic拡散kernelによる有界空間変調場、row-gated core偏差上界、
+  双安定座標保護条件、energy-matched global対照を実装した。
+- [EXP-2026-015](docs/research/experiments/EXP-2026-015.md) の確認では、局所場が
+  全270条件でcore保持率1を保ち、一様global対照よりcore保持0.3472、reserve
+  線形記憶容量0.07683高かった。これは単一の人工RNN familyにおける因果的な
+  設計比較であり、学習された場、高次元系、生物機構への一般化ではない。
+- [EXP-2026-016](docs/research/experiments/EXP-2026-016.md) の確認では、2+2・2+3
+  系だけでfitした固定component modelを3+5系へ外挿し、component-aware MAE
+  0.01232、global 0.03970、product-only 0.01699を得た。certificate chainの
+  違反は0だったが、Spearmanでは二baselineを上回らなかった。
+- 全186 unittest、7 DOCX test、branch coverage 87%を確認し、EXP-2026-016の
+  確認用source/test manifest SHA-256を
+  `f013d7f40c2e2dd146fce6d61ea5d95288b3b8b0892b4413ea8c381817ebc170`
+  に固定した。
 - canonical systems、artifact schema、seed manifestが未完了のためGate 0は未通過である。
 - 論文化判断は[論文化ゲート](docs/research/publication-readiness.md)で管理する。
 
@@ -856,6 +897,33 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - [R42] Raghav et al. (2026), “The Genetic and Environmental Architecture
   of the Human Functional Connectome.” arXiv:2604.24614.
   <https://arxiv.org/abs/2604.24614>
+- [R43] Cahill et al. (2024), “Local and Transient Inputs to Astrocytes
+  Generate Larger and Longer-Lasting Calcium Signals.” *Nature*.
+  <https://doi.org/10.1038/s41586-024-07311-5>
+- [R44] “Centripetal Integration of Past Events in Hippocampal Astrocytes
+  Regulated by the Locus Coeruleus.” (2024), *Nature Neuroscience*.
+  <https://doi.org/10.1038/s41593-024-01612-8>
+- [R45] “Rapid Astrocyte Modulation of Local Extracellular Calcium Drives
+  Striatal Cholinergic Interneurons and Dopamine Release.” (2024),
+  *Nature Communications*.
+  <https://doi.org/10.1038/s41467-024-54253-7>
+- [R46] “Astrocytic Sodium Homeostasis Exhibits Cellular and Subcellular
+  Heterogeneity and Controls Potassium Uptake.” (2026),
+  *Nature Communications*.
+  <https://doi.org/10.1038/s41467-026-73435-z>
+- [R47] “Brain-State-Dependent Astrocytic Chloride.” (2023),
+  *Nature Communications*.
+  <https://doi.org/10.1038/s41467-023-37433-9>
+- [R48] “Acetylcholine–Dopamine Waves as a Reaction–Diffusion System.”
+  (2023), *Nature Communications*.
+  <https://doi.org/10.1038/s41467-023-42311-5>
+- [R49] “Dopamine Builds and Reveals Latent Behavioral Attractors.”
+  (2024), *Nature Communications*.
+  <https://doi.org/10.1038/s41467-024-53976-x>
+- [R50] Driscoll, Shenoy, and Sussillo (2024), “Flexible Multitask
+  Computation in Recurrent Networks Utilizes Shared Dynamical Motifs.”
+  *Nature Neuroscience* 27, 1349–1363.
+  <https://doi.org/10.1038/s41593-024-01668-6>
 
 ### 13.3 力学系・遷移・トポロジーの分析
 
@@ -884,6 +952,16 @@ Lorenz、Rössler、Lorenz–96など、状態が単純なESPを満たさない�
 - [A19] Li et al. (2025), “Control Invariant Sets for Neural Network
   Dynamical Systems and Recursive Feasibility in Model Predictive Control.”
   arXiv:2505.11546. <https://arxiv.org/abs/2505.11546>
+- [A20] Dashkovskiy, Rüffer, and Wirth (2010), “Small Gain Theorems for
+  Large Scale Systems and Construction of ISS Lyapunov Functions.”
+  *SIAM Journal on Control and Optimization* 48(6), 4089–4118.
+  <https://doi.org/10.1137/090746483>
+- [A21] Zhang, Xiu, Qu, and Fan (2023), “Compositional Neural Certificates
+  for Networked Dynamical Systems.” *Proceedings of L4DC*, PMLR 211,
+  272–285. <https://proceedings.mlr.press/v211/zhang23a.html>
+- [A22] Pradhan, Dasgupta, and Sinha (2011), “Modular Organization Enhances
+  the Robustness of Attractor Network Dynamics.” *Europhysics Letters* 94,
+  38004. <https://doi.org/10.1209/0295-5075/94/38004>
 
 ## 14. 調査方法と確度
 

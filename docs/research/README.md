@@ -63,14 +63,20 @@ established
 - `theory/modular-factorization.md`: 独立moduleの積則とgauge同値性
 - `theory/signed-coordinate-conjugacy.md`: 符号共役、cycle不変量、有効構造標本数
 - `theory/weak-module-coupling.md`: 弱いmodule間結合のrectangle保証と積則残差
+- `theory/spatial-modulation-fields.md`: 有界拡散場、局所gate、energy-matched対照
 - `experiments/EXP-2026-010.md`: 4 network familyの未知seed task確認
 - `experiments/EXP-2026-011.md`: family・seed二重holdout予測確認
 - `experiments/EXP-2026-012.md`: candidate未使用modular familyへの陰性外挿確認
 - `experiments/AUDIT-2026-001.md`: 既存5 familyの符号共役class監査
 - `experiments/EXP-2026-013.md`: 異質独立moduleの積則確認事前登録
 - `experiments/EXP-2026-014.md`: 弱いmodule間結合による積則残差確認
+- `experiments/EXP-2026-015.md`: 空間局所gateによるcore保護とreserve記憶確認
+- `experiments/EXP-2026-016.md`: 小規模非対称moduleから3+5系へのcomponent-aware外挿
 - `experiments/TEMPLATE.md`: 実験記録テンプレート
 - `directions/innate-core-plastic-reserve.md`: 生得的構造と生涯学習の長期仮説
+- `theory/directional-component-coupling.md`: 方向別結合負荷と合成certificate chain
+- `theory/multicomponent-composition.md`: 未知分割、多成分負荷行列、規模別計算量条件
+- `experiments/EXP-2026-017.md`: 未知分割・三moduleへの固定predictor移送事前登録
 - `../papers/robust-repertoire-memory-ja.md`: robust repertoire論文草稿
 
 台帳は `load_claim_registry` により検証され、仮説に反証条件がない場合や、

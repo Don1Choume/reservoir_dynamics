@@ -1,0 +1,94 @@
+{
+  "experiment_id": "EXP-2026-016",
+  "phase": "confirmation",
+  "task_values_generated": false,
+  "structure_gate": {
+    "trial_seeds": [
+      2101,
+      2102,
+      2103,
+      2104,
+      2105,
+      2106,
+      2107,
+      2108,
+      2109,
+      2110,
+      2111,
+      2112,
+      2113,
+      2114,
+      2115,
+      2116,
+      2117,
+      2118,
+      2119,
+      2120,
+      2121,
+      2122,
+      2123,
+      2124,
+      2125,
+      2126,
+      2127,
+      2128,
+      2129,
+      2130
+    ],
+    "module_size_pairs": [
+      [
+        3,
+        5
+      ]
+    ],
+    "internal_gains": [
+      0.025,
+      0.05
+    ],
+    "maximum_bridge_strengths": [
+      0.0,
+      0.01,
+      0.02,
+      0.04
+    ],
+    "group_class_counts": [
+      [
+        "3+5:0x1.999999999999ap-6:0x0.0p+0",
+        30
+      ],
+      [
+        "3+5:0x1.999999999999ap-6:0x1.47ae147ae147bp-7",
+        30
+      ],
+      [
+        "3+5:0x1.999999999999ap-6:0x1.47ae147ae147bp-6",
+        30
+      ],
+      [
+        "3+5:0x1.999999999999ap-6:0x1.47ae147ae147bp-5",
+        30
+      ],
+      [
+        "3+5:0x1.999999999999ap-5:0x0.0p+0",
+        30
+      ],
+      [
+        "3+5:0x1.999999999999ap-5:0x1.47ae147ae147bp-7",
+        30
+      ],
+      [
+        "3+5:0x1.999999999999ap-5:0x1.47ae147ae147bp-6",
+        30
+      ],
+      [
+        "3+5:0x1.999999999999ap-5:0x1.47ae147ae147bp-5",
+        30
+      ]
+    ],
+    "fingerprints_unique": true,
+    "internal_blocks_asymmetric": true,
+    "positive_bridges_valid": true,
+    "bridge_norms_valid": true,
+    "passed": true
+  }
+}

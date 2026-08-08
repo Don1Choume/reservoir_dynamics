@@ -1,6 +1,6 @@
 # 論文化ゲート
 
-判定日: 2026-08-01  
+判定日: 2026-08-02
 現在の判定: **限定的な原著論文の草稿開始可**
 
 ## 証拠
@@ -92,6 +92,25 @@
   0.5250を認証し、normだけの後者0.4406より保守性を緩和した。
 - `EXP-2026-014` 実行前に全171テストと11 subtestを通過し、branch coverageは
   88%だった。
+- `EXP-2026-015` は3+5 node、非対称・双方向bridge、確率外乱を持つ
+  core–reserve RNNで、有界拡散場による局所bridge gateを同一Frobenius
+  介入energyの一様global recurrent gainと比較した。
+- 未使用30 seed、270条件、2,851,200座標遷移で、局所gateの8必須orthant
+  保持率は全条件1だった。global対照との差は0.3472、95% bootstrap区間
+  [0.2393, 0.4681]、reserve線形記憶容量差は0.07683、区間
+  [0.06350, 0.09123]だった。
+- 場の範囲違反、energy-matching違反、座標別certificate違反は0で、事前固定した
+  10判定はすべて成立した。実行前に全180テストと11 subtest、branch coverage
+  88%を確認した。
+- `EXP-2026-016` は非対称2+2・2+3 moduleだけでfitした方向別component-aware
+  ridgeを、係数再fitなしで未使用30 seedの3+5 moduleへ適用した。
+- 960点、983,040 challengeでcomponent-aware MAEは0.01232、global profileは
+  0.03970、product-onlyは0.01699だった。seed単位baseline minus component
+  MAEの95%区間下限は0.02474と0.004166で、事前固定9判定はすべて成立した。
+- transported、directional、global-shifted certificate chainとtask下界に違反は
+  なく、最大bridge strengthの平均認証率は0.6694、0.5089、0.4822だった。
+- 一方、Spearmanはcomponent-aware 0.8116に対してglobal 0.8542、product-only
+  0.9062であり、component modelの順位支配は得られなかった。
 
 ### 陰性結果
 
@@ -109,10 +128,12 @@
 ### 未検証
 
 - アトラクタprofileが符号保持以外の計算・記憶能力も予測するか
-- 非対称結合、module size違いを含む複数modular family間の実効
-  レパートリー比較
+- `EXP-2026-016` の較正優位が、別generator、3個以上のmodule、未知分割、
+  stochastic外乱、cue、readout task、非線形global baselineでも維持されるか。
 - 遷移時間尺度とタスク時間尺度の整合
-- アトラクタ指向調整のbaselineに対する優位性
+- アトラクタmarginを用いる学習済み調整器の強いbaselineに対する優位性。
+  EXP-2026-015のfeedback-only局所gateは一様global対照を上回ったが、低rank、
+  最適制御、学習済み対照とは未比較。
 - `EXP-2026-004` の所見が非直交、疎、学習済み、spiking、物理reservoirで
   維持されるか
 - shared-readout retentionが既存のglobal/output consistency profileを
@@ -121,8 +142,11 @@
 - task-specificな機能的アトラクタ商の数学的整備とatlas上での安定推定
 - 生得的機能コアとplastic reserveの操作定義が新規学習と忘却を予測するか
 - 高次元・非対角・非normalな多重安定coreでの安全集合margin推定
-- component-awareな摂動modelが弱結合modular familyへ外挿するか
-- robust repertoireがstochastic外乱、cue、readout、逐次学習taskを予測するか
+- component-awareな摂動modelが、分割を未知とした弱結合系や3 module以上へ
+  外挿するか
+- robust repertoireがstochastic外乱、cue、非線形readout、逐次学習taskを
+  予測するか。EXP-2026-015は確率外乱と線形reserve記憶を局所制御taskで扱ったが、
+  repertoire predictorの確認ではない。
 - random matched mask、部分空間保護、EWC、replayに対するcore–reserve
   構造の増分優位
 - module数、task数、reserve次元、feedback総量、energyのscale law
@@ -202,6 +226,20 @@ exact baselineである。`EXP-2026-014` は対称二bridgeの弱結合で、raw
 module size差へ残差表現を外挿し、global baselineに対する増分妥当性を測ること
 である。
 
+`EXP-2026-015` は非対称bridgeとmodule size差を別の因果介入taskへ導入し、
+同一介入energyの一様global対照よりcore保持とreserve記憶を同時に改善した。
+この結果は条件3を一つの人工network familyで限定的に満たす。ただしglobal対照は
+単一scalarであり、低rank制御、最適制御、学習された受容体mapより強いとは
+限らない。またEXP-2026-014のcomponent積残差predictorを外挿した結果ではない。
+従って草稿へ含める価値はあるが、単独で投稿前ゲートを解除しない。
+
+`EXP-2026-016` はこの残ったcomponent外挿を直接検証した。小さい2 familyでfitした
+固定modelが未知3+5 familyでglobal profileとproduct-onlyより低いMAEを示し、
+方向別certificate chainも保ったため、component分解の増分較正情報を一familyで
+確認した。ただし順位相関は二baselineより低く、別generator・別task・非線形
+baselineは未確認である。従って当初のcomponent残差移植gateは満たしたが、
+普遍predictorの投稿gateとは扱わない。
+
 日本語草稿は
 [アトラクタ数を越えたリザバー評価](../papers/robust-repertoire-memory-ja.md)
 として作成した。
@@ -226,14 +264,19 @@ module size差へ残差表現を外挿し、global baselineに対する増分妥
 `EXP-2026-010` と `EXP-2026-011` により条件2を限定的に満たした。4 familyと
 未知seedでmargin profileの性能予測を再現し、family holdout fitでもraw count、
 多変量structural baselineに対する事前登録優位を得たため、原稿を更新する。
+`EXP-2026-015` により条件3も単一family・単純global対照に限って満たした。
+`EXP-2026-016` により、条件2のうちmodule-sizeを跨ぐcomponent-aware較正優位を
+一つの非対称generatorで追加確認した。
 
 ## 投稿前の必須追加条件
 
 草稿は開始するが、投稿前に次を満たす。
 
-- 完全隔離と対称弱結合で得たcomponent残差表現を、非対称bridgeまたはmodule
-  size違いへ外挿し、global feature baselineと事前登録比較する
-- time-varying stochastic外乱でsurvival curveと保証の保守性を測る
+- `EXP-2026-016` のcomponent較正優位を、別generator、3 module以上、未知分割、
+  非線形global baselineで再確認する
+- time-varying stochastic外乱について、EXP-2026-015のcore制御taskとは別に
+  robust repertoire survival curveとrectangle保証の保守性を測る
+- 局所場を低rank制御、MPC、学習済み受容体mapと同一energyで比較する
 - family、coupling、local Jacobian、固定点座標を含む非線形baselineを
   nested cross-validationで比較する
 - hyperbox以外のset表現を一つ以上実装し、保守性と計算量を比較する
